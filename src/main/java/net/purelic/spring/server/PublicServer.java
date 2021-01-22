@@ -142,7 +142,7 @@ public class PublicServer {
                         servers.size() > 0 ? browse : ""
                 ));
 
-                ItemAction.BROWSE_LEAGUE.apply(item, this.playlist.getName());
+                ItemAction.SELECT_LEAGUE.apply(item, this.playlist.getName());
             } else {
                 item.setLore(Arrays.asList(
                         ChatColor.WHITE + this.playlist.getDescription(),
@@ -154,7 +154,7 @@ public class PublicServer {
                         browse
                 ));
 
-                ItemAction.BROWSE_PUBLIC.apply(item, this.playlist.getName());
+                ItemAction.SELECT_PUBLIC.apply(item, this.playlist.getName());
             }
         }
 

@@ -33,24 +33,38 @@ public class InventoryManager {
     }
 
     public static void openMainSelector(ProxiedPlayer player) {
+        ItemStack publicServers = new ItemStack(ItemType.IRON_CHESTPLATE);
+        publicServers.setDisplayName(new ComponentBuilder("Public Servers").color(ChatColor.AQUA).bold(true).create());
+        publicServers.setLore(ChatUtils.wrap("Play a variety unique game modes on community built maps!"));
+        ItemAction.BROWSE_PUBLIC.apply(publicServers);
 
+        ItemStack leagueServers = new ItemStack(ItemType.QUARTZ);
+        leagueServers.setDisplayName(new ComponentBuilder("League" + ChatColor.RESET + ChatColor.GRAY + " (/league)").color(ChatColor.AQUA).bold(true).create());
+        leagueServers.setLore(ChatUtils.wrap("Show off your skill and play in competitive, ranked matches!"));
+        ItemAction.BROWSE_LEAGUE.apply(leagueServers);
 
+        ItemStack privateServer = new ItemStack(ItemType.TRIPWIRE_HOOK);
+        privateServer.setDisplayName(new ComponentBuilder("Private Server" + ChatColor.RESET + ChatColor.GRAY + " (/ps)").color(ChatColor.AQUA).bold(true).create());
+        privateServer.setLore(ChatUtils.wrap("Host custom games or create your own maps!"));
+        ItemAction.PRIVATE_SERVER.apply(privateServer);
 
-        // 4 items
-        // reuse code
-    }
-
-    public static void openServerSelector(ProxiedPlayer player) {
-        Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(selectorRows), new TextComponent("Select a playlist:"));
-
-        ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem()));
+        Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(3), new TextComponent("Select an option:"));
+        inventory.setItem(10, publicServers);
+        inventory.setItem(12, leagueServers);
+        inventory.setItem(16, privateServer);
 
         List<GameServer> privateServers = ServerManager.getPrivateServers(!PermissionUtils.isStaff(player));
 
         if (privateServers.size() > 0) {
-            inventory.setItem(privateServerItemSlot, getPrivateServerItem(privateServers));
+            inventory.setItem(14, getPrivateServerItem(privateServers));
         }
 
+        InventoryModule.sendInventory(player, inventory);
+    }
+
+    public static void openServerSelector(ProxiedPlayer player) {
+        Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(selectorRows), new TextComponent("Select a playlist:"));
+        ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem()));
         InventoryModule.sendInventory(player, inventory);
     }
 
@@ -65,7 +79,7 @@ public class InventoryManager {
 
     private static ItemStack getPrivateServerItem(List<GameServer> servers) {
         ItemStack skull = new ItemStack(ItemType.PLAYER_HEAD);
-        skull.setDisplayName(new ComponentBuilder("Private Servers").color(ChatColor.AQUA).bold(true).create());
+        skull.setDisplayName(new ComponentBuilder("Custom Games").color(ChatColor.AQUA).bold(true).create());
         skull.setLore(Collections.singletonList(ChatColor.WHITE + "Browse " + ChatColor.AQUA + servers.size() + ChatColor.WHITE + " server" + (servers.size() == 1 ? "" : "s")));
         ItemAction.BROWSE_PRIVATE.apply(skull);
         return skull;
