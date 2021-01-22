@@ -19,6 +19,7 @@ public enum ItemAction {
     QUEUE,
     BROWSE_PRIVATE,
     LEADERBOARD,
+    STATS,
     PRIVATE_SERVER,
     ;
 

@@ -1,23 +1,28 @@
 package net.purelic.spring.profile;
 
 import com.google.cloud.firestore.FieldValue;
+import net.purelic.spring.managers.LeagueManager;
 import net.purelic.spring.managers.PlaylistManager;
-import net.purelic.spring.server.Playlist;
 import net.purelic.spring.party.Party;
+import net.purelic.spring.server.Playlist;
 import net.purelic.spring.utils.DatabaseUtils;
 
 import java.util.*;
 
 public class Profile {
 
+    private static final Long STARTING_ELO = 250L;
+
     private final UUID uuid;
     private final Set<Rank> ranks;
+    private Map<String, Object> stats;
     private boolean betaFeatures;
     private Playlist playlist;
 
     public Profile(UUID uuid, Map<String, Object> data) {
         this.uuid = uuid;
         this.ranks = Rank.parseRanks((List<Object>) data.getOrDefault(Rank.PATH, new ArrayList<>()));
+        this.stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
         this.playlist = this.getPlaylist(data);
     }
@@ -74,6 +79,14 @@ public class Profile {
         data.put(Preference.PATH, preferences);
 
         return data;
+    }
+
+    public int getRating(Playlist pl) {
+        Map<String, Object> ranked = (Map<String, Object>) stats.getOrDefault("ranked", new HashMap<>());
+        Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason(), new HashMap<>());
+        Map<String, Object> playlist = (Map<String, Object>) season.getOrDefault(pl.getId(), new HashMap<>());
+        Long rating = (Long) playlist.getOrDefault("rating", STARTING_ELO);
+        return rating.intValue();
     }
 
 }

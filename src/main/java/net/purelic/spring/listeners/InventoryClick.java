@@ -116,6 +116,14 @@ public class InventoryClick implements Listener {
                             .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/leaderboards"))
                             .create());
                     break;
+                case STATS:
+                    player.sendMessage(new ComponentBuilder("View your full stats online:")
+                        .append(" » ").color(ChatColor.GRAY)
+                        .append("purelic.net/players/" + player.getName()).color(ChatColor.AQUA)
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/players/" + player.getName()))
+                        .create());
+                    break;
                 case PRIVATE_SERVER:
                     InventoryManager.openPrivateServerInv(player);
                     break;

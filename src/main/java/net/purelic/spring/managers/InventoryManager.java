@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
+import net.purelic.spring.league.LeagueRank;
 import net.purelic.spring.profile.Profile;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
@@ -71,8 +72,10 @@ public class InventoryManager {
     public static void openLeagueSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(rankedSelectorRows), new TextComponent("Select a playlist:"));
         ServerManager.getPublicServerTypes().values().stream().filter(PublicServer::isRanked).forEach(server -> {
+            Playlist playlist = server.getPlaylist();
             inventory.setItem(server.getSlot(), server.toItem());
-            inventory.setItem(server.getSlot() + 9, LeaderboardManager.getLeaderboard(server.getPlaylist()).toItem());
+            inventory.setItem(server.getSlot() + 9, LeaderboardManager.getLeaderboard(playlist).toItem());
+            inventory.setItem(server.getSlot() - 9, LeagueRank.toItem(player, playlist));
         });
         InventoryModule.sendInventory(player, inventory);
     }
@@ -123,8 +126,6 @@ public class InventoryManager {
                 CommandUtils.sendAlertMessage(player, "Please wait, your server is still starting up...");
             }
         }
-
-        ProfileManager.getProfile(player); // pre-load their profile before they choose another option
     }
 
     private static void openSelectorInv(final ProxiedPlayer player) {
