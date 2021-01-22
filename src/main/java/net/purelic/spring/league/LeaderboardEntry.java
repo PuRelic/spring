@@ -7,22 +7,22 @@ import java.util.Map;
 public class LeaderboardEntry {
 
     private final String name;
-    private final long value;
+    private final int value;
 
     public LeaderboardEntry(Map<String, Object> data) {
-        this((String) data.get("name"), (long) data.get("value"));
+        this((String) data.get("name"), (Long) data.get("value"));
     }
 
-    private LeaderboardEntry(String name, long value) {
+    private LeaderboardEntry(String name, Long value) {
         this.name = name;
-        this.value = value;
+        this.value = value.intValue();
     }
 
     public String getName() {
         return this.name;
     }
 
-    public long getValue() {
+    public int getValue() {
         return this.value;
     }
 

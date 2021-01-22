@@ -105,7 +105,7 @@ public class Spring extends Plugin {
         this.registerListener(new PreLogin());
         this.registerListener(new ProxyPing());
         this.registerListener(new ServerKick());
-        this.registerListener(new ServerSwitch());
+        this.registerListener(new ServerConnected());
         this.registerListener(new SpringPluginMessage());
     }
 

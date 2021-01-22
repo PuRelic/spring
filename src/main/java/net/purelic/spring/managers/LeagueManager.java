@@ -33,6 +33,10 @@ public class LeagueManager {
         LeaderboardManager.reloadLeaderboards(currentSeason);
     }
 
+    public static String getCurrentSeason() {
+        return currentSeason;
+    }
+
     public static void clearQueues() {
         QUEUE.forEach((team, task) -> {
             team.sendMessage(ChatColor.RED + "Playlists updated - queues cleared! Please rejoin.", true);
@@ -68,7 +72,7 @@ public class LeagueManager {
             return;
         }
 
-        if (isQueued(player)) {
+        if (anyQueued(party)) {
             CommandUtils.sendErrorMessage(player, "You or someone in your party is already queued!");
             return;
         }
@@ -84,8 +88,8 @@ public class LeagueManager {
         joinQueue(team);
     }
 
-    private static boolean anyQueued(Set<ProxiedPlayer> players) {
-        return players.stream().anyMatch(LeagueManager::isQueued);
+    private static boolean anyQueued(Party party) {
+        return party.getMembers().stream().anyMatch(LeagueManager::isQueued);
     }
 
     private static boolean isQueued(ProxiedPlayer player) {
@@ -169,17 +173,7 @@ public class LeagueManager {
 
     public static int getAvgRating(Playlist pl, Set<ProxiedPlayer> players) {
         AtomicInteger total = new AtomicInteger();
-
-        players.forEach(player -> {
-            Map<String, Object> data = DatabaseUtils.getPlayerDoc(player.getUniqueId());
-            Map<String, Object> stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
-            Map<String, Object> ranked = (Map<String, Object>) stats.getOrDefault("ranked", new HashMap<>());
-            Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(currentSeason, new HashMap<>());
-            Map<String, Object> playlist = (Map<String, Object>) season.getOrDefault(pl.getId(), new HashMap<>());
-            Long rating = (Long) playlist.getOrDefault("rating", STARTING_ELO);
-            total.addAndGet(rating.intValue());
-        });
-
+        players.forEach(player -> total.addAndGet(ProfileManager.getProfile(player).getRating(pl)));
         return total.get() / players.size();
     }
 

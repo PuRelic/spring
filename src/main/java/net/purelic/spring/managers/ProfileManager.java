@@ -17,6 +17,12 @@ public class ProfileManager {
         return PROFILES;
     }
 
+    public static void reloadProfile(ProxiedPlayer player) {
+        UUID uuid = player.getUniqueId();
+        removeProfile(uuid);
+        loadProfile(uuid);
+    }
+
     public static Profile getProfile(ProxiedPlayer player) {
         return getProfile(player.getUniqueId());
     }

@@ -1,16 +1,25 @@
 package net.purelic.spring.listeners;
 
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.Spring;
+import net.purelic.spring.managers.ProfileManager;
 
-public class ServerSwitch implements Listener {
+public class ServerConnected implements Listener {
 
     @EventHandler
-    public void onServerSwitch(ServerConnectedEvent event) {
+    public void onServerConnected(ServerConnectedEvent event) {
         ProxiedPlayer player = event.getPlayer();
+
+        ServerInfo to = event.getServer().getInfo();
+        boolean toHub = to.getName().equals("Hub");
+
+        if (toHub) {
+            ProfileManager.reloadProfile(player);
+        }
 
         if (player.getServer() == null) return;
 
@@ -18,7 +27,7 @@ public class ServerSwitch implements Listener {
                 player,
                 "QuitMessage",
                 player.getUniqueId().toString(),
-                event.getServer().getInfo().getName());
+                to.getName());
     }
 
 }
