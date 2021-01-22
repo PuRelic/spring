@@ -56,7 +56,7 @@ public class LeagueManager {
         Party party = PartyManager.getParty(player);
 
         if (party == null) {
-            CommandUtils.sendErrorMessage(player, "You must be in a party to play league!");
+            CommandUtils.sendErrorMessage(player, "You must be in a party to play league! Use /party create to start a party");
             return;
         }
 
