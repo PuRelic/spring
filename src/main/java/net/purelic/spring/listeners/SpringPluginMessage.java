@@ -32,7 +32,7 @@ public class SpringPluginMessage implements Listener {
                 case "ServerSelector": {
                     UUID playerId = UUID.fromString(in.readUTF());
                     ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(playerId);
-                    InventoryManager.openServerSelector(player);
+                    InventoryManager.openMainSelector(player);
                     break;
                 }
                 case "LeagueSelector": {

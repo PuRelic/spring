@@ -12,11 +12,14 @@ public enum ItemAction {
     BETA,
     VIEW_PLAYLISTS,
     SELECT_PLAYLIST,
+    SELECT_PUBLIC,
     BROWSE_PUBLIC,
+    SELECT_LEAGUE,
     BROWSE_LEAGUE,
     QUEUE,
     BROWSE_PRIVATE,
     LEADERBOARD,
+    PRIVATE_SERVER,
     ;
 
     public void apply(ItemStack item) {

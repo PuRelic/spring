@@ -14,7 +14,7 @@ public class ServersCommand implements CustomCommand {
                 .senderType(ProxiedPlayer.class)
                 .handler(c -> {
                     ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    InventoryManager.openServerSelector(player);
+                    InventoryManager.openMainSelector(player);
                 });
     }
 

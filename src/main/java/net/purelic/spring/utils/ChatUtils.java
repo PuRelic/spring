@@ -4,6 +4,10 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
+import org.apache.commons.lang3.text.WordUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ChatUtils {
 
@@ -39,6 +43,19 @@ public class ChatUtils {
                             .append("\n")
                             .create());
         }
+    }
+
+    public static List<String> wrap(String text) {
+        return wrap(text, ChatColor.WHITE);
+    }
+
+    public static List<String> wrap(String text, ChatColor color) {
+        return wrap(text, 30, color);
+    }
+
+    public static List<String> wrap(String text, int length, ChatColor color) {
+        String wrapped = WordUtils.wrap(text, length, "%%" + color, true);
+        return Arrays.asList(wrapped.split("%%"));
     }
 
 }

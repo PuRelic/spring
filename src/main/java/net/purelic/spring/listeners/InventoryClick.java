@@ -89,18 +89,24 @@ public class InventoryClick implements Listener {
                     InventoryManager.openPrivateServerSelector(player);
                     break;
                 case BROWSE_PUBLIC:
+                    InventoryManager.openServerSelector(player);
+                    break;
+                case SELECT_PUBLIC:
                     if (clickType == ClickType.LEFT_CLICK) {
                         ServerUtils.quickJoin(player, playlist);
                     } else {
                         InventoryManager.openPublicServerSelector(player, playlist, false);
                     }
                     break;
-                case BROWSE_LEAGUE:
+                case SELECT_LEAGUE:
                     if (clickType == ClickType.LEFT_CLICK) {
                         LeagueManager.joinQueue(player, playlist);
                     } else {
                         InventoryManager.openPublicServerSelector(player, playlist, true);
                     }
+                    break;
+                case BROWSE_LEAGUE:
+                    InventoryManager.openLeagueSelector(player);
                     break;
                 case LEADERBOARD:
                     player.sendMessage(new ComponentBuilder("View the rest of the leaderboard online")
@@ -109,6 +115,9 @@ public class InventoryClick implements Listener {
                             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
                             .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/leaderboards"))
                             .create());
+                    break;
+                case PRIVATE_SERVER:
+                    InventoryManager.openPrivateServerInv(player);
                     break;
             }
         }

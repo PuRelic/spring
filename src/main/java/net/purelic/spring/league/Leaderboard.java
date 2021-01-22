@@ -70,11 +70,15 @@ public class Leaderboard {
 
         List<String> lore = new ArrayList<>();
 
+        lore.add("" + ChatColor.GRAY + ChatColor.ITALIC + "Refreshes every 5 minutes");
+        lore.add("");
+
         for (int i = 0; i < this.entries.size(); i++) {
             lore.add(ChatColor.AQUA + "#" + (i + 1) + " " + this.entries.get(i).toString());
         }
 
-        lore.add("\n" + ChatColor.GRAY + ChatColor.ITALIC + "Refreshes every 5 minutes");
+        lore.add("");
+        lore.add(ChatColor.AQUA + "purelic.net/leaderboards");
 
         ItemStack item = new ItemStack(ItemType.OAK_SIGN);
         item.setDisplayName(new ComponentBuilder(this.playlist.getName() + " Leaderboard").color(ChatColor.AQUA).bold(true).create());
