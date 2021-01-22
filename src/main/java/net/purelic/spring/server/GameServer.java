@@ -231,6 +231,7 @@ public class GameServer {
     }
 
     public int getPlayersOnline() {
+        if (this.serverInfo == null) return 0;
         return this.getPlayers().size();
     }
 
