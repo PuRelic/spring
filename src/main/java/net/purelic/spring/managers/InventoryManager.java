@@ -12,6 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.spring.league.LeagueRank;
 import net.purelic.spring.profile.Profile;
+import net.purelic.spring.profile.StatSection;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
@@ -211,6 +212,17 @@ public class InventoryManager {
         inventory.setItem(8, server.getItem());
 
         InventoryModule.sendInventory(player, inventory);
+    }
+
+    public static void openStatsMenu(ProxiedPlayer viewer) {
+        openStatsMenu(viewer, viewer);
+    }
+
+    public static void openStatsMenu(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
+        ProfileManager.reloadProfile(statsPlayer);
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(statsPlayer.getName() + "'s Stats"));
+        Arrays.asList(StatSection.values()).forEach(section -> inventory.setItem(section.getSlot(), section.toItem(viewer, statsPlayer)));
+        InventoryModule.sendInventory(viewer, inventory);
     }
 
 }

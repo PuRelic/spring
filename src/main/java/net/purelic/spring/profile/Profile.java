@@ -15,7 +15,7 @@ public class Profile {
 
     private final UUID uuid;
     private final Set<Rank> ranks;
-    private Map<String, Object> stats;
+    private final Map<String, Object> stats;
     private boolean betaFeatures;
     private Playlist playlist;
 
@@ -68,6 +68,20 @@ public class Profile {
         else DatabaseUtils.updatePlayerDoc(this.uuid, "party_id", party.getId());
     }
 
+    public Map<String, Object> getStats() {
+        return this.stats;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getStats(StatSection section) {
+        return (Map<String, Object>) this.stats.getOrDefault(section.getKey(), new HashMap<>());
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getTotalStats(StatSection section) {
+        return (Map<String, Object>) this.getStats(section).getOrDefault("total", new HashMap<>());
+    }
+
     public Map<String, Object> getData() {
         Map<String, Object> data = new HashMap<>();
 
@@ -80,12 +94,14 @@ public class Profile {
         preferences.put(Preference.PLAYLIST.getKey(), this.playlist.getName());
         data.put(Preference.PATH, preferences);
 
+        data.put("stats", this.stats);
+
         return data;
     }
 
     @SuppressWarnings("unchecked")
     public int getRating(Playlist pl) {
-        Map<String, Object> ranked = (Map<String, Object>) stats.getOrDefault("ranked", new HashMap<>());
+        Map<String, Object> ranked = (Map<String, Object>) this.stats.getOrDefault("ranked", new HashMap<>());
         Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason().getId(), new HashMap<>());
         Map<String, Object> playlist = (Map<String, Object>) season.getOrDefault(pl.getId(), new HashMap<>());
         Long rating = (Long) playlist.getOrDefault("rating", STARTING_ELO);
