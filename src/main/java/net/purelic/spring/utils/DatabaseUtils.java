@@ -3,6 +3,7 @@ package net.purelic.spring.utils;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import net.purelic.commons.Commons;
+import net.purelic.spring.league.Season;
 import net.purelic.spring.server.GameServer;
 
 import java.util.HashMap;
@@ -67,14 +68,20 @@ public class DatabaseUtils {
                 .update(field, value);
     }
 
-    public static String getCurrentSeason() {
+    @SuppressWarnings("unchecked")
+    public static Season getCurrentSeason() {
         try {
             DocumentReference docRef = Commons.getFirestore().collection("league").document("seasons");
             ApiFuture<DocumentSnapshot> future = docRef.get();
             DocumentSnapshot document = future.get();
 
-            if (document.exists()) return document.getString("current");
-            else return null;
+            if (document.exists() && document.getData() != null) {
+                String current = (String) document.getData().getOrDefault("current", "beta");
+                Map<String, Object> data = (Map<String, Object>) document.getData().getOrDefault(current, new HashMap<>());
+                return new Season(current, data);
+            } else {
+                return null;
+            }
         } catch (ExecutionException | InterruptedException e) {
             System.out.println("Error fetching current league season!");
             e.printStackTrace();

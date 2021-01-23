@@ -61,6 +61,11 @@
             <version>1.6.7-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.ocpsoft.prettytime</groupId>
+            <artifactId>prettytime</artifactId>
+            <version>5.0.0.Final</version>
+        </dependency>
     </dependencies>
 
     <build>

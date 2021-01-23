@@ -71,12 +71,16 @@ public class InventoryManager {
 
     public static void openLeagueSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(rankedSelectorRows), new TextComponent("Select a playlist:"));
+
+        inventory.setItem(4, LeagueManager.getCurrentSeason().toItem());
+
         ServerManager.getPublicServerTypes().values().stream().filter(PublicServer::isRanked).forEach(server -> {
             Playlist playlist = server.getPlaylist();
             inventory.setItem(server.getSlot(), server.toItem());
             inventory.setItem(server.getSlot() + 9, LeaderboardManager.getLeaderboard(playlist).toItem());
             inventory.setItem(server.getSlot() - 9, LeagueRank.toItem(player, playlist));
         });
+
         InventoryModule.sendInventory(player, inventory);
     }
 

@@ -19,6 +19,7 @@ public class Profile {
     private boolean betaFeatures;
     private Playlist playlist;
 
+    @SuppressWarnings("unchecked")
     public Profile(UUID uuid, Map<String, Object> data) {
         this.uuid = uuid;
         this.ranks = Rank.parseRanks((List<Object>) data.getOrDefault(Rank.PATH, new ArrayList<>()));
@@ -56,6 +57,7 @@ public class Profile {
         return playlist == null || playlist.isArchived() ? PlaylistManager.getDefaultPlaylist() : playlist;
     }
 
+    @SuppressWarnings("unchecked")
     private Object getPreference(Preference preference, Map<String, Object> data, Object defaultValue) {
         Map<String, Object> preferences = (Map<String, Object>) data.getOrDefault(Preference.PATH, new HashMap<>());
         return preferences.getOrDefault(preference.getKey(), defaultValue);
@@ -81,9 +83,10 @@ public class Profile {
         return data;
     }
 
+    @SuppressWarnings("unchecked")
     public int getRating(Playlist pl) {
         Map<String, Object> ranked = (Map<String, Object>) stats.getOrDefault("ranked", new HashMap<>());
-        Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason(), new HashMap<>());
+        Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason().getId(), new HashMap<>());
         Map<String, Object> playlist = (Map<String, Object>) season.getOrDefault(pl.getId(), new HashMap<>());
         Long rating = (Long) playlist.getOrDefault("rating", STARTING_ELO);
         return rating.intValue();

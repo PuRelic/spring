@@ -63,6 +63,11 @@ public enum LeagueRank {
         return this.nextRank;
     }
 
+    @Override
+    public String toString() {
+        return this.getFlair() + " " + this.getName() + ChatColor.DARK_GRAY + " (" + ChatColor.GRAY + this.description + ChatColor.DARK_GRAY + ")";
+    }
+
     public static ItemStack toItem(ProxiedPlayer player, Playlist playlist) {
         int rating = ProfileManager.getProfile(player).getRating(playlist);
         LeagueRank rank = getRank(rating);

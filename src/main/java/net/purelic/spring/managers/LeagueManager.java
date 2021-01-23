@@ -3,10 +3,7 @@ package net.purelic.spring.managers;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
-import net.purelic.spring.league.LeagueMatch;
-import net.purelic.spring.league.LeagueMatchSearch;
-import net.purelic.spring.league.LeagueServerSearch;
-import net.purelic.spring.league.LeagueTeam;
+import net.purelic.spring.league.*;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
@@ -25,15 +22,14 @@ public class LeagueManager {
 
     private static final Map<LeagueTeam, ScheduledTask> QUEUE = new HashMap<>();
     private static final Map<LeagueMatch, ScheduledTask> MATCHES = new HashMap<>();
-    private static final long STARTING_ELO = 250;
-    private static String currentSeason;
+    private static Season currentSeason;
 
     public static void reloadSeason() {
         currentSeason = DatabaseUtils.getCurrentSeason();
         LeaderboardManager.reloadLeaderboards(currentSeason);
     }
 
-    public static String getCurrentSeason() {
+    public static Season getCurrentSeason() {
         return currentSeason;
     }
 

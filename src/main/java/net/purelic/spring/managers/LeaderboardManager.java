@@ -2,6 +2,7 @@ package net.purelic.spring.managers;
 
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.purelic.spring.league.Leaderboard;
+import net.purelic.spring.league.Season;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 import net.purelic.spring.utils.TaskUtils;
@@ -17,9 +18,9 @@ public class LeaderboardManager {
     private static final int REFRESH_INTERVAL = 600; // 5 minutes
     private static ScheduledTask refreshTask = null;
 
-    public static void reloadLeaderboards(String season) {
+    public static void reloadLeaderboards(Season season) {
         LEADERBOARDS.clear();
-        getRankedPlaylists().forEach(playlist -> LEADERBOARDS.put(playlist, new Leaderboard(playlist, season)));
+        getRankedPlaylists().forEach(playlist -> LEADERBOARDS.put(playlist, new Leaderboard(playlist, season.getId())));
         startRefreshTask();
     }
 
