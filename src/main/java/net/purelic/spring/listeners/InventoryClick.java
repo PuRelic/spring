@@ -126,9 +126,10 @@ public class InventoryClick implements Listener {
                         .create());
                     break;
                 case MATCH:
+                    String truncated = value.length() > 15 ? value.substring(0, 10) + "..." : "";
                     player.sendMessage(new ComponentBuilder("View the full match online:")
                         .append(" » ").color(ChatColor.GRAY)
-                        .append("purelic.net/matches/" + value).color(ChatColor.AQUA)
+                        .append("purelic.net/matches/" + truncated).color(ChatColor.AQUA)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
                         .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/matches/" + value))
                         .create());
