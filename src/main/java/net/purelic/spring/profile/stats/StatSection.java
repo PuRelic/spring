@@ -128,6 +128,7 @@ public enum StatSection {
 
         lore.add(this.getFormattedValue(stats, StatType.GAMES_PLAYED));
         lore.add(this.getFormattedValue(stats, StatType.WINS) + "  " + this.getFormattedValue("WLR", wlr));
+        if (this != TOTAL && this != RANKED) lore.add(this.getFormattedValue(stats, StatType.WIN_STREAK));
         lore.add("");
         lore.add(this.getFormattedValue(StatType.KILLS, kills) + "  " + this.getFormattedValue("KDR", kd));
         lore.add(this.getFormattedValue(StatType.ASSISTS, assists) + "  " + this.getFormattedValue("KDAR", kda));

@@ -108,12 +108,20 @@ public class Profile {
     }
 
     @SuppressWarnings("unchecked")
-    public int getRating(Playlist pl) {
+    public Map<String, Object> getRankedStats(Playlist pl) {
         Map<String, Object> ranked = (Map<String, Object>) this.stats.getOrDefault("ranked", new HashMap<>());
         Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason().getId(), new HashMap<>());
-        Map<String, Object> playlist = (Map<String, Object>) season.getOrDefault(pl.getId(), new HashMap<>());
-        Long rating = (Long) playlist.getOrDefault("rating", STARTING_ELO);
+        return (Map<String, Object>) season.getOrDefault(pl.getId(), new HashMap<>());
+    }
+
+    public int getRating(Playlist playlist) {
+        Long rating = (Long) this.getRankedStats(playlist).getOrDefault("rating", STARTING_ELO);
         return rating.intValue();
+    }
+
+    public int getWinStreak(Playlist playlist) {
+        Long winStreak = (Long) this.getRankedStats(playlist).getOrDefault("win_streak", 0L);
+        return winStreak.intValue();
     }
 
 }

@@ -13,7 +13,7 @@ public enum StatType {
     BEDS(ChatColor.YELLOW),
     WINS(ChatColor.GREEN),
     LOSSES,
-    WIN_STREAK,
+    WIN_STREAK(ChatColor.GREEN),
     GAMES_PLAYED,
     HEADS_COLLECTED(ChatColor.YELLOW),
     HEADS_STOLEN(ChatColor.YELLOW),

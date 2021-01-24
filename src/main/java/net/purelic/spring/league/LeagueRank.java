@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.ProfileManager;
+import net.purelic.spring.profile.Profile;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.utils.ItemAction;
 
@@ -69,7 +70,10 @@ public enum LeagueRank {
     }
 
     public static ItemStack toItem(ProxiedPlayer player, Playlist playlist) {
-        int rating = ProfileManager.getProfile(player).getRating(playlist);
+        Profile profile = ProfileManager.getProfile(player);
+        int rating = profile.getRating(playlist);
+        int winStreak = profile.getWinStreak(playlist);
+
         LeagueRank rank = getRank(rating);
         LeagueRank next = rank.getNextRank();
         ItemStack item = new ItemStack(rank.getItemType());
@@ -77,8 +81,9 @@ public enum LeagueRank {
 
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatColor.GRAY + "Rating: " + ChatColor.WHITE + rating);
         lore.add(ChatColor.GRAY + "Rank: " + rank.getFlair() + " " + rank.getName());
+        lore.add(ChatColor.GRAY + "Rating: " + ChatColor.AQUA + rating);
+        lore.add(ChatColor.GRAY + "Win Streak: " + ChatColor.AQUA + winStreak);
         if (next != null) {
             lore.add("");
             lore.add(ChatColor.GRAY + "Next: " + next.getFlair() + " " + next.getName() + "");

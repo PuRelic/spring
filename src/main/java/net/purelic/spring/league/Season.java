@@ -50,7 +50,7 @@ public class Season {
         lore.add(ChatColor.GRAY + "Started " + PT.format(this.started.toDate()));
         lore.add(ChatColor.GRAY + "Ends " + PT.format(this.ended.toDate()));
         lore.add("");
-        lore.add(ChatColor.GRAY + "Ranks");
+        lore.add(ChatColor.GRAY + "Ranks:");
         Arrays.stream(LeagueRank.values()).forEach(rank -> lore.add(rank.toString()));
         item.setLore(lore);
         return item;
