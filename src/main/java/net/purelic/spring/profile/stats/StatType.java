@@ -1,4 +1,4 @@
-package net.purelic.spring.profile;
+package net.purelic.spring.profile.stats;
 
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang3.text.WordUtils;

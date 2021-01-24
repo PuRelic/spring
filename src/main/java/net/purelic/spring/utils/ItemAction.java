@@ -20,6 +20,7 @@ public enum ItemAction {
     BROWSE_PRIVATE,
     LEADERBOARD,
     STATS,
+    MATCH,
     PRIVATE_SERVER,
     ;
 

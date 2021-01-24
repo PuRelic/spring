@@ -18,11 +18,8 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.purelic.commons.Commons;
 import net.purelic.spring.commands.*;
-import net.purelic.spring.commands.social.StatsCommand;
+import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
-import net.purelic.spring.commands.social.FindCommand;
-import net.purelic.spring.commands.social.MessageCommand;
-import net.purelic.spring.commands.social.ReplyCommand;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
@@ -132,20 +129,23 @@ public class Spring extends Plugin {
         this.registerCommand(new PartyRenameCommand());
         this.registerCommand(new PartyWarpCommand());
 
+        // Social
+        this.registerCommand(new FindCommand());
+        this.registerCommand(new MatchesCommand());
+        this.registerCommand(new MessageCommand());
+        this.registerCommand(new PingCommand());
+        this.registerCommand(new ReplyCommand());
+        this.registerCommand(new StatsCommand());
+
         // Spring
         this.registerCommand(new DestroyCommand());
         this.registerCommand(new PurgeCommand());
         this.registerCommand(new ReloadCommand());
 
         this.registerCommand(new BroadcastCommand());
-        this.registerCommand(new FindCommand());
         this.registerCommand(new HubCommand());
         this.registerCommand(new LeagueCommand());
-        this.registerCommand(new MessageCommand());
-        this.registerCommand(new PingCommand());
         this.registerCommand(new PrivateServerCommand());
-        this.registerCommand(new ReplyCommand());
-        this.registerCommand(new StatsCommand());
         this.registerCommand(new ServerCommand());
         this.registerCommand(new ServersCommand());
     }

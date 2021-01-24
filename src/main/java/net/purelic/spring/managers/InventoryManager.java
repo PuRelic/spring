@@ -12,7 +12,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.spring.league.LeagueRank;
 import net.purelic.spring.profile.Profile;
-import net.purelic.spring.profile.StatSection;
+import net.purelic.spring.profile.match.Match;
+import net.purelic.spring.profile.stats.StatSection;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
@@ -222,6 +223,25 @@ public class InventoryManager {
         ProfileManager.reloadProfile(statsPlayer);
         Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(statsPlayer.getName() + "'s Stats"));
         Arrays.asList(StatSection.values()).forEach(section -> inventory.setItem(section.getSlot(), section.toItem(viewer, statsPlayer)));
+        InventoryModule.sendInventory(viewer, inventory);
+    }
+
+    public static void openMatchesMenu(ProxiedPlayer viewer) {
+        openMatchesMenu(viewer, viewer);
+    }
+
+    public static void openMatchesMenu(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
+        ProfileManager.reloadProfile(statsPlayer);
+        Profile profile = ProfileManager.getProfile(statsPlayer);
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X3, new TextComponent(statsPlayer.getName() + "'s Recent Matches"));
+
+        int i = 0;
+        for (Map<String, Object> matchData : profile.getMatches()) {
+            Match match = new Match(matchData);
+            inventory.setItem(i, match.toItem());
+            i++;
+        }
+
         InventoryModule.sendInventory(viewer, inventory);
     }
 

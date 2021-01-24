@@ -4,6 +4,7 @@ import com.google.cloud.firestore.FieldValue;
 import net.purelic.spring.managers.LeagueManager;
 import net.purelic.spring.managers.PlaylistManager;
 import net.purelic.spring.party.Party;
+import net.purelic.spring.profile.stats.StatSection;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.utils.DatabaseUtils;
 
@@ -16,6 +17,7 @@ public class Profile {
     private final UUID uuid;
     private final Set<Rank> ranks;
     private final Map<String, Object> stats;
+    private final List<Map<String, Object>> matches;
     private boolean betaFeatures;
     private Playlist playlist;
 
@@ -24,6 +26,7 @@ public class Profile {
         this.uuid = uuid;
         this.ranks = Rank.parseRanks((List<Object>) data.getOrDefault(Rank.PATH, new ArrayList<>()));
         this.stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
+        this.matches = (List<Map<String, Object>>) data.getOrDefault("recent_matches", new ArrayList<>());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
         this.playlist = this.getPlaylist(data);
     }
@@ -82,6 +85,10 @@ public class Profile {
         return (Map<String, Object>) this.getStats(section).getOrDefault("total", new HashMap<>());
     }
 
+    public List<Map<String, Object>> getMatches() {
+        return this.matches;
+    }
+
     public Map<String, Object> getData() {
         Map<String, Object> data = new HashMap<>();
 
@@ -95,6 +102,7 @@ public class Profile {
         data.put(Preference.PATH, preferences);
 
         data.put("stats", this.stats);
+        data.put("recent_matches", this.matches);
 
         return data;
     }

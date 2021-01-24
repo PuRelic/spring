@@ -1,10 +1,11 @@
-package net.purelic.spring.profile;
+package net.purelic.spring.profile.stats;
 
 import de.exceptionflug.protocolize.items.ItemStack;
 import de.exceptionflug.protocolize.items.ItemType;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.ProfileManager;
+import net.purelic.spring.profile.Profile;
 import net.purelic.spring.utils.ItemAction;
 import net.purelic.spring.utils.Protocol;
 
