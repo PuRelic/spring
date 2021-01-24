@@ -7,7 +7,6 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.Spring;
 import net.purelic.spring.managers.InventoryManager;
-import net.purelic.spring.managers.ServerManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -27,29 +26,28 @@ public class SpringPluginMessage implements Listener {
 
         try {
             String subChannel = in.readUTF();
+            UUID playerId = UUID.fromString(in.readUTF());
+            ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(playerId);
 
             switch (subChannel) {
                 case "ServerSelector": {
-                    UUID playerId = UUID.fromString(in.readUTF());
-                    ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(playerId);
                     InventoryManager.openMainSelector(player);
                     break;
                 }
                 case "LeagueSelector": {
-                    UUID playerId = UUID.fromString(in.readUTF());
-                    ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(playerId);
                     InventoryManager.openLeagueSelector(player);
                     break;
                 }
                 case "PrivateServer": {
-                    UUID playerId = UUID.fromString(in.readUTF());
-                    ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(playerId);
                     InventoryManager.openPrivateServerInv(player);
                     break;
                 }
-                case "RemoveServer": {
-                    String name = in.readUTF();
-                    ServerManager.removeServer(name);
+                case "ViewStats": {
+                    InventoryManager.openStatsMenu(player);
+                    break;
+                }
+                case "ViewMatches": {
+                    InventoryManager.openMatchesMenu(player);
                     break;
                 }
             }

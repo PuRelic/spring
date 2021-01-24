@@ -233,13 +233,20 @@ public class InventoryManager {
     public static void openMatchesMenu(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
         ProfileManager.reloadProfile(statsPlayer);
         Profile profile = ProfileManager.getProfile(statsPlayer);
-        Inventory inventory = new Inventory(InventoryType.GENERIC_9X3, new TextComponent(statsPlayer.getName() + "'s Recent Matches"));
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(statsPlayer.getName() + "'s Recent Matches"));
 
-        int i = 0;
+        int row = 1;
+        int offset = 1;
+
         for (Map<String, Object> matchData : profile.getMatches()) {
+            if (offset == 8) {
+                row++;
+                offset = 1;
+            }
+
             Match match = new Match(matchData);
-            inventory.setItem(i, match.toItem());
-            i++;
+            inventory.setItem((row * 9) + offset, match.toItem());
+            offset++;
         }
 
         InventoryModule.sendInventory(viewer, inventory);
