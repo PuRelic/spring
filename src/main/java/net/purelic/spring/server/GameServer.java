@@ -94,6 +94,7 @@ public class GameServer {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public GameServer(String name, Map<String, Object> data) throws RequestUnsuccessfulException, DigitalOceanException {
         this.plugin = Spring.getPlugin();
         this.proxy = this.plugin.getProxy();
@@ -206,6 +207,7 @@ public class GameServer {
         return this.ranked;
     }
 
+    @SuppressWarnings("unchecked")
     public void setRankedPlayers(LeagueMatch match) {
         List<Map<String, Object>> data = match.toData();
         DocumentManager.getServerDoc(this).update("ranked_players", data);
@@ -294,6 +296,7 @@ public class GameServer {
         }
 
         if (current == ServerStatus.STARTED && status != ServerStatus.STARTED && this.isRanked()) {
+            this.getPlayers().forEach(ServerUtils::sendToHub);
             this.clearRankedPlayers();
         }
     }
@@ -350,6 +353,7 @@ public class GameServer {
         return item;
     }
 
+    @SuppressWarnings("deprecation")
     public TextComponent getTextComponent() {
         TextComponent component = new TextComponent(
                 ChatColor.GRAY + " • " + ChatColor.AQUA + this.name + ChatColor.GRAY + " » " +
@@ -407,7 +411,7 @@ public class GameServer {
 
                             if (hostname.isEmpty()) return;
 
-                            InetSocketAddress address = null;
+                            InetSocketAddress address;
 
                             try {
                                 address = new InetSocketAddress(hostname, 25565);
@@ -437,6 +441,7 @@ public class GameServer {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void addServer(InetSocketAddress address) {
         ServerInfo serverInfo = this.proxy.constructServerInfo(
                 this.name,

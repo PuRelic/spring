@@ -1,5 +1,7 @@
 package net.purelic.spring.utils;
 
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.managers.ServerManager;
@@ -14,6 +16,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class ServerUtils {
+
+    public static ServerInfo getHub() {
+        return ProxyServer.getInstance().getServerInfo("Hub");
+    }
+
+    public static void sendToHub(ProxiedPlayer player) {
+        ServerInfo current = player.getServer().getInfo();
+        ServerInfo hub = getHub();
+        if (current != hub) player.connect(hub);
+    }
 
     public static String getValidName(String name) {
         return !ServerManager.getGameServers().containsKey(name) ? name : ServerUtils.getValidName(name, 1);
@@ -139,6 +151,7 @@ public class ServerUtils {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isRankedPlayer(ProxiedPlayer player) {
         return ServerManager.getGameServers().values().stream().anyMatch(server -> server.isRankedPlayer(player));
     }
