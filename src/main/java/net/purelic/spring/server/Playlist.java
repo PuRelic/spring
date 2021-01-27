@@ -5,9 +5,9 @@ import de.exceptionflug.protocolize.items.ItemStack;
 import de.exceptionflug.protocolize.items.ItemType;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.ItemAction;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class Playlist {
@@ -31,7 +31,7 @@ public class Playlist {
     private ItemStack getItem() {
         ItemStack item = new ItemStack(this.itemType);
         item.setDisplayName(new ComponentBuilder(this.name).color(ChatColor.AQUA).bold(true).create());
-        item.setLore(Collections.singletonList(ChatColor.WHITE + this.description));
+        item.setLore(ChatUtils.wrap(this.description));
         item.setFlag(ItemFlag.HIDE_ATTRIBUTES, true);
         ItemAction.SELECT_PLAYLIST.apply(item, this.name);
         return item;
@@ -57,6 +57,7 @@ public class Playlist {
         return this.itemStack;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isArchived() {
         return this.archived;
     }

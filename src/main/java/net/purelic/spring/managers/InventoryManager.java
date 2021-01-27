@@ -145,24 +145,6 @@ public class InventoryManager {
         }
 
         Profile profile = ProfileManager.getProfile(player);
-
-        // Add the playlist selector item
-        Playlist playlist = profile.getPlaylist();
-        ItemStack playlistItem = new ItemStack(playlist.getItemType());
-        playlistItem.setDisplayName(new ComponentBuilder("Playlist Selector").color(ChatColor.WHITE).bold(true).create());
-        playlistItem.setLore(Arrays.asList(
-                ChatColor.GRAY + "Selected: " + ChatColor.AQUA + playlist.getName(),
-                "",
-                ChatColor.WHITE + "Playlists decide what maps and game",
-                ChatColor.WHITE + "modes your server starts with.",
-                "",
-                ChatColor.GREEN + "◊ Premium Only"
-        ));
-        ItemAction.VIEW_PLAYLISTS.apply(playlistItem);
-
-        inventory.setItem(7, playlistItem);
-
-        // Add the beta features item
         boolean beta = profile.hasBetaFeatures();
 
         ItemStack betaItem = new ItemStack(beta ? ItemType.LIME_DYE : ItemType.GRAY_DYE);

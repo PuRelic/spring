@@ -3,7 +3,6 @@ package net.purelic.spring.profile;
 public enum Preference {
 
     BETA_FEATURES,
-    PLAYLIST,
     ;
 
     public static final String PATH = "preferences";

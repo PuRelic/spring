@@ -2,7 +2,6 @@ package net.purelic.spring.profile;
 
 import com.google.cloud.firestore.FieldValue;
 import net.purelic.spring.managers.LeagueManager;
-import net.purelic.spring.managers.PlaylistManager;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.profile.stats.StatSection;
 import net.purelic.spring.server.Playlist;
@@ -19,7 +18,6 @@ public class Profile {
     private final Map<String, Object> stats;
     private final List<Map<String, Object>> matches;
     private boolean betaFeatures;
-    private Playlist playlist;
 
     @SuppressWarnings("unchecked")
     public Profile(UUID uuid, Map<String, Object> data) {
@@ -28,7 +26,6 @@ public class Profile {
         this.stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
         this.matches = (List<Map<String, Object>>) data.getOrDefault("recent_matches", new ArrayList<>());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
-        this.playlist = this.getPlaylist(data);
     }
 
     public Set<Rank> getRanks() {
@@ -42,22 +39,6 @@ public class Profile {
     public void toggleBetaFeatures() {
         this.betaFeatures = !this.betaFeatures;
         DatabaseUtils.updatePlayerDoc(this.uuid, Preference.BETA_FEATURES.getFullPath(), this.betaFeatures);
-    }
-
-    public Playlist getPlaylist() {
-        if (!PlaylistManager.isAvailable(this.playlist)) this.playlist = PlaylistManager.getDefaultPlaylist();
-        return this.playlist;
-    }
-
-    public void setPlaylist(Playlist playlist) {
-        this.playlist = playlist;
-        DatabaseUtils.updatePlayerDoc(this.uuid, Preference.PLAYLIST.getFullPath(), playlist.getName());
-    }
-
-    private Playlist getPlaylist(Map<String, Object> data) {
-        String playlistValue = (String) this.getPreference(Preference.PLAYLIST, data, PlaylistManager.getDefaultPlaylist().getName());
-        Playlist playlist = PlaylistManager.getPlaylist(playlistValue);
-        return playlist == null || playlist.isArchived() ? PlaylistManager.getDefaultPlaylist() : playlist;
     }
 
     @SuppressWarnings("unchecked")
@@ -98,7 +79,6 @@ public class Profile {
 
         Map<String, Object> preferences = new HashMap<>();
         preferences.put(Preference.BETA_FEATURES.getKey(), this.betaFeatures);
-        preferences.put(Preference.PLAYLIST.getKey(), this.playlist.getName());
         data.put(Preference.PATH, preferences);
 
         data.put("stats", this.stats);

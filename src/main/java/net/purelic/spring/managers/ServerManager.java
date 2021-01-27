@@ -21,6 +21,7 @@ public class ServerManager {
     private static final Map<ProxiedPlayer, PublicServer> QUEUED = new HashMap<>();
     private static final Map<String, GameServer> GAME_SERVERS = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     public static void loadPublicServers(Configuration config) {
         clearQueues();
         PUBLIC_SERVERS.clear();
@@ -118,6 +119,10 @@ public class ServerManager {
         addServer(new GameServer(player, ServerSize.LITE, type));
     }
 
+    public static void createPrivateSerer(ProxiedPlayer player, Playlist playlist) {
+        addServer(new GameServer(player, ServerSize.LITE, ServerType.CUSTOM_GAMES, playlist));
+    }
+
     private static void addServer(GameServer server) {
         GAME_SERVERS.put(server.getName(), server);
         server.create();
@@ -128,6 +133,7 @@ public class ServerManager {
         removeServer(GAME_SERVERS.get(name));
     }
 
+    @SuppressWarnings("deprecation")
     public static void removeServer(GameServer server) {
         if (server == null) return;
 

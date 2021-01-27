@@ -63,12 +63,16 @@ public class GameServer {
     private ServerInfo serverInfo;
 
     public GameServer(ProxiedPlayer player, ServerSize size, ServerType type) {
+        this(player, size, type, null);
+    }
+
+    public GameServer(ProxiedPlayer player, ServerSize size, ServerType type, Playlist playlist) {
         this(
                 player.getUniqueId().toString(),
                 player.getName(),
                 size,
                 type,
-                ProfileManager.getProfile(player).getPlaylist(),
+                playlist,
                 20,
                 0,
                 0,

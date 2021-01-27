@@ -45,7 +45,7 @@ public class InventoryClick implements Listener {
                 case CREATE:
                     ServerType serverType = ServerType.valueOf(value);
 
-                    if (serverType != ServerType.GAME_DEVELOPMENT && !PermissionUtils.isDonator(player)) {
+                    if (serverType.isPremium() && !PermissionUtils.isDonator(player)) {
                         CommandUtils.sendErrorMessage(player, serverType.getName() + " servers are only available for Premium players. Consider donating at purelic.net/donate");
                         break;
                     }
@@ -72,15 +72,8 @@ public class InventoryClick implements Listener {
                     PlaylistManager.openSelectorInventory(player);
                     break;
                 case SELECT_PLAYLIST:
-                    if (!PermissionUtils.isDonator(player)) {
-                        CommandUtils.sendErrorMessage(player, "Changing playlists is only available for Premium players. Consider donating at purelic.net/donate");
-                        break;
-                    }
-
-
-                    CommandUtils.sendSuccessMessage(player, "You set your preferred playlist to \"" + playlist.getName() + "\"!");
-                    ProfileManager.getProfile(player).setPlaylist(playlist);
-                    InventoryManager.openPrivateServerInv(player);
+                    CommandUtils.sendAlertMessage(player, "Creating your private " + ServerType.CUSTOM_GAMES.getName() + " server! We'll notify you when it's ready.");
+                    ServerManager.createPrivateSerer(player, playlist);
                     break;
                 case QUEUE:
                     CommandUtils.sendSuccessMessage(player, "You were added to the queue for " + playlist.getName() + "!");
