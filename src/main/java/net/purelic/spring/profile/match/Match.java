@@ -39,7 +39,7 @@ public class Match {
         this.map = (String) data.get("map");
         this.gameMode = (String) data.get("game_mode");
         this.place = data.get("place") + (String) data.get("place_suffix");
-        this.showScores = (boolean) data.get("show_scores");
+        this.showScores = (boolean) data.getOrDefault("show_scores", false);
         this.teamId = (String) data.get("team");
         this.teams = new ArrayList<>();
 
