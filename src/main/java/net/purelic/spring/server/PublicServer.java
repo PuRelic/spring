@@ -136,7 +136,7 @@ public class PublicServer {
                         ChatColor.WHITE + this.playlist.getDescription(),
                         "",
                         ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
-                        ChatColor.GRAY + "Party: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
+                        ChatColor.GRAY + "Party Required: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
                         "",
                         ChatColor.WHITE + "L-Click to Join Queue",
                         servers.size() > 0 ? browse : ""
