@@ -11,6 +11,7 @@ import net.purelic.commons.Commons;
 import net.purelic.spring.Spring;
 import net.purelic.spring.server.*;
 import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.utils.ServerUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ public class ServerManager {
     private static final Map<String, PublicServer> PUBLIC_SERVERS = new HashMap<>();
     private static final Map<ProxiedPlayer, PublicServer> QUEUED = new HashMap<>();
     private static final Map<String, GameServer> GAME_SERVERS = new HashMap<>();
+    private static final Map<UUID, String> LAST_SERVERS = new HashMap<>();
 
     @SuppressWarnings("unchecked")
     public static void loadPublicServers(Configuration config) {
@@ -153,6 +155,15 @@ public class ServerManager {
         DocumentManager.removeServerDoc(server.getId());
 
         System.out.println((server.isPrivate() ? "Private" : "Public") + " server destroyed (" + name + ")");
+    }
+
+    public static GameServer getLastServer(ProxiedPlayer player) {
+        String serverName = LAST_SERVERS.get(player.getUniqueId());
+        return serverName == null ? null : ServerUtils.getGameServerByName(serverName, true);
+    }
+
+    public static void setLastServer(ProxiedPlayer player) {
+        LAST_SERVERS.put(player.getUniqueId(), player.getServer().getInfo().getName());
     }
 
 }

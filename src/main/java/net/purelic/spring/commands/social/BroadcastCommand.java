@@ -1,10 +1,11 @@
-package net.purelic.spring.commands;
+package net.purelic.spring.commands.social;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.purelic.spring.commands.CustomCommand;
 import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.PermissionUtils;

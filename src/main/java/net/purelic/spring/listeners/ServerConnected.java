@@ -7,6 +7,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.Spring;
 import net.purelic.spring.managers.ProfileManager;
+import net.purelic.spring.managers.ServerManager;
 
 public class ServerConnected implements Listener {
 
@@ -22,6 +23,8 @@ public class ServerConnected implements Listener {
         }
 
         if (player.getServer() == null) return;
+
+        ServerManager.setLastServer(player);
 
         Spring.sendPluginMessage(
                 player,

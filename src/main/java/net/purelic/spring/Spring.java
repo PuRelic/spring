@@ -17,7 +17,10 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.purelic.commons.Commons;
+import net.purelic.spring.analytics.Analytics;
 import net.purelic.spring.commands.*;
+import net.purelic.spring.commands.league.LeaveCommand;
+import net.purelic.spring.commands.server.*;
 import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
 import net.purelic.spring.commands.spring.DestroyCommand;
@@ -56,6 +59,7 @@ public class Spring extends Plugin {
         ServerManager.loadServerCache();
         DocumentManager.loadDocuments();
         PartyManager.loadPartyCache();
+        Analytics.loadSessionCache();
     }
 
     @Override
@@ -66,6 +70,7 @@ public class Spring extends Plugin {
         ServerManager.getGameServers().values().forEach(server -> Commons.getServerCache().put(server.getName(), server.getData()));
         PartyManager.cacheParties();
         LeagueManager.clearQueues();
+        Analytics.cacheSessions();
     }
 
     public static Spring getPlugin() {
@@ -114,6 +119,17 @@ public class Spring extends Plugin {
     private void registerCommands() {
         this.registerCommandManager();
 
+        // League
+        this.registerCommand(new LeaveCommand());
+
+        // Server
+        this.registerCommand(new HubCommand());
+        this.registerCommand(new LeagueCommand());
+        this.registerCommand(new PrivateServerCommand());
+        this.registerCommand(new RejoinCommand());
+        this.registerCommand(new ServerCommand());
+        this.registerCommand(new ServersCommand());
+
         // Party
         this.registerCommand(new PartyAcceptCommand());
         this.registerCommand(new PartyChatCommand());
@@ -130,6 +146,7 @@ public class Spring extends Plugin {
         this.registerCommand(new PartyWarpCommand());
 
         // Social
+        this.registerCommand(new BroadcastCommand());
         this.registerCommand(new FindCommand());
         this.registerCommand(new MatchesCommand());
         this.registerCommand(new MessageCommand());
@@ -141,13 +158,6 @@ public class Spring extends Plugin {
         this.registerCommand(new DestroyCommand());
         this.registerCommand(new PurgeCommand());
         this.registerCommand(new ReloadCommand());
-
-        this.registerCommand(new BroadcastCommand());
-        this.registerCommand(new HubCommand());
-        this.registerCommand(new LeagueCommand());
-        this.registerCommand(new PrivateServerCommand());
-        this.registerCommand(new ServerCommand());
-        this.registerCommand(new ServersCommand());
     }
 
     private void registerCommandManager() {

@@ -8,10 +8,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.purelic.spring.analytics.Analytics;
 import net.purelic.spring.utils.Protocol;
 
 public class PostLogin implements Listener {
 
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
         ProxiedPlayer player = event.getPlayer();
@@ -31,6 +33,8 @@ public class PostLogin implements Listener {
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
                         .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/mZc2PhrYAv"));
         player.sendMessage(discordMessage.create());
+
+        Analytics.startSession(player);
     }
 
 }

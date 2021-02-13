@@ -1,4 +1,4 @@
-package net.purelic.spring.commands;
+package net.purelic.spring.commands.server;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.standard.StringArgument;
@@ -7,6 +7,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.purelic.spring.commands.CustomCommand;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.ServerStatus;
 import net.purelic.spring.utils.CommandUtils;

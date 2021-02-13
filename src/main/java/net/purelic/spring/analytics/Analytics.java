@@ -1,0 +1,79 @@
+package net.purelic.spring.analytics;
+
+import com.google.cloud.Timestamp;
+import com.google.common.collect.ImmutableMap;
+import com.rudderstack.sdk.java.messages.IdentifyMessage;
+import com.rudderstack.sdk.java.messages.TrackMessage;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.purelic.commons.Commons;
+import net.purelic.spring.analytics.events.PlayerConnectedEvent;
+import net.purelic.spring.analytics.events.PlayerDisconnectedEvent;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+public class Analytics {
+
+    private static Map<UUID, UUID> sessions = new HashMap<>();
+    private static Map<UUID, Timestamp> sessionStarts = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    public static void loadSessionCache() {
+        sessions = (Map<UUID, UUID>) Commons.getGeneralCache().getOrDefault("session_ids", new HashMap<>());
+        sessionStarts = (Map<UUID, Timestamp>) Commons.getGeneralCache().getOrDefault("session_starts", new HashMap<>());
+    }
+
+    public static void cacheSessions() {
+        Commons.getGeneralCache().put("session_ids", sessions);
+        Commons.getGeneralCache().put("session_starts", sessionStarts);
+    }
+
+    public static void startSession(ProxiedPlayer player) {
+        UUID sessionId = UUID.randomUUID();
+
+        sessions.put(player.getUniqueId(), sessionId);
+        sessionStarts.put(sessionId, Timestamp.now());
+
+        identify(player);
+        track(new PlayerConnectedEvent(player));
+    }
+
+    public static void endSession(ProxiedPlayer player) {
+        UUID playerId = player.getUniqueId();
+        UUID sessionId = sessions.get(playerId);
+
+        Timestamp sessionStarted = sessionStarts.get(sessionId);
+        Timestamp sessionEnded = Timestamp.now();
+        long playtime = sessionEnded.getSeconds() - sessionStarted.getSeconds();
+
+        track(new PlayerDisconnectedEvent(player, playtime));
+
+        sessions.remove(playerId);
+        sessionStarts.remove(sessionId);
+    }
+
+    public static void identify(ProxiedPlayer player) {
+        Commons.getAnalytics().enqueue(IdentifyMessage.builder()
+            .timestamp(Timestamp.now().toDate())
+            .userId(player.getUniqueId().toString())
+            .traits(ImmutableMap.<String, Object>builder()
+                .put("name", player.getName())
+                .build()
+            )
+        );
+    }
+
+    public static void track(AnalyticsEvent event) {
+        Map<String, Object> properties = event.getProperties();
+        properties.put("session_id", sessions.get(event.getPlayerId()).toString());
+
+        Commons.getAnalytics().enqueue(
+            TrackMessage.builder(event.getName())
+                .timestamp(Timestamp.now().toDate())
+                .userId(event.getPlayerId().toString())
+                .properties(properties)
+        );
+    }
+
+}

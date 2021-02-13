@@ -73,7 +73,7 @@ public class LeagueManager {
             return;
         }
 
-        party.getMembers().forEach(member -> CommandUtils.sendSuccessMessage(member, "Joining " + playlist.getName() + " queue..."));
+        party.getMembers().forEach(member -> CommandUtils.sendSuccessMessage(member, "Joining " + playlist.getName() + " queue... Use /leave to leave the queue at any time"));
 
         // if no servers are online, create a server on first successful queue join
         if (ServerManager.getGameServers().values().stream().noneMatch(gs -> gs.getPlaylist() == playlist)) {
@@ -88,10 +88,20 @@ public class LeagueManager {
         return party.getMembers().stream().anyMatch(LeagueManager::isQueued);
     }
 
-    private static boolean isQueued(ProxiedPlayer player) {
+    public static boolean isQueued(ProxiedPlayer player) {
         return QUEUE.keySet().stream().anyMatch(team -> team.getPlayers().contains(player))
             || MATCHES.keySet().stream().anyMatch(match -> match.getBlueTeam().getPlayers().contains(player))
             || MATCHES.keySet().stream().anyMatch(match -> match.getRedTeam().getPlayers().contains(player));
+    }
+
+    public static LeagueTeam getTeam(ProxiedPlayer player) {
+        LeagueTeam queued = QUEUE.keySet().stream().filter(team -> team.getPlayers().contains(player)).findFirst().orElse(null);
+        LeagueTeam blueTeam = MATCHES.keySet().stream().filter(match -> match.getBlueTeam().getPlayers().contains(player)).findFirst().map(LeagueMatch::getBlueTeam).orElse(null);
+        LeagueTeam redTeam = MATCHES.keySet().stream().filter(match -> match.getRedTeam().getPlayers().contains(player)).findFirst().map(LeagueMatch::getRedTeam).orElse(null);
+
+        if (queued != null) return queued;
+        else if (blueTeam != null) return blueTeam;
+        else return redTeam;
     }
 
     public static void joinQueue(LeagueTeam team) {
