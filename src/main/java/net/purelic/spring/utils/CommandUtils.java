@@ -14,6 +14,7 @@ public class CommandUtils {
     private static BaseComponent[] alertPrefix;
     private static BaseComponent[] successPrefix;
 
+    @SuppressWarnings("deprecation")
     private static BaseComponent[] getPrefix(String hover, ChatColor primary, ChatColor secondary) {
         return
                 new ComponentBuilder("[").color(secondary).bold(true)

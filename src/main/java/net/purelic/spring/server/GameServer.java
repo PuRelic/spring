@@ -1,5 +1,6 @@
 package net.purelic.spring.server;
 
+import com.google.cloud.Timestamp;
 import com.myjeeva.digitalocean.exception.DigitalOceanException;
 import com.myjeeva.digitalocean.exception.RequestUnsuccessfulException;
 import com.myjeeva.digitalocean.pojo.*;
@@ -17,6 +18,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.purelic.commons.Commons;
 import net.purelic.spring.Spring;
+import net.purelic.spring.analytics.events.ServerCreatedEvent;
+import net.purelic.spring.analytics.events.ServerDestroyedEvent;
+import net.purelic.spring.analytics.events.ServerStartedEvent;
 import net.purelic.spring.league.LeagueMatch;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.party.Party;
@@ -34,6 +38,7 @@ public class GameServer {
     private final ProxyServer proxy;
     private final String id;
     private final String name;
+    private final Timestamp createdAt;
     private final ServerSize size;
     private final ServerRegion region;
     private final ServerType type;
@@ -104,6 +109,7 @@ public class GameServer {
         this.proxy = this.plugin.getProxy();
         this.id = (String) data.get("id");
         this.name = name;
+        this.createdAt = (Timestamp) data.get("created_at");
         this.size = ServerSize.valueOf((String) data.get("size"));
         this.region = ServerRegion.valueOf((String) data.get("region"));
         this.type = ServerType.valueOf((String) data.get("type"));
@@ -138,6 +144,7 @@ public class GameServer {
         this.proxy = this.plugin.getProxy();
         this.id = id;
         this.name = isPrivate ? ServerUtils.getValidName(name) : ServerUtils.getValidName(name, 1);
+        this.createdAt = Timestamp.now();
         this.size = size;
         this.region = ServerRegion.NYC;
         this.type = type;
@@ -169,6 +176,10 @@ public class GameServer {
 
     public String getName() {
         return this.name;
+    }
+
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
     }
 
     public ServerSize getSize() {
@@ -257,6 +268,10 @@ public class GameServer {
         if (this.online) return;
 
         this.online = online;
+
+        if (online) {
+            new ServerStartedEvent(this).track();
+        }
 
         if (this.isPrivate && online) {
             ProxiedPlayer player = this.proxy.getPlayer(UUID.fromString(this.id));
@@ -429,6 +444,7 @@ public class GameServer {
                             this.addServer(address);
 
                             System.out.println("Server successfully created after " + attempts.get() + " attempt(s)! (" + this.name + ")");
+                            new ServerCreatedEvent(this, attempts.get()).track();
                             this.cancel();
                         }
                     } catch (DigitalOceanException | RequestUnsuccessfulException e) {
@@ -466,6 +482,7 @@ public class GameServer {
                 Commons.getDigitalOcean().deleteDroplet(this.dropletId);
                 ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(this.name);
                 if (player != null) CommandUtils.sendAlertMessage(player, "Your private server has shutdown");
+                new ServerDestroyedEvent(this).track();
             } catch (DigitalOceanException | RequestUnsuccessfulException e) {
                 System.out.println("There was an error destroying server! (" + this.name + " - " + this.dropletId + ")");
                 e.printStackTrace();
@@ -523,6 +540,7 @@ public class GameServer {
         Map<String, Object> data = new HashMap<>();
         data.put("id", this.id);
         data.put("name", this.name);
+        data.put("created_at", this.createdAt);
         data.put("size", this.size.name());
         data.put("region", this.region.name());
         data.put("type", this.type.name());

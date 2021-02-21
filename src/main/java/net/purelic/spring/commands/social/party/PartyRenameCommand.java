@@ -5,6 +5,7 @@ import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.purelic.spring.analytics.events.PartyRenamedEvent;
 import net.purelic.spring.commands.CustomCommand;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.party.Party;
@@ -51,6 +52,7 @@ public class PartyRenameCommand implements CustomCommand {
                         return;
                     }
 
+                    new PartyRenamedEvent(party, name).track();
                     party.setName(name);
                     party.sendMessage("The party has been renamed to \"" + name + "\"!");
                 });

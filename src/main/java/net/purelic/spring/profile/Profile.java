@@ -104,4 +104,9 @@ public class Profile {
         return winStreak.intValue();
     }
 
+    public void setSessionId(UUID sessionId) {
+        if (sessionId == null) DatabaseUtils.updatePlayerDoc(this.uuid, "session_id", FieldValue.delete());
+        else DatabaseUtils.updatePlayerDoc(this.uuid, "session_id", sessionId.toString());
+    }
+
 }

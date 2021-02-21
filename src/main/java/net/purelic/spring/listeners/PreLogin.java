@@ -30,6 +30,7 @@ public class PreLogin implements Listener {
         }
     }
 
+    @SuppressWarnings({ "unchecked", "BooleanMethodIsAlwaysInverted" })
     private boolean canBypass(String playerName, boolean includePremium) {
         QueryDocumentSnapshot doc = DatabaseUtils.getPlayerDoc(playerName);
 

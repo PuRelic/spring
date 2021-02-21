@@ -3,7 +3,7 @@ package net.purelic.spring.managers;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.commons.Commons;
 import net.purelic.spring.Spring;
-import net.purelic.spring.events.PartyCreateEvent;
+import net.purelic.spring.analytics.events.PartyCreatedEvent;
 import net.purelic.spring.events.PartyJoinEvent;
 import net.purelic.spring.events.PartyLeaveEvent;
 import net.purelic.spring.party.Party;
@@ -17,9 +17,10 @@ import java.util.stream.Collectors;
 
 public class PartyManager {
 
-    private static Map<ProxiedPlayer, Party> PARTIES = new HashMap<>();
+    private static final Map<ProxiedPlayer, Party> PARTIES = new HashMap<>();
     private static final Map<ProxiedPlayer, Set<PartyInvite>> INVITES = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     public static void loadPartyCache() {
         Set<Map<String, Object>> cache = (Set<Map<String, Object>>) Commons.getGeneralCache().getOrDefault("parties", new HashSet<>());
         Set<Party> parties = cache.stream().map(Party::new).collect(Collectors.toSet());
@@ -39,7 +40,7 @@ public class PartyManager {
 
     public static Party createParty(ProxiedPlayer player, String name) {
         Party party = new Party(player, name);
-        Spring.callEvent(new PartyCreateEvent(party, player));
+        new PartyCreatedEvent(party).track();
         setParty(player, party);
         return party;
     }

@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.purelic.spring.analytics.Analytics;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.ServerType;
@@ -103,28 +104,31 @@ public class InventoryClick implements Listener {
                     InventoryManager.openLeagueSelector(player);
                     break;
                 case LEADERBOARD:
+                    String lbUrl = Analytics.urlBuilder(player, "https://purelic.net/leaderboards", "league_gui");
                     player.sendMessage(new ComponentBuilder("View the rest of the leaderboard online")
                             .append(" » ").color(ChatColor.GRAY)
                             .append("purelic.net/leaderboards").color(ChatColor.AQUA)
                             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
-                            .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/leaderboards"))
+                            .event(new ClickEvent(ClickEvent.Action.OPEN_URL, lbUrl))
                             .create());
                     break;
                 case STATS:
+                    String profileUrl = Analytics.urlBuilder(player, "https://purelic.net/players/" + player.getName(), "stats_gui");
                     player.sendMessage(new ComponentBuilder("View your full stats online:")
                         .append(" » ").color(ChatColor.GRAY)
                         .append("purelic.net/players/" + player.getName()).color(ChatColor.AQUA)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/players/" + player.getName()))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, profileUrl))
                         .create());
                     break;
                 case MATCH:
                     String truncated = value.length() > 15 ? value.substring(0, 10) + "..." : "";
+                    String matchUrl = Analytics.urlBuilder(player, "https://purelic.net/matches/" + value, "matches_gui");
                     player.sendMessage(new ComponentBuilder("View the full match online:")
                         .append(" » ").color(ChatColor.GRAY)
                         .append("purelic.net/matches/" + truncated).color(ChatColor.AQUA)
                         .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
-                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/matches/" + value))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, matchUrl))
                         .create());
                     break;
                 case PRIVATE_SERVER:

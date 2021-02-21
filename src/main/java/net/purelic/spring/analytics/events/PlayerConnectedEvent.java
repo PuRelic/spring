@@ -6,7 +6,6 @@ import net.purelic.spring.utils.Protocol;
 
 public class PlayerConnectedEvent extends AnalyticsEvent {
 
-    @SuppressWarnings("deprecation")
     public PlayerConnectedEvent(ProxiedPlayer player) {
         super("Player Connected", player);
 
@@ -16,7 +15,6 @@ public class PlayerConnectedEvent extends AnalyticsEvent {
         this.properties.put("version_full", protocol.getFullLabel());
         this.properties.put("version_clean", protocol.getLabel());
         this.properties.put("ping", player.getPing());
-        this.properties.put("ip_address", player.getAddress().getAddress().getHostAddress());
     }
 
 }

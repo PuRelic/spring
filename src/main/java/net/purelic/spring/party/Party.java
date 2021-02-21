@@ -6,7 +6,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
-import net.purelic.spring.events.PartyDisbandEvent;
+import net.purelic.spring.analytics.events.PartyDisbandedEvent;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.utils.CommandUtils;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class Party {
 
     private final String id;
-    private final Timestamp created;
+    private final Timestamp createdAt;
     private ProxiedPlayer leader;
     private String name;
     private final List<ProxiedPlayer> members;
 
     public Party(ProxiedPlayer leader, String name) {
         this.id = UUID.randomUUID().toString();
-        this.created = Timestamp.now();
+        this.createdAt = Timestamp.now();
         this.leader = leader;
         this.name = name;
         this.members = new ArrayList<>();
@@ -34,9 +34,10 @@ public class Party {
         CommandUtils.sendSuccessMessage(leader, "You successfully created a party!");
     }
 
+    @SuppressWarnings("unchecked")
     public Party(Map<String, Object> data) {
         this.id = (String) data.get("id");
-        this.created = (Timestamp) data.get("created");
+        this.createdAt = (Timestamp) data.get("created");
         this.leader = Spring.getPlayer((UUID) data.get("leader"));
         this.name = (String) data.get("name");
         this.members = ((List<UUID>) data.get("members")).stream().map(Spring::getPlayer).collect(Collectors.toList());
@@ -49,6 +50,10 @@ public class Party {
 
     public String getId() {
         return this.id;
+    }
+
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
     }
 
     public ProxiedPlayer getLeader() {
@@ -66,7 +71,7 @@ public class Party {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -78,7 +83,13 @@ public class Party {
     }
 
     public List<ProxiedPlayer> getMembers() {
-        return members;
+        return this.members;
+    }
+
+    public String[] getMemberIds() {
+        List<String> ids = new ArrayList<>();
+        this.members.forEach(member -> ids.add(member.getUniqueId().toString()));
+        return ids.toArray(new String[0]);
     }
 
     public int size() {
@@ -145,13 +156,13 @@ public class Party {
     public void disband() {
         this.sendMessage("The party you were in has been disbanded!");
         PartyManager.removeParty(this);
-        Spring.callEvent(new PartyDisbandEvent(this));
+        new PartyDisbandedEvent(this).track();
     }
 
     public Map<String, Object> toData() {
         Map<String, Object> data = new HashMap<>();
         data.put("id", this.id);
-        data.put("created", this.created);
+        data.put("created", this.createdAt);
         data.put("leader", this.leader.getUniqueId());
         data.put("members", this.members.stream().map(ProxiedPlayer::getUniqueId).collect(Collectors.toList()));
         data.put("name", this.name);

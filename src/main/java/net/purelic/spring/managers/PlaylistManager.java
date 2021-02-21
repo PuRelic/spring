@@ -17,6 +17,7 @@ public class PlaylistManager {
 
     private static final Map<String, Playlist> PLAYLISTS = new LinkedHashMap<>();
 
+    @SuppressWarnings("unchecked")
     public static void loadPlaylists(Configuration config) {
         PLAYLISTS.clear();
         config.getList("playlists")
@@ -26,18 +27,8 @@ public class PlaylistManager {
                 });
     }
 
-    public static Playlist getDefaultPlaylist() {
-        return PLAYLISTS.values().stream().findFirst().orElse(null);
-    }
-
     public static Playlist getPlaylist(String name) {
         return PLAYLISTS.get(name);
-    }
-
-    public static boolean isAvailable(Playlist playlist) {
-        if (playlist == null) return false;
-        Playlist refreshed = getPlaylist(playlist.getName());
-        return refreshed != null && !refreshed.isArchived();
     }
 
     public static void openSelectorInventory(ProxiedPlayer player) {

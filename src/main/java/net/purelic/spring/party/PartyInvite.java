@@ -45,6 +45,7 @@ public class PartyInvite {
         };
     }
 
+    @SuppressWarnings("deprecation")
     public void send() {
         BaseComponent[] message = new ComponentBuilder(this.sender.getName() + " has invited you to " + (this.party.hasCustomName() ? this.party.getName() + "'s" : "their") + " party  ")
                 .append("[ACCEPT]")

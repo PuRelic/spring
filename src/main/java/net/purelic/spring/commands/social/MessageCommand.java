@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
+import net.purelic.spring.analytics.events.PrivateMessageSentEvent;
 import net.purelic.spring.commands.CustomCommand;
 
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class MessageCommand implements CustomCommand {
             sendFancyPM(sender, recipient, message, false);
         }
 
-        // WorldModule.playSound(recipient, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.MASTER, 10F, 1F);
+        new PrivateMessageSentEvent(sender, recipient, message, sameServer).track();
     }
 
     private static void sendFancyPM(ProxiedPlayer sender, ProxiedPlayer recipient, String message, boolean isSender) {
@@ -62,6 +63,7 @@ public class MessageCommand implements CustomCommand {
         (isSender ? sender : recipient).sendMessage(pm);
     }
 
+    @SuppressWarnings("deprecation")
     private static TextComponent getMessageName(ProxiedPlayer player) {
         TextComponent component = new TextComponent(ChatColor.DARK_AQUA + player.getName());
         ComponentBuilder hover = new ComponentBuilder(ChatColor.GRAY + "Server: " + ChatColor.DARK_AQUA + player.getServer().getInfo().getName());

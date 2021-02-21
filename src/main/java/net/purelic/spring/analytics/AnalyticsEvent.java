@@ -8,24 +8,29 @@ import java.util.UUID;
 
 public abstract class AnalyticsEvent {
 
+    private static final UUID FALLBACK_UUID = UUID.fromString("57014d5f-1d26-4986-832b-a0e7a4e41088"); // PuRelic
+
     private final String name;
-    private final ProxiedPlayer player;
     private final UUID playerId;
     protected final Map<String, Object> properties;
 
+    public AnalyticsEvent(String name) {
+        this(name, FALLBACK_UUID);
+    }
+
     public AnalyticsEvent(String name, ProxiedPlayer player) {
+        this(name, player == null ? FALLBACK_UUID : player.getUniqueId());
+        if (player != null) this.properties.put("player_name", player.getName());
+    }
+
+    public AnalyticsEvent(String name, UUID playerId) {
         this.name = name;
-        this.player = player;
-        this.playerId = player.getUniqueId();
+        this.playerId = playerId;
         this.properties = new LinkedHashMap<>();
     }
 
     public String getName() {
         return this.name;
-    }
-
-    public ProxiedPlayer getPlayer() {
-        return this.player;
     }
 
     public UUID getPlayerId() {
@@ -34,6 +39,10 @@ public abstract class AnalyticsEvent {
 
     public Map<String, Object> getProperties() {
         return this.properties;
+    }
+
+    public void track() {
+        Analytics.track(this);
     }
 
 }

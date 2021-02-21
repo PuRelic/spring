@@ -4,10 +4,12 @@ import com.google.cloud.Timestamp;
 import com.google.common.collect.ImmutableMap;
 import com.rudderstack.sdk.java.messages.IdentifyMessage;
 import com.rudderstack.sdk.java.messages.TrackMessage;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.commons.Commons;
 import net.purelic.spring.analytics.events.PlayerConnectedEvent;
 import net.purelic.spring.analytics.events.PlayerDisconnectedEvent;
+import net.purelic.spring.managers.ProfileManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class Analytics {
 
         identify(player);
         track(new PlayerConnectedEvent(player));
+        ProfileManager.getProfile(player).setSessionId(sessionId);
     }
 
     public static void endSession(ProxiedPlayer player) {
@@ -48,11 +51,13 @@ public class Analytics {
         long playtime = sessionEnded.getSeconds() - sessionStarted.getSeconds();
 
         track(new PlayerDisconnectedEvent(player, playtime));
+        ProfileManager.getProfile(player).setSessionId(null);
 
         sessions.remove(playerId);
         sessionStarts.remove(sessionId);
     }
 
+    @SuppressWarnings("deprecation")
     public static void identify(ProxiedPlayer player) {
         Commons.getAnalytics().enqueue(IdentifyMessage.builder()
             .timestamp(Timestamp.now().toDate())
@@ -61,19 +66,53 @@ public class Analytics {
                 .put("name", player.getName())
                 .build()
             )
+            .context(ImmutableMap.<String, Object>builder().put("ip", player.getAddress().getAddress().getHostAddress()).build())
         );
     }
 
+    @SuppressWarnings("deprecation")
     public static void track(AnalyticsEvent event) {
-        Map<String, Object> properties = event.getProperties();
-        properties.put("session_id", sessions.get(event.getPlayerId()).toString());
+        TrackMessage.Builder track = TrackMessage.builder(event.getName())
+            .timestamp(Timestamp.now().toDate())
+            .userId(event.getPlayerId().toString());
 
+        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(event.getPlayerId());
+
+        if (player != null) {
+            track.context(ImmutableMap.<String, Object>builder().put("ip", player.getAddress().getAddress().getHostAddress()).build());
+        }
+
+        Map<String, Object> properties = event.getProperties();
+
+        if (sessions.containsKey(event.getPlayerId())) {
+            properties.put("session_id", sessions.get(event.getPlayerId()).toString());
+        }
+
+        Commons.getAnalytics().enqueue(track.properties(properties));
+    }
+
+    public static void track(String event, String ip, Map<String, Object> properties) {
         Commons.getAnalytics().enqueue(
-            TrackMessage.builder(event.getName())
+            TrackMessage.builder(event)
                 .timestamp(Timestamp.now().toDate())
-                .userId(event.getPlayerId().toString())
+                .anonymousId(ip)
                 .properties(properties)
+                .context(ImmutableMap.<String, Object>builder().put("ip", ip).build())
         );
+    }
+
+    public static String urlBuilder(ProxiedPlayer player, String url, String content, String... utms) {
+        StringBuilder urlBuilder = new StringBuilder(url)
+            .append("?uuid=").append(player.getUniqueId().toString())
+            .append("&utm_source=server")
+            .append("&utm_medium=chat")
+            .append("&utm_content=").append(content);
+
+        for (String utm : utms) {
+            urlBuilder.append("&").append(utm);
+        }
+
+        return urlBuilder.toString();
     }
 
 }

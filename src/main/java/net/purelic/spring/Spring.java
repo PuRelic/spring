@@ -102,6 +102,7 @@ public class Spring extends Plugin {
         this.registerListener(new PartyJoin());
         this.registerListener(new PartyLeave());
 
+        this.registerListener(new Chat());
         this.registerListener(new InventoryClick());
         this.registerListener(new PlayerDisconnect());
         this.registerListener(new PostLogin());

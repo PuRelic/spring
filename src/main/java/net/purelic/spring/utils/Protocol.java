@@ -72,7 +72,7 @@ public enum Protocol {
         return this.label;
     }
 
-    private static Protocol getProtocol(int version) {
+    public static Protocol getProtocol(int version) {
         Protocol protocol = Protocol.MINECRAFT_LATEST;
 
         for (Protocol p : Protocol.values()) {

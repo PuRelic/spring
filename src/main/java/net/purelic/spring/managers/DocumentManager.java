@@ -69,6 +69,7 @@ public class DocumentManager {
         addServerDoc(server, docRef);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public static void addServerDoc(GameServer server, DocumentReference docRef) {
         DOC_REFS.put(server.getId(), docRef);
 
@@ -111,8 +112,11 @@ public class DocumentManager {
     }
 
     public static void removeServerDoc(String id) {
-        DOC_REFS.get(id).delete();
+        DocumentReference docRef = DOC_REFS.get(id);
+        LISTENERS.get(docRef).remove();
+        LISTENERS.remove(docRef);
         DOC_REFS.remove(id);
+        docRef.delete();
     }
 
     public static void clearDocs() {
