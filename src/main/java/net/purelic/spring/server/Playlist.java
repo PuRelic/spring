@@ -57,7 +57,6 @@ public class Playlist {
         return this.itemStack;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isArchived() {
         return this.archived;
     }
