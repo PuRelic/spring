@@ -148,6 +148,7 @@ public class Spring extends Plugin {
 
         // Social
         this.registerCommand(new BroadcastCommand());
+        this.registerCommand(new DiscordCommand());
         this.registerCommand(new FindCommand());
         this.registerCommand(new MatchesCommand());
         this.registerCommand(new MessageCommand());
