@@ -21,7 +21,7 @@ public class BroadcastCommand implements CustomCommand {
                     ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                     String message = c.get("message");
 
-                    if (!PermissionUtils.isAdmin(player)) {
+                    if (!PermissionUtils.isStaff(player)) {
                         CommandUtils.sendNoPermissionMessage(player);
                         return;
                     }
