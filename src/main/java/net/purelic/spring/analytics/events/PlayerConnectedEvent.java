@@ -16,7 +16,7 @@ public class PlayerConnectedEvent extends AnalyticsEvent {
         this.properties.put("version_full", protocol.getFullLabel());
         this.properties.put("version_clean", protocol.getLabel());
         this.properties.put("ping", player.getPing());
-        this.properties.put("players_online", ProxyServer.getInstance().getPlayers().size());
+        this.properties.put("players_online", ProxyServer.getInstance().getOnlineCount());
     }
 
 }
