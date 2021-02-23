@@ -118,11 +118,11 @@ public class ServerManager {
     }
 
     public static void createPrivateSerer(ProxiedPlayer player, ServerType type) {
-        addServer(new GameServer(player, ServerSize.LITE, type));
+        addServer(new GameServer(player, type));
     }
 
     public static void createPrivateSerer(ProxiedPlayer player, Playlist playlist) {
-        addServer(new GameServer(player, ServerSize.LITE, ServerType.CUSTOM_GAMES, playlist));
+        addServer(new GameServer(player, ServerType.CUSTOM_GAMES, playlist));
     }
 
     private static void addServer(GameServer server) {

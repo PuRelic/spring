@@ -67,15 +67,15 @@ public class GameServer {
     private String ip;
     private ServerInfo serverInfo;
 
-    public GameServer(ProxiedPlayer player, ServerSize size, ServerType type) {
-        this(player, size, type, null);
+    public GameServer(ProxiedPlayer player, ServerType type) {
+        this(player, type, null);
     }
 
-    public GameServer(ProxiedPlayer player, ServerSize size, ServerType type, Playlist playlist) {
+    public GameServer(ProxiedPlayer player, ServerType type, Playlist playlist) {
         this(
                 player.getUniqueId().toString(),
                 player.getName(),
-                size,
+                PermissionUtils.isDonator(player) ? ServerSize.BASIC : ServerSize.LITE,
                 type,
                 playlist,
                 20,
@@ -91,7 +91,7 @@ public class GameServer {
         this(
                 UUID.randomUUID().toString(),
                 server.isRanked() ? "League" : server.getPlaylist().getName().replaceAll(" ", ""),
-                ServerSize.LITE,
+                server.isRanked() ? ServerSize.BASIC : ServerSize.PREMIUM,
                 ServerType.CUSTOM_GAMES,
                 server.getPlaylist(),
                 server.getMaxPlayers(),
