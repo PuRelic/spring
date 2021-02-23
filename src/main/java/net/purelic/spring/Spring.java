@@ -153,6 +153,7 @@ public class Spring extends Plugin {
         this.registerCommand(new MatchesCommand());
         this.registerCommand(new MessageCommand());
         this.registerCommand(new PingCommand());
+        this.registerCommand(new PlayersCommand());
         this.registerCommand(new ReplyCommand());
         this.registerCommand(new StatsCommand());
 
