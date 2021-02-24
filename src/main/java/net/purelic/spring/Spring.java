@@ -155,6 +155,7 @@ public class Spring extends Plugin {
         this.registerCommand(new PingCommand());
         this.registerCommand(new PlayersCommand());
         this.registerCommand(new ReplyCommand());
+        this.registerCommand(new StaffChatCommand());
         this.registerCommand(new StatsCommand());
 
         // Spring
