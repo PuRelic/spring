@@ -78,7 +78,9 @@ public class GameServer {
                 PermissionUtils.isDonator(player) ? ServerSize.BASIC : ServerSize.LITE,
                 type,
                 playlist,
-                20,
+                type == ServerType.GAME_DEVELOPMENT ?
+                    (PermissionUtils.isDonator(player) ? 10 : 4) :
+                    (PermissionUtils.isDonator(player) ? 20 : 8),
                 0,
                 0,
                 false,
