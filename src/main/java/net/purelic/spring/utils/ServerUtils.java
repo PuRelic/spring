@@ -54,7 +54,7 @@ public class ServerUtils {
         if (PermissionUtils.isStaff(player)) return false; // always allow staff
         if (server.isRanked() && server.isRankedPlayer(player)) return false; // always allow ranked players
 
-        int maxPlayersWithOverflow = server.isPrivate() ? 30 : server.getMaxPlayers() + ServerManager.getPublicServer(server.getPlaylist()).getOverflow();
+        int maxPlayersWithOverflow = server.isPrivate() ? (int) (server.getMaxPlayers() * 1.5) : server.getMaxPlayers() + ServerManager.getPublicServer(server.getPlaylist()).getOverflow();
         boolean isFull = server.getPlayersOnline() >= server.getMaxPlayers();
         boolean isOverflow = server.getPlayersOnline() >= maxPlayersWithOverflow;
 
