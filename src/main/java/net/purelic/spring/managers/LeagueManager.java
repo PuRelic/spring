@@ -148,7 +148,7 @@ public class LeagueManager {
     }
 
     public static GameServer findServer(Playlist playlist) {
-        return ServerManager.getPublicServers(playlist)
+        return ServerManager.getPublicServers(playlist, true)
                 .stream().filter(server -> server.getStatus() == ServerStatus.STARTING)
                 .findFirst().orElse(null);
     }

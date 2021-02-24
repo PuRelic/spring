@@ -280,7 +280,7 @@ public class GameServer {
             if (player != null) CommandUtils.sendSuccessMessage(player, "Your private server is now online!");
         } else if (!this.isPrivate
                 && online
-                && ServerManager.getPublicServers(this.playlist).size() == 1
+                && ServerManager.getPublicServers(this.playlist, true).size() == 1
                 && !this.ranked) {
             ChatUtils.broadcastMessage("A " + this.playlist.getName() + " server is now open! Join now with" + ChatColor.AQUA + " /server " + this.name);
             ServerManager.getPublicServer(this.playlist).getQueued().stream().filter(player -> player.getServer().getInfo().getName().equals("Hub")).forEach(this::connect);

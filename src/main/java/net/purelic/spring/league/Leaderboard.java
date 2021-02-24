@@ -63,7 +63,7 @@ public class Leaderboard {
     }
 
     private boolean isServerOnline() {
-        return ServerManager.getPublicServers(this.playlist).size() > 0;
+        return ServerManager.getPublicServers(this.playlist, true).size() > 0;
     }
 
     public ItemStack toItem() {

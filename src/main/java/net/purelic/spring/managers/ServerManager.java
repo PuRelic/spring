@@ -59,7 +59,7 @@ public class ServerManager {
     }
 
     public static List<GameServer> getGameServers(PublicServer server) {
-        return getPublicServers().stream()
+        return getPublicServers(true).stream()
                 .filter(gs -> gs.getPlaylist().getName().equals(server.getPlaylist().getName()))
                 .collect(Collectors.toList());
     }
@@ -85,14 +85,14 @@ public class ServerManager {
         QUEUED.clear();
     }
 
-    public static List<GameServer> getPublicServers() {
+    public static List<GameServer> getPublicServers(boolean visibleOnly) {
         return GAME_SERVERS.values().stream()
-                .filter(server -> !server.isPrivate() && server.isVisible())
+                .filter(server -> !server.isPrivate() && (!visibleOnly || server.isVisible()))
                 .collect(Collectors.toList());
     }
 
-    public static List<GameServer> getPublicServers(Playlist playlist) {
-        return getPublicServers().stream()
+    public static List<GameServer> getPublicServers(Playlist playlist, boolean visibleOnly) {
+        return getPublicServers(visibleOnly).stream()
                 .filter(server -> server.getPlaylist().getName().equals(playlist.getName()))
                 .collect(Collectors.toList());
     }

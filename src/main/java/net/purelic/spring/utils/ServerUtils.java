@@ -63,16 +63,16 @@ public class ServerUtils {
 
     public static boolean allServersFull(Playlist playlist) {
         int scaleThreshold = ServerManager.getPublicServer(playlist).getScaleThreshold();
-        return ServerManager.getPublicServers(playlist).stream().noneMatch(server -> server.getPlayersOnline() < scaleThreshold);
+        return ServerManager.getPublicServers(playlist, false).stream().noneMatch(server -> server.getPlayersOnline() < scaleThreshold);
     }
 
     public static boolean isMaxServers(Playlist playlist) {
         int maxServers = ServerManager.getPublicServer(playlist).getMaxServers();
-        return ServerManager.getPublicServers(playlist).size() >= maxServers;
+        return ServerManager.getPublicServers(playlist, false).size() >= maxServers;
     }
 
     public static List<GameServer> getSortedPublicServers(Playlist playlist) {
-        List<GameServer> servers = ServerManager.getPublicServers(playlist);
+        List<GameServer> servers = ServerManager.getPublicServers(playlist, true);
         servers.sort(Comparator.comparingInt(GameServer::getPlayersOnline)); // sort by player count
         Collections.reverse(servers); // most players to least players
         return servers;
