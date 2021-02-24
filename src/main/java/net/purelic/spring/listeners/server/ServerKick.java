@@ -1,4 +1,4 @@
-package net.purelic.spring.listeners;
+package net.purelic.spring.listeners.server;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;

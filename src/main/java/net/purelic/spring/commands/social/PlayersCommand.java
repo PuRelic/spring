@@ -2,13 +2,11 @@ package net.purelic.spring.commands.social;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.bungee.BungeeCommandManager;
-import cloud.commandframework.bungee.arguments.PlayerArgument;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.CustomCommand;
-import net.purelic.spring.listeners.Chat;
 import net.purelic.spring.utils.CommandUtils;
 
 public class PlayersCommand implements CustomCommand {

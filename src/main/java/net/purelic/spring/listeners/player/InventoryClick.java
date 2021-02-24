@@ -1,4 +1,4 @@
-package net.purelic.spring.listeners;
+package net.purelic.spring.listeners.player;
 
 import de.exceptionflug.protocolize.api.ClickType;
 import de.exceptionflug.protocolize.inventory.InventoryModule;

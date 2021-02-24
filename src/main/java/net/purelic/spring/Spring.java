@@ -26,9 +26,11 @@ import net.purelic.spring.commands.social.party.*;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
-import net.purelic.spring.listeners.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
+import net.purelic.spring.listeners.player.Chat;
+import net.purelic.spring.listeners.player.InventoryClick;
+import net.purelic.spring.listeners.server.*;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.server.ServerType;
 import net.purelic.spring.utils.TaskUtils;
@@ -102,8 +104,11 @@ public class Spring extends Plugin {
         this.registerListener(new PartyJoin());
         this.registerListener(new PartyLeave());
 
+        // Player
         this.registerListener(new Chat());
         this.registerListener(new InventoryClick());
+
+        // Server
         this.registerListener(new PlayerDisconnect());
         this.registerListener(new PostLogin());
         this.registerListener(new PreLogin());

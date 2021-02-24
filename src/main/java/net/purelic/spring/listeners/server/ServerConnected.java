@@ -1,4 +1,4 @@
-package net.purelic.spring.listeners;
+package net.purelic.spring.listeners.server;
 
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

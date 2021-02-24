@@ -1,4 +1,4 @@
-package net.purelic.spring.listeners;
+package net.purelic.spring.listeners.server;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import net.md_5.bungee.api.chat.TextComponent;
