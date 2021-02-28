@@ -6,6 +6,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.commons.Commons;
 import net.purelic.spring.Spring;
@@ -152,7 +153,6 @@ public class ServerManager {
 
         Spring.getPlugin().getProxy().getServers().remove(name);
         server.destroy();
-        DocumentManager.removeServerDoc(server.getId());
 
         System.out.println((server.isPrivate() ? "Private" : "Public") + " server destroyed (" + name + ")");
     }
@@ -163,7 +163,9 @@ public class ServerManager {
     }
 
     public static void setLastServer(ProxiedPlayer player) {
-        LAST_SERVERS.put(player.getUniqueId(), player.getServer().getInfo().getName());
+        Server server = player.getServer();
+        if (server == null) return;
+        LAST_SERVERS.put(player.getUniqueId(), server.getInfo().getName());
     }
 
 }
