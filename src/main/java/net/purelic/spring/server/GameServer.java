@@ -480,7 +480,7 @@ public class GameServer {
     public void destroy() {
         if (this.created) {
             try {
-                DatabaseUtils.removeServerIp(this);
+                DatabaseUtils.removeServerDoc(this);
                 Commons.getDigitalOcean().deleteDroplet(this.dropletId);
                 ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(this.name);
                 if (player != null) CommandUtils.sendAlertMessage(player, "Your private server has shutdown");

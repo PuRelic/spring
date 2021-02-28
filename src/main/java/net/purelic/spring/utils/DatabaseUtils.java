@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import net.purelic.commons.Commons;
 import net.purelic.spring.league.Season;
+import net.purelic.spring.managers.DocumentManager;
 import net.purelic.spring.server.GameServer;
 
 import java.util.HashMap;
@@ -28,8 +29,11 @@ public class DatabaseUtils {
                 .set(data, SetOptions.merge());
     }
 
-    public static void removeServerIp(GameServer server) {
-        Commons.getFirestore().collection("server_ips").document(server.getId()).delete();
+    public static void removeServerDoc(GameServer server) {
+        String id = server.getId();
+        Commons.getFirestore().collection("servers").document(id).delete();
+        Commons.getFirestore().collection("server_ips").document(id).delete();
+        DocumentManager.removeServerDoc(id);
     }
 
     public static Map<String, Object> getPlayerDoc(UUID uuid) {
