@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.utils.CommandUtils;
 
 import java.util.Optional;
 
@@ -26,7 +27,8 @@ public class DiscordCommand implements CustomCommand {
                     Optional<ProxiedPlayer> targetArg = c.getOptional("player");
 
                     if (targetArg.isPresent()) {
-                        targetArg.get().sendMessage(
+                        ProxiedPlayer target = targetArg.get();
+                        target.sendMessage(
                             new ComponentBuilder(player.getName() + " invited you to the PuRelic Discord").color(ChatColor.WHITE).bold(true)
                                 .append(" » ").reset().color(ChatColor.GRAY)
                                 .append("purelic.net/discord").color(ChatColor.AQUA)
@@ -34,6 +36,7 @@ public class DiscordCommand implements CustomCommand {
                                 .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/discord"))
                                 .create()
                         );
+                        CommandUtils.sendSuccessMessage(player, "You invited " + target.getName() + " to join Discord!");
                     } else {
                         sendDiscordMessage(player);
                     }
