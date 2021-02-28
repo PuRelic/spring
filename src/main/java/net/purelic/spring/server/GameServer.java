@@ -485,7 +485,7 @@ public class GameServer {
                 ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(this.name);
                 if (player != null) CommandUtils.sendAlertMessage(player, "Your private server has shutdown");
                 new ServerDestroyedEvent(this).track();
-            } catch (DigitalOceanException | RequestUnsuccessfulException e) {
+            } catch (Exception e) {
                 System.out.println("There was an error destroying server! (" + this.name + " - " + this.dropletId + ")");
                 e.printStackTrace();
             }

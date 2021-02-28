@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 public class DocumentManager {
 
     private static final Map<String, DocumentReference> DOC_REFS = new HashMap<>();
-    private static final Map<DocumentReference, ListenerRegistration> LISTENERS = new HashMap<>();
+    private static final Map<String, ListenerRegistration> LISTENERS = new HashMap<>();
 
     public static void loadDocuments() {
         Commons.getFirestore().collection("servers").listDocuments().forEach(documentReference -> {
@@ -27,7 +27,7 @@ public class DocumentManager {
         });
     }
 
-    public static Map<DocumentReference, ListenerRegistration> getListeners() {
+    public static Map<String, ListenerRegistration> getListeners() {
         return LISTENERS;
     }
 
@@ -71,8 +71,6 @@ public class DocumentManager {
 
     @SuppressWarnings("ConstantConditions")
     public static void addServerDoc(GameServer server, DocumentReference docRef) {
-        DOC_REFS.put(server.getId(), docRef);
-
         ListenerRegistration registration = docRef.addSnapshotListener((snapshot, e) -> {
             if (e != null) {
                 System.err.println("Listen failed: " + e);
@@ -87,9 +85,6 @@ public class DocumentManager {
                 boolean whitelisted = (boolean) data.get("whitelisted");
 
                 if (shutdown) {
-                    DocumentReference ref = snapshot.getReference();
-                    LISTENERS.get(ref).remove();
-                    LISTENERS.remove(ref);
                     ServerManager.removeServer(server);
                     return;
                 }
@@ -108,15 +103,15 @@ public class DocumentManager {
             }
         });
 
-        LISTENERS.put(docRef, registration);
+        String serverId = server.getId();
+        DOC_REFS.put(serverId, docRef);
+        LISTENERS.put(serverId, registration);
     }
 
     public static void removeServerDoc(String id) {
-        DocumentReference docRef = DOC_REFS.get(id);
-        LISTENERS.get(docRef).remove();
-        LISTENERS.remove(docRef);
+        LISTENERS.get(id).remove();
+        LISTENERS.remove(id);
         DOC_REFS.remove(id);
-        docRef.delete();
     }
 
     public static void clearDocs() {
