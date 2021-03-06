@@ -2,10 +2,10 @@ package net.purelic.spring.server;
 
 public enum ServerSize {
 
-    LITE("Lite", "s-1vcpu-1gb-intel"),
-    BASIC("Basic", "s-1vcpu-2gb-intel"),
-    PREMIUM("Premium", "s-2vcpu-2gb-intel"),
-    PREMIUM_PLUS("Premium+", "s-2vcpu-4gb-intel"),
+    LITE("Lite", "s-1vcpu-1gb"),
+    BASIC("Basic", "s-1vcpu-2gb-amd"),
+    PREMIUM("Premium", "s-2vcpu-2gb-amd"),
+    PREMIUM_PLUS("Premium+", "s-2vcpu-4gb-amd"),
     ;
 
     private final String name;
