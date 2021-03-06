@@ -37,7 +37,7 @@ public class StaffChatCommand implements CustomCommand {
 
                     ProxyServer.getInstance().getPlayers().stream()
                         .filter(PermissionUtils::isStaff)
-                        .forEach(staff -> this.sendPartyMessage(staff, message));
+                        .forEach(staff -> this.sendPartyMessage(player, message));
                 });
     }
 
