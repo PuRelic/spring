@@ -6,6 +6,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
 import org.apache.commons.lang3.text.WordUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class ChatUtils {
 
     public static List<String> wrap(String text, int length, ChatColor color) {
         String wrapped = WordUtils.wrap(text, length, "%%" + color, true);
-        return Arrays.asList(wrapped.split("%%"));
+        return new ArrayList<>(Arrays.asList(wrapped.split("%%")));
     }
 
 }

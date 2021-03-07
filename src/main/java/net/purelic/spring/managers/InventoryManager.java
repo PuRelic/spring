@@ -27,39 +27,23 @@ public class InventoryManager {
 
     private static int selectorRows;
     private static int rankedSelectorRows;
-    private static int privateServerItemSlot;
 
     public static void loadServerSelector(Configuration config) {
         selectorRows = config.getInt("server_selector.rows", 3);
         rankedSelectorRows = config.getInt("server_selector.ranked_selector_rows", 3);
-        privateServerItemSlot = config.getInt("server_selector.private_server_item_slot", 4);
     }
 
     public static void openMainSelector(ProxiedPlayer player) {
-        ItemStack publicServers = new ItemStack(ItemType.IRON_CHESTPLATE);
-        publicServers.setDisplayName(new ComponentBuilder("Public Servers").color(ChatColor.AQUA).bold(true).create());
-        publicServers.setLore(ChatUtils.wrap("Play a variety unique game modes on community built maps!"));
-        ItemAction.BROWSE_PUBLIC.apply(publicServers);
-
-        ItemStack leagueServers = new ItemStack(ItemType.QUARTZ);
-        leagueServers.setDisplayName(new ComponentBuilder("League" + ChatColor.RESET + ChatColor.GRAY + " (/league)").color(ChatColor.AQUA).bold(true).create());
-        leagueServers.setLore(ChatUtils.wrap("Show off your skill and play in competitive, ranked matches!"));
-        ItemAction.BROWSE_LEAGUE.apply(leagueServers);
-
-        ItemStack privateServer = new ItemStack(ItemType.TRIPWIRE_HOOK);
-        privateServer.setDisplayName(new ComponentBuilder("Private Server" + ChatColor.RESET + ChatColor.GRAY + " (/ps)").color(ChatColor.AQUA).bold(true).create());
-        privateServer.setLore(ChatUtils.wrap("Host custom games or create your own maps!"));
-        ItemAction.PRIVATE_SERVER.apply(privateServer);
-
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(3), new TextComponent("Select an option:"));
-        inventory.setItem(10, publicServers);
-        inventory.setItem(12, leagueServers);
-        inventory.setItem(16, privateServer);
+        inventory.setItem(10, ItemUtils.getPublicServerItem());
+        inventory.setItem(12, ItemUtils.getLeagueServerItem());
+        inventory.setItem(16, ItemUtils.getPrivateServerItem());
 
+        // private servers
         List<GameServer> privateServers = ServerManager.getPrivateServers(!PermissionUtils.isStaff(player));
 
         if (privateServers.size() > 0) {
-            inventory.setItem(14, getPrivateServerItem(privateServers));
+            inventory.setItem(14, ItemUtils.getPrivateServerItem(privateServers));
         }
 
         InventoryModule.sendInventory(player, inventory);
@@ -84,14 +68,6 @@ public class InventoryManager {
         });
 
         InventoryModule.sendInventory(player, inventory);
-    }
-
-    private static ItemStack getPrivateServerItem(List<GameServer> servers) {
-        ItemStack skull = new ItemStack(ItemType.PLAYER_HEAD);
-        skull.setDisplayName(new ComponentBuilder("Custom Games").color(ChatColor.AQUA).bold(true).create());
-        skull.setLore(Collections.singletonList(ChatColor.WHITE + "Browse " + ChatColor.AQUA + servers.size() + ChatColor.WHITE + " server" + (servers.size() == 1 ? "" : "s")));
-        ItemAction.BROWSE_PRIVATE.apply(skull);
-        return skull;
     }
 
     public static void openPrivateServerSelector(ProxiedPlayer player) {
@@ -144,26 +120,7 @@ public class InventoryManager {
             i++;
         }
 
-        Profile profile = ProfileManager.getProfile(player);
-        boolean beta = profile.hasBetaFeatures();
-
-        ItemStack betaItem = new ItemStack(beta ? ItemType.LIME_DYE : ItemType.GRAY_DYE);
-        betaItem.setDisplayName(new ComponentBuilder("Beta Features").color(ChatColor.WHITE).bold(true).create());
-        betaItem.setLore(Arrays.asList(
-                (beta ? ChatColor.ITALIC + "" + ChatColor.GREEN + "Enabled" : ChatColor.ITALIC + "" + ChatColor.RED + "Disabled"),
-                "",
-                ChatColor.WHITE + "Enabling beta features gives you access",
-                ChatColor.WHITE + "to updates early, but might introduce",
-                ChatColor.WHITE + "new bugs or stability issues.",
-                "",
-                ChatColor.WHITE + "Please report bugs and",
-                ChatColor.WHITE + "feedback in Discord.",
-                "",
-                ChatColor.GREEN + "◊ Premium Only"
-        ));
-        ItemAction.BETA.apply(betaItem);
-
-        inventory.setItem(8, betaItem);
+        inventory.setItem(8, ItemUtils.getBetaItem(player));
 
         InventoryModule.sendInventory(player, inventory);
     }
@@ -171,29 +128,9 @@ public class InventoryManager {
     private static void openControlsInv(ProxiedPlayer player, GameServer server) {
         String name = server.getName();
         Inventory inventory = new Inventory(InventoryType.GENERIC_9X1, new TextComponent("Choose an option:"));
-
-        ItemStack joinItem = new ItemStack(ItemType.LIME_WOOL);
-        joinItem.setDisplayName(new ComponentBuilder("Join Server").color(ChatColor.GREEN).bold(true).create());
-        ItemAction.JOIN.apply(joinItem, name);
-
-        ItemStack stopItem = new ItemStack(ItemType.RED_WOOL);
-        stopItem.setDisplayName(new ComponentBuilder("Force Shutdown").color(ChatColor.RED).bold(true).create());
-        stopItem.setLore(Arrays.asList(
-                ChatColor.RED + "" + ChatColor.BOLD + "WARNING",
-                "",
-                ChatColor.WHITE + "Please join your server and use",
-                ChatColor.WHITE + "/shutdown if possible. One use this",
-                ChatColor.WHITE + "if you can't connect to your server.",
-                "",
-                ChatColor.WHITE + "Forcing a shutdown from here could",
-                ChatColor.WHITE + "corrupt your custom maps."
-        ));
-        ItemAction.STOP.apply(stopItem, name);
-
-        inventory.setItem(0, joinItem);
-        inventory.setItem(1, stopItem);
+        inventory.setItem(0, ItemUtils.getJoinServerItem(name));
+        inventory.setItem(1, ItemUtils.getStopServerItem(name));
         inventory.setItem(8, server.getItem());
-
         InventoryModule.sendInventory(player, inventory);
     }
 

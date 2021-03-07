@@ -104,6 +104,12 @@ public class ServerManager {
                 .collect(Collectors.toList());
     }
 
+    public static List<GameServer> getRankedServers(boolean visibleOnly) {
+        return getPublicServers(visibleOnly).stream()
+            .filter(GameServer::isRanked)
+            .collect(Collectors.toList());
+    }
+
     public static void clearQueue(Playlist playlist) {
         PublicServer server = getPublicServer(playlist);
         server.getQueued().forEach(QUEUED::remove);
