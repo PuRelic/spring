@@ -53,6 +53,7 @@ public class ServerUtils {
     public static boolean isServerFull(GameServer server, ProxiedPlayer player) {
         if (PermissionUtils.isStaff(player)) return false; // always allow staff
         if (server.isRanked() && server.isRankedPlayer(player)) return false; // always allow ranked players
+        if (server.getId().equals(player.getUniqueId().toString())) return false; // always allow the server owner
 
         int maxPlayersWithOverflow = server.isPrivate() ? (int) (server.getMaxPlayers() * 1.5) : server.getMaxPlayers() + ServerManager.getPublicServer(server.getPlaylist()).getOverflow();
         boolean isFull = server.getPlayersOnline() >= server.getMaxPlayers();
