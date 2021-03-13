@@ -35,7 +35,7 @@ public class ServerCommand implements CustomCommand {
                                 player,
                                 new ComponentBuilder("You are currently connected to ")
                                     .append(name).color(ChatColor.AQUA)
-                                    .append(" (" + server.getPlayers().size() + " online)").color(ChatColor.GRAY)
+                                    .append(" (" + server.getPlayers().size() + " Online)").color(ChatColor.GRAY)
                                     .create());
                         return;
                     }
