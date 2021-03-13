@@ -28,7 +28,7 @@ public class StaffChatCommand implements CustomCommand {
                 .argument(StringArgument.greedy("message"))
                 .handler(c -> {
                     ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    String message = c.get("message");
+                    String message = player.getName() + ": " + c.get("message");
 
                     if (!PermissionUtils.isStaff(player)) {
                         CommandUtils.sendNoPermissionMessage(player);
@@ -37,7 +37,7 @@ public class StaffChatCommand implements CustomCommand {
 
                     ProxyServer.getInstance().getPlayers().stream()
                         .filter(PermissionUtils::isStaff)
-                        .forEach(staff -> this.sendPartyMessage(player, message));
+                        .forEach(staff -> this.sendStaffMessage(staff, message));
                 });
     }
 
@@ -50,11 +50,11 @@ public class StaffChatCommand implements CustomCommand {
                 .create();
     }
 
-    private void sendPartyMessage(ProxiedPlayer player, String message) {
-        sendPartyMessage(player, new TextComponent(player.getName() + ": " + message));
+    private void sendStaffMessage(ProxiedPlayer player, String message) {
+        sendStaffMessage(player, new TextComponent(message));
     }
 
-    private void sendPartyMessage(ProxiedPlayer player, BaseComponent... messages) {
+    private void sendStaffMessage(ProxiedPlayer player, BaseComponent... messages) {
         player.sendMessage(ArrayUtils.addAll(this.getPrefix(), messages));
     }
 
