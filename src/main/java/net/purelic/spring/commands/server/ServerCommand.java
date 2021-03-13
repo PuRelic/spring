@@ -6,6 +6,7 @@ import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.CustomCommand;
 import net.purelic.spring.server.GameServer;
@@ -27,10 +28,15 @@ public class ServerCommand implements CustomCommand {
                     Optional<String> serverArg = c.getOptional("server");
 
                     if (!serverArg.isPresent()) {
-                        String name = player.getServer().getInfo().getName();
+                        ServerInfo server = player.getServer().getInfo();
+                        String name = server.getName();
+
                         CommandUtils.sendAlertMessage(
                                 player,
-                                new ComponentBuilder("You are currently connected to ").append(name).color(ChatColor.AQUA).create());
+                                new ComponentBuilder("You are currently connected to ")
+                                    .append(name).color(ChatColor.AQUA)
+                                    .append(" (" + server.getPlayers().size() + " online)").color(ChatColor.GRAY)
+                                    .create());
                         return;
                     }
 
