@@ -48,6 +48,10 @@ public class Analytics {
 
         Timestamp sessionStarted = sessionStarts.get(sessionId);
         Timestamp sessionEnded = Timestamp.now();
+
+        // Players that disconnect before fully connecting can sometimes cause NPEs
+        if (sessionId == null || sessionStarted == null || player.getServer() == null) return;
+
         long playtime = sessionEnded.getSeconds() - sessionStarted.getSeconds();
 
         track(new PlayerDisconnectedEvent(player, playtime));
