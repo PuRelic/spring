@@ -3,6 +3,7 @@ package net.purelic.spring.analytics.events;
 import com.google.cloud.Timestamp;
 import net.purelic.spring.analytics.AnalyticsEvent;
 import net.purelic.spring.server.GameServer;
+import net.purelic.spring.server.Playlist;
 
 public class ServerDestroyedEvent extends AnalyticsEvent {
 
@@ -25,12 +26,17 @@ public class ServerDestroyedEvent extends AnalyticsEvent {
         this.properties.put("type", server.getType().name());
         this.properties.put("type_name", server.getType().getName());
         this.properties.put("premium", server.getType().isPremium());
-        if (server.getPlaylist() != null) this.properties.put("playlist", server.getPlaylist());
         this.properties.put("max_players", server.getMaxPlayers());
         this.properties.put("max_party", server.getMaxParty());
         this.properties.put("min_party", server.getMinParty());
         this.properties.put("ip_address", server.getIp());
         this.properties.put("time_online", Timestamp.now().getSeconds() - server.getCreatedAt().getSeconds());
+
+        Playlist playlist = server.getPlaylist();
+        if (playlist != null) {
+            this.properties.put("playlist_name", playlist.getName());
+            this.properties.put("playlist_id", playlist.getId());
+        }
     }
 
 }
