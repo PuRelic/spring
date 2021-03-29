@@ -55,6 +55,12 @@ public class CommandUtils {
         sendErrorMessage(player, errorMessage);
     }
 
+    public static void sendNoPlayerMessage(ProxiedPlayer player, String name) {
+        TextComponent errorMessage = new TextComponent("Could not find player \"" + name + "\"");
+        errorMessage.setColor(ChatColor.RED);
+        sendErrorMessage(player, errorMessage);
+    }
+
     public static void sendNoPermissionMessage(ProxiedPlayer player) {
         TextComponent errorMessage = new TextComponent("You don't have permission to use this command!");
         errorMessage.setColor(ChatColor.RED);

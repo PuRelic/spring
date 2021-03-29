@@ -1,5 +1,6 @@
 package net.purelic.spring.utils;
 
+import com.google.cloud.Timestamp;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -7,13 +8,16 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
 import org.apache.commons.lang3.text.WordUtils;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class ChatUtils {
 
+    private static final PrettyTime PRETTY_TIME = new PrettyTime();
     public static final String BULLET = " \u2022 "; // •
     public static final String ARROW = "\u00BB"; // »
 
@@ -77,6 +81,14 @@ public class ChatUtils {
     public static void sendMessage(ProxiedPlayer player, TextComponent message) {
         if (Protocol.isLegacy(player)) player.sendMessages(message.toLegacyText().split("\n"));
         else player.sendMessage(message);
+    }
+
+    public static String format(Timestamp timestamp) {
+        return format(timestamp.toDate());
+    }
+
+    public static String format(Date date) {
+        return PRETTY_TIME.format(date);
     }
 
 }

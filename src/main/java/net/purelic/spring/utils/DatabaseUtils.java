@@ -53,7 +53,7 @@ public class DatabaseUtils {
 
     public static QueryDocumentSnapshot getPlayerDoc(String name) {
         try {
-            Query query = Commons.getFirestore().collection("players").whereEqualTo("name", name);
+            Query query = Commons.getFirestore().collection("players").whereEqualTo("name_lower", name.toLowerCase());
             ApiFuture<QuerySnapshot> future = query.get();
             QuerySnapshot snapshot = future.get();
 

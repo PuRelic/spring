@@ -14,15 +14,19 @@ public class FindCommand implements CustomCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("find")
-                .senderType(ProxiedPlayer.class)
-                .argument(PlayerArgument.of("player"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    ProxiedPlayer target = c.get("player");
-                    CommandUtils.sendAlertMessage(player,
-                            target.getDisplayName() + " is currently playing on server " +
-                                    ChatColor.AQUA + target.getServer().getInfo().getName());
-                });
+            .senderType(ProxiedPlayer.class)
+            .argument(PlayerArgument.of("player"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                ProxiedPlayer target = c.get("player");
+                sendFoundMessage(player, target);
+            });
+    }
+
+    public static void sendFoundMessage(ProxiedPlayer player, ProxiedPlayer target) {
+        CommandUtils.sendAlertMessage(player,
+            ChatColor.AQUA + target.getName() + ChatColor.RESET + " is currently playing on server " +
+                ChatColor.AQUA + target.getServer().getInfo().getName());
     }
 
 }

@@ -78,7 +78,7 @@ public class Spring extends Plugin {
     }
 
     public static Spring getPlugin() {
-        return Spring.plugin;
+        return plugin;
     }
 
     public void reloadConfig() {
@@ -164,6 +164,7 @@ public class Spring extends Plugin {
         this.registerCommand(new PingCommand());
         this.registerCommand(new PlayersCommand());
         this.registerCommand(new ReplyCommand());
+        this.registerCommand(new SeenCommand());
         this.registerCommand(new StaffChatCommand());
         this.registerCommand(new StatsCommand());
 
@@ -195,7 +196,7 @@ public class Spring extends Plugin {
     public static void sendPluginMessage(ProxiedPlayer player, String subChannel, String... data) {
         Server server = player.getServer();
         if (server == null) return;
-        Spring.sendPluginMessage(player.getServer().getInfo(), subChannel, data);
+        sendPluginMessage(player.getServer().getInfo(), subChannel, data);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -212,11 +213,15 @@ public class Spring extends Plugin {
     }
 
     public static void callEvent(Event event) {
-        TaskUtils.runAsync(() -> Spring.getPlugin().getProxy().getPluginManager().callEvent(event));
+        TaskUtils.runAsync(() -> getPlugin().getProxy().getPluginManager().callEvent(event));
     }
 
     public static ProxiedPlayer getPlayer(UUID uuid) {
-        return Spring.getPlugin().getProxy().getPlayer(uuid);
+        return getPlugin().getProxy().getPlayer(uuid);
+    }
+
+    public static ProxiedPlayer getPlayer(String name) {
+        return getPlugin().getProxy().getPlayer(name);
     }
 
 }
