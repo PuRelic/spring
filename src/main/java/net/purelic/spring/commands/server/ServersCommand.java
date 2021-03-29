@@ -20,7 +20,7 @@ public class ServersCommand implements CustomCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
-        return mgr.commandBuilder("servers")
+        return mgr.commandBuilder("servers", "s")
             .senderType(ProxiedPlayer.class)
             .flag(mgr.flagBuilder("list").withAliases("l"))
             .handler(c -> {
