@@ -14,6 +14,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.CustomCommand;
 import net.purelic.spring.managers.InventoryManager;
 import net.purelic.spring.utils.ChatUtils;
+import net.purelic.spring.utils.ServerUtils;
 
 public class ServersCommand implements CustomCommand {
 
@@ -30,7 +31,7 @@ public class ServersCommand implements CustomCommand {
                     ComponentBuilder message = ChatUtils.getHeader("Servers");
 
                     for (ServerInfo server : ProxyServer.getInstance().getServersCopy().values()) {
-                        message.append("\n").reset().append(this.getServerDetails(server));
+                        message.append("\n").reset().append(ServerUtils.getServerDetails(server, false));
                     }
 
                     ChatUtils.sendMessage(player, message);
@@ -38,24 +39,6 @@ public class ServersCommand implements CustomCommand {
                     InventoryManager.openMainSelector(player);
                 }
             });
-    }
-
-    @SuppressWarnings("deprecation")
-    private BaseComponent[] getServerDetails(ServerInfo server) {
-        String name = server.getName();
-        boolean hub = name.equals("Hub");
-        int online = server.getPlayers().size();
-
-        return new ComponentBuilder(ChatUtils.BULLET).color(ChatColor.GRAY)
-            .append(name).color(ChatColor.AQUA)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                    new ComponentBuilder("Connect to ").color(ChatColor.GRAY)
-                        .append(name).color(ChatColor.AQUA)
-                        .create()))
-                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, hub ? "/hub" : "/server " + name))
-            .append(" " + ChatUtils.ARROW + " ").color(ChatColor.GRAY)
-            .append(online + " Online").color(ChatColor.WHITE)
-            .create();
     }
 
 }

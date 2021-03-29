@@ -1,6 +1,11 @@
 package net.purelic.spring.utils;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.PartyManager;
@@ -155,6 +160,26 @@ public class ServerUtils {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isRankedPlayer(ProxiedPlayer player) {
         return ServerManager.getGameServers().values().stream().anyMatch(server -> server.isRankedPlayer(player));
+    }
+
+    @SuppressWarnings("deprecation")
+    public static BaseComponent[] getServerDetails(ServerInfo server, boolean staffOnly) {
+        String name = server.getName();
+        boolean hub = name.equals("Hub");
+        long online = staffOnly ?
+            server.getPlayers().stream().filter(PermissionUtils::isStaff).count() :
+            server.getPlayers().size();
+
+        return new ComponentBuilder(ChatUtils.BULLET).color(ChatColor.GRAY)
+            .append(name).color(ChatColor.AQUA)
+            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder("Connect to ").color(ChatColor.GRAY)
+                    .append(name).color(ChatColor.AQUA)
+                    .create()))
+            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, hub ? "/hub" : "/server " + name))
+            .append(" " + ChatUtils.ARROW + " ").color(ChatColor.GRAY)
+            .append(online + " Online").color(ChatColor.WHITE)
+            .create();
     }
 
 }
