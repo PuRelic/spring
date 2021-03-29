@@ -167,6 +167,7 @@ public class Spring extends Plugin {
         this.registerCommand(new SeenCommand());
         this.registerCommand(new StaffChatCommand());
         this.registerCommand(new StatsCommand());
+        this.registerCommand(new SupportCommand());
 
         // Spring
         this.registerCommand(new DestroyCommand());

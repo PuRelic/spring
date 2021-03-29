@@ -184,4 +184,8 @@ public class ServerUtils {
             .create();
     }
 
+    public static int getStaffOnline() {
+        return (int) ProxyServer.getInstance().getPlayers().stream().filter(PermissionUtils::isStaff).count();
+    }
+
 }

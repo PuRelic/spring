@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
+import net.purelic.spring.server.GameServer;
 import org.apache.commons.lang3.text.WordUtils;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ChatUtils {
 
@@ -50,6 +52,21 @@ public class ChatUtils {
             .append("\n ");
 
         for (ProxiedPlayer player : Spring.getPlugin().getProxy().getPlayers()) sendMessage(player, builder);
+    }
+
+    public static void broadcastRequest(ProxiedPlayer player, String request) {
+        GameServer server = ServerUtils.getGameServer(player);
+
+        ComponentBuilder builder = new ComponentBuilder("\n")
+            .append("REQUEST  ").color(ChatColor.LIGHT_PURPLE).bold(true)
+            .append(ChatColor.DARK_AQUA + player.getName() + ChatColor.RESET + " on server " +
+                ChatColor.AQUA + player.getServer().getInfo().getName() + ChatColor.RESET +
+                (server == null ? "" : ChatColor.GRAY + " (" + server.getType().getName() + ")") +
+                ChatColor.RESET + " has requested help with \"" + request + "\"").reset()
+            .append("\n ");
+
+        List<ProxiedPlayer> onlineStaff = Spring.getPlugin().getProxy().getPlayers().stream().filter(PermissionUtils::isStaff).collect(Collectors.toList());
+        for (ProxiedPlayer staff : onlineStaff) sendMessage(staff, builder);
     }
 
     public static List<String> wrap(String text) {
