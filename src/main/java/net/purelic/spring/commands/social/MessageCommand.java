@@ -23,7 +23,7 @@ public class MessageCommand implements CustomCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
-        return mgr.commandBuilder("msg")
+        return mgr.commandBuilder("msg", "tell")
                 .senderType(ProxiedPlayer.class)
                 .argument(PlayerArgument.of("player"))
                 .argument(StringArgument.greedy("message"))
