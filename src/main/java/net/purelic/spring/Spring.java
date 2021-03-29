@@ -26,6 +26,7 @@ import net.purelic.spring.commands.social.party.*;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
+import net.purelic.spring.commands.social.StaffChatCommand;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.Chat;
@@ -135,6 +136,7 @@ public class Spring extends Plugin {
         this.registerCommand(new RejoinCommand());
         this.registerCommand(new ServerCommand());
         this.registerCommand(new ServersCommand());
+        this.registerCommand(new StaffCommand());
 
         // Party
         this.registerCommand(new PartyAcceptCommand());
@@ -188,6 +190,7 @@ public class Spring extends Plugin {
         this.cmdMgr.command(customCommand.getCommandBuilder(this.cmdMgr).build());
     }
 
+    // TODO player.getServer() can return null
     public static void sendPluginMessage(ProxiedPlayer player, String subChannel, String... data) {
         Spring.sendPluginMessage(player.getServer().getInfo(), subChannel, data);
     }
