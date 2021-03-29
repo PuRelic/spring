@@ -34,7 +34,7 @@ public class PartyHelpCommand implements CustomCommand {
                             .append(new CommandBuilder("/party warp", "Warp party to same server", ChatColor.GOLD).toComponent())
                             ;
 
-                    player.sendMessage(builder.create());
+                    ChatUtils.sendMessage(player, builder);
                 });
     }
 
