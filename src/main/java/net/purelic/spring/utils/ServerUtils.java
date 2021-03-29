@@ -178,7 +178,7 @@ public class ServerUtils {
                     .create()))
             .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, hub ? "/hub" : "/server " + name))
             .append(" " + ChatUtils.ARROW + " ").color(ChatColor.GRAY)
-            .append(online + " Online").color(ChatColor.WHITE)
+            .append(online + (staffOnly ? " Staff" : " Online")).color(ChatColor.WHITE)
             .create();
     }
 
