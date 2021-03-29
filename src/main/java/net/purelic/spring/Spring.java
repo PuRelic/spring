@@ -10,6 +10,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.plugin.Event;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -190,8 +191,9 @@ public class Spring extends Plugin {
         this.cmdMgr.command(customCommand.getCommandBuilder(this.cmdMgr).build());
     }
 
-    // TODO player.getServer() can return null
     public static void sendPluginMessage(ProxiedPlayer player, String subChannel, String... data) {
+        Server server = player.getServer();
+        if (server == null) return;
         Spring.sendPluginMessage(player.getServer().getInfo(), subChannel, data);
     }
 
