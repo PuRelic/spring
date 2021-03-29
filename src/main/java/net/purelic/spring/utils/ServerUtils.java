@@ -170,6 +170,8 @@ public class ServerUtils {
             server.getPlayers().stream().filter(PermissionUtils::isStaff).count() :
             server.getPlayers().size();
 
+        if (online == 0 && staffOnly) return new BaseComponent[] {};
+
         return new ComponentBuilder(ChatUtils.BULLET).color(ChatColor.GRAY)
             .append(name).color(ChatColor.AQUA)
             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
