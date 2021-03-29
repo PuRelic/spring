@@ -4,6 +4,7 @@ import com.google.cloud.Timestamp;
 import de.exceptionflug.protocolize.items.ItemStack;
 import de.exceptionflug.protocolize.items.ItemType;
 import net.md_5.bungee.api.ChatColor;
+import net.purelic.spring.utils.ChatUtils;
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
@@ -12,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Season {
-
-    private static final PrettyTime PT = new PrettyTime();
 
     private final String id;
     private final String name;
@@ -47,8 +46,8 @@ public class Season {
         ItemStack item = new ItemStack(ItemType.PAPER);
         item.setDisplayName("" + ChatColor.AQUA + ChatColor.BOLD + this.name);
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Started " + PT.format(this.started.toDate()));
-        lore.add(ChatColor.GRAY + "Ends " + PT.format(this.ended.toDate()));
+        lore.add(ChatColor.GRAY + "Started " + ChatUtils.format(this.started));
+        lore.add(ChatColor.GRAY + "Ends " + ChatUtils.format(this.ended));
         lore.add("");
         lore.add(ChatColor.GRAY + "Ranks:");
         Arrays.stream(LeagueRank.values()).forEach(rank -> lore.add(rank.toString()));

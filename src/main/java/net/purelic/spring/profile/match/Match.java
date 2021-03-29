@@ -3,6 +3,7 @@ package net.purelic.spring.profile.match;
 import com.google.cloud.Timestamp;
 import de.exceptionflug.protocolize.items.ItemStack;
 import net.md_5.bungee.api.ChatColor;
+import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.ItemAction;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -10,8 +11,6 @@ import java.time.LocalTime;
 import java.util.*;
 
 public class Match {
-
-    private static final PrettyTime PT = new PrettyTime();
 
     private final String id;
     private final MatchResult result;
@@ -53,7 +52,7 @@ public class Match {
         ItemStack item = new ItemStack(this.result.getItemType());
         item.setDisplayName("" + ChatColor.BOLD + ChatColor.YELLOW + this.gameMode + ChatColor.WHITE + " on " + ChatColor.GOLD + this.map);
         List<String> lore = new ArrayList<>();
-        lore.add(this.result.getName() + " " + PT.format(this.started.toDate()));
+        lore.add(this.result.getName() + " " + ChatUtils.format(this.started));
         lore.add(ChatColor.GRAY + "Length: " + (" " + LocalTime.ofSecondOfDay(this.length).toString()).replaceFirst(" 00:", ""));
         lore.add("");
         lore.add(ChatColor.GRAY + "Playlist: " + ChatColor.AQUA + this.playlist);

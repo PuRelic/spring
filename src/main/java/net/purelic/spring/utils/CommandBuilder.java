@@ -37,7 +37,7 @@ public class CommandBuilder {
             new ComponentBuilder(required ? "<" + argument + ">" : "[" + argument + "]")
                 .color(required ? this.color : ChatColor.GRAY)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder((required ? "" : "(Optional) ") + description).create()))
-                .append("").event(this.resetHover()) // required to reset the hover for the text following it
+                .append("").event(this.resetHover())
                 .create()
         );
         return this;
@@ -64,6 +64,7 @@ public class CommandBuilder {
 
     @SuppressWarnings("deprecation")
     private HoverEvent resetHover() {
+        // required to reset the hover for the text following it
         return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {});
     }
 
