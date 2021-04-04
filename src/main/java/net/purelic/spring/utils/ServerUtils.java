@@ -52,6 +52,7 @@ public class ServerUtils {
 
     public static int totalPlaying(List<GameServer> servers) {
         return servers.stream()
+                .filter(gs -> gs.getServerInfo() != null)
                 .mapToInt(gs -> gs.getServerInfo().getPlayers().size()).sum();
     }
 

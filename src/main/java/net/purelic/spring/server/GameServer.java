@@ -460,6 +460,11 @@ public class GameServer {
         } catch (Exception e) {
             System.out.println("There was an error setting up the server! (" + this.name + ")");
             e.printStackTrace();
+            this.destroy();
+            if (this.isPrivate) {
+                ProxiedPlayer player = this.proxy.getPlayer(UUID.fromString(this.id));
+                if (player != null) CommandUtils.sendErrorMessage(player, "There was an issue creating your private server, please try again!");
+            }
         }
     }
 
