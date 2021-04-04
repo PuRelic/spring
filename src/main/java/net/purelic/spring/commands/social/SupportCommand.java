@@ -20,6 +20,13 @@ public class SupportCommand implements CustomCommand {
             .handler(c -> {
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                 String request = c.get("request");
+
+                if (request.split(" ").length <= 3) {
+                    CommandUtils.sendErrorMessage(player,
+                        "Request too short - please type out your full request! Both online and offline staff will be notified.");
+                    return;
+                }
+
                 ChatUtils.broadcastRequest(player, request);
                 DiscordManager.sendSupportNotification(player, request);
                 CommandUtils.sendSuccessMessage(player, "Your support request has been sent to the staff team!");
