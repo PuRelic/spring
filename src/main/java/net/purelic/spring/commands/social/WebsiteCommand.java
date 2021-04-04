@@ -11,7 +11,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.CustomCommand;
 
 public class WebsiteCommand implements CustomCommand {
-    
+
     @SuppressWarnings("deprecation")
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
