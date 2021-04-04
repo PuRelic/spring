@@ -29,7 +29,11 @@ public class HelpCommand implements CustomCommand {
 
                     .append(new CommandBuilder("/staff", "List online staff").toComponent())
 
-                    .append(new CommandBuilder("/discord", "Need more help? Join our discord.").toComponent())
+                    .append(new CommandBuilder("/discord", "Need more help? Join our discord").toComponent())
+
+                    .append(new CommandBuilder("/website", "Learn more about PuRelic").toComponent())
+
+                    .append(new CommandBuilder("/docs", "Documentation for map and game development").toComponent())
                     ;
 
                 ChatUtils.sendMessage(player, builder);

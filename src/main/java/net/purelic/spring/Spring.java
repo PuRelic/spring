@@ -157,6 +157,7 @@ public class Spring extends Plugin {
         // Social
         this.registerCommand(new BroadcastCommand());
         this.registerCommand(new DiscordCommand());
+        this.registerCommand(new DocsCommand());
         this.registerCommand(new FindCommand());
         this.registerCommand(new HelpCommand());
         this.registerCommand(new MatchesCommand());
@@ -168,6 +169,7 @@ public class Spring extends Plugin {
         this.registerCommand(new StaffChatCommand());
         this.registerCommand(new StatsCommand());
         this.registerCommand(new SupportCommand());
+        this.registerCommand(new WebsiteCommand());
 
         // Spring
         this.registerCommand(new DestroyCommand());
