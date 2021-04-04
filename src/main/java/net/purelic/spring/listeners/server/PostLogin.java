@@ -25,7 +25,6 @@ public class PostLogin implements Listener {
         }
 
         DiscordCommand.sendDiscordMessage(player);
-
         Analytics.startSession(player);
     }
 
