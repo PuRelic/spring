@@ -10,6 +10,7 @@ import net.purelic.commons.Commons;
 import net.purelic.spring.analytics.events.PlayerConnectedEvent;
 import net.purelic.spring.analytics.events.PlayerDisconnectedEvent;
 import net.purelic.spring.managers.ProfileManager;
+import net.purelic.spring.profile.Profile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,11 +64,14 @@ public class Analytics {
 
     @SuppressWarnings("deprecation")
     public static void identify(ProxiedPlayer player) {
+        Profile profile = ProfileManager.getProfile(player);
+
         Commons.getAnalytics().enqueue(IdentifyMessage.builder()
             .timestamp(Timestamp.now().toDate())
             .userId(player.getUniqueId().toString())
             .traits(ImmutableMap.<String, Object>builder()
                 .put("name", player.getName())
+                .put("joined", profile.getJoined().toDate())
                 .build()
             )
             .context(ImmutableMap.<String, Object>builder().put("ip", player.getAddress().getAddress().getHostAddress()).build())
