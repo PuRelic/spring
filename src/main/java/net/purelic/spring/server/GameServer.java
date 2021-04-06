@@ -277,7 +277,10 @@ public class GameServer {
 
         if (this.isPrivate && online) {
             ProxiedPlayer player = this.proxy.getPlayer(UUID.fromString(this.id));
-            if (player != null) CommandUtils.sendSuccessMessage(player, "Your private server is now online!");
+            if (player != null) {
+                CommandUtils.sendSuccessMessage(player, "Your private server is now online! Join now with /ps or /server " + this.name);
+                if (ServerUtils.inHub(player)) TaskUtils.scheduleTask(() -> this.connect(player), 1);
+            }
         } else if (!this.isPrivate
                 && online
                 && ServerManager.getPublicServers(this.playlist, true).size() == 1
