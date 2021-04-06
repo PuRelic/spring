@@ -32,6 +32,10 @@ public class ServerUtils {
         if (current != hub) player.connect(hub);
     }
 
+    public static boolean inHub(ProxiedPlayer player) {
+        return player.getServer().getInfo() == getHub();
+    }
+
     public static String getValidName(String name) {
         return !ServerManager.getGameServers().containsKey(name) ? name : ServerUtils.getValidName(name, 1);
     }
