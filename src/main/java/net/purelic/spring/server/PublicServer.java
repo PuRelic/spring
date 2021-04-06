@@ -115,7 +115,9 @@ public class PublicServer {
                 item.setLore(Arrays.asList(
                     ChatColor.WHITE + this.playlist.getDescription(),
                     "",
-                    ChatColor.GREEN + "Server starting..."
+                    ChatColor.GREEN + "Server starting...",
+                    "",
+                    ChatColor.WHITE + "Click to Join Queue"
                 ));
             } else {
                 item.setLore(Arrays.asList(
@@ -125,9 +127,9 @@ public class PublicServer {
                     "",
                     ChatColor.WHITE + "Click to Join Queue"
                 ));
-
-                ItemAction.QUEUE.apply(item, this.playlist.getName());
             }
+
+            ItemAction.QUEUE.apply(item, this.playlist.getName());
         } else {
             int totalPlayers = ServerUtils.totalPlaying(servers);
             String browse = ChatColor.GRAY + "R-Click to Browse " + ChatColor.AQUA + totalServers + ChatColor.GRAY + " Server" + (totalServers == 1 ? "" : "s");
@@ -151,7 +153,7 @@ public class PublicServer {
                         ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
                         ChatColor.GRAY + "Party: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
                         "",
-                        ChatColor.GRAY + "L-Click to Quick Join",
+                        ChatColor.GRAY + "L-Click to " + ChatColor.GREEN + "Quick Join",
                         browse
                 ));
 
