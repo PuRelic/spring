@@ -4,9 +4,6 @@ import de.exceptionflug.protocolize.inventory.Inventory;
 import de.exceptionflug.protocolize.inventory.InventoryModule;
 import de.exceptionflug.protocolize.inventory.InventoryType;
 import de.exceptionflug.protocolize.items.ItemStack;
-import de.exceptionflug.protocolize.items.ItemType;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
@@ -18,9 +15,14 @@ import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 import net.purelic.spring.server.ServerType;
-import net.purelic.spring.utils.*;
+import net.purelic.spring.utils.ItemUtils;
+import net.purelic.spring.utils.PermissionUtils;
+import net.purelic.spring.utils.ServerUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InventoryManager {
@@ -99,15 +101,8 @@ public class InventoryManager {
     public static void openPrivateServerInv(ProxiedPlayer player) {
         GameServer server = ServerUtils.getPrivateServerById(player.getUniqueId().toString());
 
-        if (server == null) {
-            openSelectorInv(player);
-        } else {
-            if (server.isOnline()) {
-                openControlsInv(player, server);
-            } else {
-                CommandUtils.sendAlertMessage(player, "Please wait, your server is still starting up...");
-            }
-        }
+        if (server == null) openSelectorInv(player);
+        else openControlsInv(player, server);
     }
 
     private static void openSelectorInv(final ProxiedPlayer player) {
@@ -128,7 +123,7 @@ public class InventoryManager {
     private static void openControlsInv(ProxiedPlayer player, GameServer server) {
         String name = server.getName();
         Inventory inventory = new Inventory(InventoryType.GENERIC_9X1, new TextComponent("Choose an option:"));
-        inventory.setItem(0, ItemUtils.getJoinServerItem(name));
+        inventory.setItem(0, server.isOnline() ? ItemUtils.getJoinServerItem(name) : ItemUtils.getStartingServerItem());
         inventory.setItem(1, ItemUtils.getStopServerItem(name));
         inventory.setItem(8, server.getItem());
         InventoryModule.sendInventory(player, inventory);

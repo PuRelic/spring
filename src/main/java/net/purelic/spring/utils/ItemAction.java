@@ -22,6 +22,7 @@ public enum ItemAction {
     STATS,
     MATCH,
     PRIVATE_SERVER,
+    NOTHING,
     ;
 
     public void apply(ItemStack item) {

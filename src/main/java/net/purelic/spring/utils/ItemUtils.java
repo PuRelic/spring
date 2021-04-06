@@ -109,6 +109,19 @@ public class ItemUtils {
         return item;
     }
 
+    public static ItemStack getStartingServerItem() {
+        ItemStack item = new ItemStack(ItemType.YELLOW_WOOL);
+        item.setDisplayName(new ComponentBuilder("Server Starting...").color(ChatColor.YELLOW).bold(true).create());
+        item.setLore(Arrays.asList(
+            ChatColor.WHITE + "You will be notified when",
+            ChatColor.WHITE + "your server is ready!"
+        ));
+
+        ItemAction.NOTHING.apply(item);
+
+        return item;
+    }
+
     public static ItemStack getStopServerItem(String serverName) {
         ItemStack item = new ItemStack(ItemType.RED_WOOL);
         item.setDisplayName(new ComponentBuilder("Force Shutdown").color(ChatColor.RED).bold(true).create());
@@ -116,11 +129,8 @@ public class ItemUtils {
             ChatColor.RED + "" + ChatColor.BOLD + "WARNING",
             "",
             ChatColor.WHITE + "Please join your server and use",
-            ChatColor.WHITE + "/shutdown if possible. One use this",
-            ChatColor.WHITE + "if you can't connect to your server.",
-            "",
-            ChatColor.WHITE + "Forcing a shutdown from here could",
-            ChatColor.WHITE + "corrupt your custom maps."
+            ChatColor.WHITE + "/shutdown if possible. Only use this",
+            ChatColor.WHITE + "if you can't connect to your server."
         ));
 
         ItemAction.STOP.apply(item, serverName);
