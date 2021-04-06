@@ -283,9 +283,12 @@ public class GameServer {
                 && ServerManager.getPublicServers(this.playlist, true).size() == 1
                 && !this.ranked) {
             ChatUtils.broadcastMessage("A " + this.playlist.getName() + " server is now open! Join now with" + ChatColor.AQUA + " /server " + this.name);
-            ServerManager.getPublicServer(this.playlist).getQueued().stream().filter(player -> player.getServer().getInfo().getName().equals("Hub")).forEach(this::connect);
-            ServerManager.clearQueue(this.playlist);
             DiscordManager.sendServerNotification(this);
+
+            TaskUtils.scheduleTask(() -> {
+                ServerManager.getPublicServer(this.playlist).getQueued().stream().filter(ServerUtils::inHub).forEach(this::connect);
+                ServerManager.clearQueue(this.playlist);
+            }, 1);
         }
     }
 
