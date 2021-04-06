@@ -1,5 +1,6 @@
 package net.purelic.spring.profile;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.FieldValue;
 import net.purelic.spring.managers.LeagueManager;
 import net.purelic.spring.party.Party;
@@ -17,6 +18,7 @@ public class Profile {
     private final Set<Rank> ranks;
     private final Map<String, Object> stats;
     private final List<Map<String, Object>> matches;
+    private final Timestamp joined;
     private boolean betaFeatures;
 
     @SuppressWarnings("unchecked")
@@ -25,6 +27,7 @@ public class Profile {
         this.ranks = Rank.parseRanks((List<Object>) data.getOrDefault(Rank.PATH, new ArrayList<>()));
         this.stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
         this.matches = (List<Map<String, Object>>) data.getOrDefault("recent_matches", new ArrayList<>());
+        this.joined = (Timestamp) data.getOrDefault("joined", Timestamp.now());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
     }
 
@@ -107,6 +110,10 @@ public class Profile {
     public void setSessionId(UUID sessionId) {
         if (sessionId == null) DatabaseUtils.updatePlayerDoc(this.uuid, "session_id", FieldValue.delete());
         else DatabaseUtils.updatePlayerDoc(this.uuid, "session_id", sessionId.toString());
+    }
+
+    public Timestamp getJoined() {
+        return this.joined;
     }
 
 }
