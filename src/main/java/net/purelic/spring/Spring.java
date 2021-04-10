@@ -4,8 +4,15 @@ import cloud.commandframework.CommandTree;
 import cloud.commandframework.bungee.BungeeCommandManager;
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.jda.JDA4CommandManager;
+import cloud.commandframework.jda.JDACommandSender;
+import cloud.commandframework.jda.JDAGuildSender;
+import cloud.commandframework.jda.JDAPrivateSender;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import io.leangen.geantyref.TypeToken;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -19,15 +26,18 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 import net.purelic.commons.Commons;
 import net.purelic.spring.analytics.Analytics;
-import net.purelic.spring.commands.*;
+import net.purelic.spring.commands.DiscordCommand;
+import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.discord.TempMuteCommand;
 import net.purelic.spring.commands.league.LeaveCommand;
+import net.purelic.spring.commands.parsers.RoleArgument;
 import net.purelic.spring.commands.server.*;
 import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
-import net.purelic.spring.commands.social.StaffChatCommand;
+import net.purelic.spring.listeners.discord.GuildMessageReceived;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.Chat;
@@ -35,29 +45,30 @@ import net.purelic.spring.listeners.player.InventoryClick;
 import net.purelic.spring.listeners.server.*;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.server.ServerType;
+import net.purelic.spring.utils.DiscordUtils;
 import net.purelic.spring.utils.TaskUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 public class Spring extends Plugin {
 
     private static Spring plugin;
 
-    private BungeeCommandManager<CommandSender> cmdMgr;
+    private BungeeCommandManager<CommandSender> bungeeCmdMgr;
+    private JDA4CommandManager<JDACommandSender> jdaCmdMgr;
+    private List<net.purelic.spring.commands.DiscordCommand> discordCommands;
 
     @Override
     public void onEnable() {
         plugin = this;
 
         this.getProxy().registerChannel("purelic:spring");
-        this.registerListeners();
-        this.registerCommands();
         this.reloadConfig();
+        this.registerCommands();
+        this.registerListeners();
 
         ProfileManager.loadProfileCache();
         ServerManager.loadServerCache();
@@ -75,6 +86,7 @@ public class Spring extends Plugin {
         PartyManager.cacheParties();
         LeagueManager.clearQueues();
         Analytics.cacheSessions();
+        unregisterDiscordListeners();
     }
 
     public static Spring getPlugin() {
@@ -102,6 +114,9 @@ public class Spring extends Plugin {
     }
 
     private void registerListeners() {
+        // Discord
+        this.registerListener(new GuildMessageReceived());
+
         // Party
         this.registerListener(new PartyJoin());
         this.registerListener(new PartyLeave());
@@ -120,12 +135,19 @@ public class Spring extends Plugin {
         this.registerListener(new SpringPluginMessage());
     }
 
+    private void registerListener(ListenerAdapter listener) {
+        Commons.getDiscordBot().addEventListener(listener);
+    }
+
     private void registerListener(Listener listener) {
         this.getProxy().getPluginManager().registerListener(this, listener);
     }
 
     private void registerCommands() {
-        this.registerCommandManager();
+        this.registerCommandManagers();
+
+        // Discord
+        this.registerCommand(new TempMuteCommand());
 
         // League
         this.registerCommand(new LeaveCommand());
@@ -156,7 +178,7 @@ public class Spring extends Plugin {
 
         // Social
         this.registerCommand(new BroadcastCommand());
-        this.registerCommand(new DiscordCommand());
+        this.registerCommand(new DiscordInviteCommand());
         this.registerCommand(new DocsCommand());
         this.registerCommand(new FindCommand());
         this.registerCommand(new HelpCommand());
@@ -177,23 +199,78 @@ public class Spring extends Plugin {
         this.registerCommand(new ReloadCommand());
     }
 
-    private void registerCommandManager() {
+    private void registerCommandManagers() {
         try {
             final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction =
-                    AsynchronousCommandExecutionCoordinator.<CommandSender>newBuilder().build();
-            this.cmdMgr = new BungeeCommandManager<>(
-                    this,
-                    executionCoordinatorFunction,
-                    Function.identity(),
-                    Function.identity()
+                AsynchronousCommandExecutionCoordinator.<CommandSender>newBuilder().build();
+
+            this.bungeeCmdMgr = new BungeeCommandManager<>(
+                this,
+                executionCoordinatorFunction,
+                Function.identity(),
+                Function.identity()
             );
+
+            this.jdaCmdMgr = new JDA4CommandManager<>(
+                Commons.getDiscordBot(),
+                message -> "!", // command prefix
+                DiscordUtils::hasRole, // permission check function
+                AsynchronousCommandExecutionCoordinator.simpleCoordinator(),
+                sender -> {
+                    MessageReceivedEvent event = sender.getEvent().orElse(null);
+
+                    if (sender instanceof JDAPrivateSender) {
+                        return new JDAPrivateSender(event, sender.getUser(), ((JDAPrivateSender) sender).getPrivateChannel());
+                    }
+
+                    if (sender instanceof JDAGuildSender) {
+                        JDAGuildSender jdaGuildSender = (JDAGuildSender) sender;
+                        return new JDAGuildSender(event, jdaGuildSender.getMember(), jdaGuildSender.getTextChannel());
+                    }
+
+                    throw new UnsupportedOperationException();
+                },
+                user -> {
+                    MessageReceivedEvent event = user.getEvent().orElse(null);
+
+                    if (user instanceof JDAPrivateSender) {
+                        JDAPrivateSender privateUser = (JDAPrivateSender) user;
+                        return new JDAPrivateSender(event, privateUser.getUser(), privateUser.getPrivateChannel());
+                    }
+
+                    if (user instanceof JDAGuildSender) {
+                        JDAGuildSender guildUser = (JDAGuildSender) user;
+                        return new JDAGuildSender(event, guildUser.getMember(), guildUser.getTextChannel());
+                    }
+
+                    throw new UnsupportedOperationException();
+                }
+            );
+
+            // Register custom parsers
+            this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(RoleArgument.class), parserParameters ->
+                new RoleArgument.MessageParser<>(
+                    new HashSet<>(Arrays.asList(RoleArgument.ParserMode.values()))
+                ));
         } catch (final Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void registerCommand(CustomCommand customCommand) {
-        this.cmdMgr.command(customCommand.getCommandBuilder(this.cmdMgr).build());
+    private void registerCommand(ProxyCommand command) {
+        this.bungeeCmdMgr.command(command.getCommandBuilder(this.bungeeCmdMgr).build());
+    }
+
+    private void registerCommand(DiscordCommand command) {
+        this.jdaCmdMgr.command(command.getCommandBuilder(this.jdaCmdMgr).build());
+    }
+
+    private void unregisterDiscordListeners() {
+        Commons.getDiscordBot().getRegisteredListeners().forEach(Spring::unregisterDiscordListener);
+    }
+
+    private static void unregisterDiscordListener(Object listener) {
+        Commons.getDiscordBot().removeEventListener(listener);
     }
 
     public static void sendPluginMessage(ProxiedPlayer player, String subChannel, String... data) {
