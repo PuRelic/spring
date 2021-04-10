@@ -6,13 +6,13 @@ import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.analytics.events.PartyRenamedEvent;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.PermissionUtils;
 
-public class PartyRenameCommand implements CustomCommand {
+public class PartyRenameCommand implements ProxyCommand {
 
     private final String regex = "[a-zA-Z ]*";
 

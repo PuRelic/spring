@@ -9,12 +9,12 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.DatabaseUtils;
 
-public class SeenCommand implements CustomCommand {
+public class SeenCommand implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {

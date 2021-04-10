@@ -5,12 +5,12 @@ import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.league.LeagueTeam;
 import net.purelic.spring.managers.LeagueManager;
 import net.purelic.spring.utils.CommandUtils;
 
-public class LeaveCommand implements CustomCommand {
+public class LeaveCommand implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {

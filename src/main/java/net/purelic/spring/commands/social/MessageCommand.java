@@ -12,12 +12,12 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
 import net.purelic.spring.analytics.events.PrivateMessageSentEvent;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageCommand implements CustomCommand {
+public class MessageCommand implements ProxyCommand {
 
     protected static Map<ProxiedPlayer, ProxiedPlayer> messages = new HashMap<>();
 

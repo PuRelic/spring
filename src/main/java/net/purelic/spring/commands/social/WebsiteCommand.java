@@ -8,9 +8,9 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 
-public class WebsiteCommand implements CustomCommand {
+public class WebsiteCommand implements ProxyCommand {
 
     @SuppressWarnings("deprecation")
     @Override

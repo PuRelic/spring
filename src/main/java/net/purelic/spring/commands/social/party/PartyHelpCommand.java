@@ -6,11 +6,11 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.CommandBuilder;
 
-public class PartyHelpCommand implements CustomCommand {
+public class PartyHelpCommand implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {

@@ -10,12 +10,12 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.PermissionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class StaffChatCommand implements CustomCommand {
+public class StaffChatCommand implements ProxyCommand {
 
     private static final ChatColor PRIMARY_COLOR = ChatColor.DARK_RED;
     private static final ChatColor SECONDARY_COLOR = ChatColor.WHITE;

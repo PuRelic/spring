@@ -9,12 +9,12 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.utils.CommandUtils;
 
 import java.util.Optional;
 
-public class DiscordCommand implements CustomCommand {
+public class DiscordInviteCommand implements ProxyCommand {
 
     @SuppressWarnings("deprecation")
     @Override

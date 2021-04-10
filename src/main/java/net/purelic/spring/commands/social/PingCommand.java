@@ -6,12 +6,12 @@ import cloud.commandframework.bungee.arguments.PlayerArgument;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.commands.CustomCommand;
+import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.utils.CommandUtils;
 
 import java.util.Optional;
 
-public class PingCommand implements CustomCommand {
+public class PingCommand implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
