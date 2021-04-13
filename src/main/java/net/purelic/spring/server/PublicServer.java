@@ -87,10 +87,15 @@ public class PublicServer {
         this.queued.add(player);
 
         if (this.queued.size() >= this.queue) {
-            this.queued.forEach(queued ->
-                CommandUtils.sendAlertMessage(queued, this.playlist.getName() + " will be opening shortly! We'll notify you when it's ready."));
-            if (!this.starting) ServerManager.createPublicServer(this);
-            this.starting = true;
+            String message = this.playlist.getName() + " will be opening shortly! We'll notify you when it's ready.";
+
+            if (!this.starting) {
+                this.queued.forEach(queued -> CommandUtils.sendAlertMessage(queued, message));
+                ServerManager.createPublicServer(this);
+                this.starting = true;
+            } else {
+                CommandUtils.sendAlertMessage(player, message);
+            }
         }
     }
 
