@@ -1,6 +1,5 @@
 package net.purelic.spring.utils;
 
-import cloud.commandframework.jda.JDACommandSender;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
@@ -9,6 +8,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.restaction.AuditableRestAction;
 import net.md_5.bungee.api.ProxyServer;
 import net.purelic.commons.Commons;
+import net.purelic.spring.commands.parsers.DiscordUser;
+import net.purelic.spring.discord.Channel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,31 +18,40 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ConstantConditions")
 public class DiscordUtils {
 
-    private static final long GUILD_ID = 746125703040335934L;
-    private static final long MEMBERS_CHANNEL = 826287350992076810L;
-    private static final long LOG_CHANNEL = 830354705296916520L;
-
+    private static final String GUILD_ID = "746125703040335934";
     private static final JDA BOT = Commons.getDiscordBot();
     private static final Guild GUILD = BOT.getGuildById(GUILD_ID);
 
-    public static boolean hasRole(JDACommandSender sender, String permission) {
+    public static boolean hasRole(DiscordUser sender, String permission) {
+        return hasRole(sender.getUser(), permission);
+    }
+
+    public static boolean hasRole(User user, String permission) {
         List<Role> roles = Arrays.stream(permission.split("::"))
             .map(DiscordUtils::getRoleByID)
             .collect(Collectors.toList());
 
-        return GUILD.getMember(sender.getUser()).getRoles()
+        return GUILD.getMember(user).getRoles()
             .stream().anyMatch(roles::contains);
     }
 
-    public static AuditableRestAction<Void> addRole(User user, String role) {
-        return GUILD.addRoleToMember(user.getId(), getRoleByID(role));
+    public static AuditableRestAction<Void> addRole(User user, String roleId) {
+        return addRole(user, getRoleByID(roleId));
     }
 
-    public static AuditableRestAction<Void> removeRole(User user, String role) {
-        return GUILD.removeRoleFromMember(user.getId(), getRoleByID(role));
+    public static AuditableRestAction<Void> addRole(User user, Role role) {
+        return GUILD.addRoleToMember(user.getId(), role);
     }
 
-    private static Role getRoleByID(String id) {
+    public static AuditableRestAction<Void> removeRole(User user, String roleId) {
+        return removeRole(user, getRoleByID(roleId));
+    }
+
+    public static AuditableRestAction<Void> removeRole(User user, Role role) {
+        return GUILD.removeRoleFromMember(user.getId(), role);
+    }
+
+    public static Role getRoleByID(String id) {
         return BOT.getRoleById(id);
     }
 
@@ -51,18 +61,18 @@ public class DiscordUtils {
     }
 
     public static void updateMemberCount() {
-        BOT.getVoiceChannelById(MEMBERS_CHANNEL)
+        BOT.getVoiceChannelById(Channel.MEMBERS)
             .getManager()
             .setName(GUILD.getMemberCount() + " Members")
             .queue();
     }
 
     public static void log(String message) {
-        BOT.getTextChannelById(LOG_CHANNEL).sendMessage(message).queue();
+        BOT.getTextChannelById(Channel.LOGS).sendMessage(message).queue();
     }
 
     public static void log(String message, User mention) {
-        BOT.getTextChannelById(LOG_CHANNEL).sendMessage(String.format(message, "<@" + mention.getId() + ">")).queue();
+        BOT.getTextChannelById(Channel.LOGS).sendMessage(String.format(message, "<@" + mention.getId() + ">")).queue();
     }
 
 }

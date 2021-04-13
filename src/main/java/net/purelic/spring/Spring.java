@@ -5,7 +5,6 @@ import cloud.commandframework.bungee.BungeeCommandManager;
 import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.jda.JDA4CommandManager;
-import cloud.commandframework.jda.JDACommandSender;
 import cloud.commandframework.jda.JDAGuildSender;
 import cloud.commandframework.jda.JDAPrivateSender;
 import com.google.common.io.ByteArrayDataOutput;
@@ -28,16 +27,18 @@ import net.purelic.commons.Commons;
 import net.purelic.spring.analytics.Analytics;
 import net.purelic.spring.commands.DiscordCommand;
 import net.purelic.spring.commands.ProxyCommand;
-import net.purelic.spring.commands.discord.TempMuteCommand;
+import net.purelic.spring.commands.discord.*;
 import net.purelic.spring.commands.league.LeaveCommand;
-import net.purelic.spring.commands.parsers.RoleArgument;
+import net.purelic.spring.commands.parsers.*;
 import net.purelic.spring.commands.server.*;
 import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
+import net.purelic.spring.listeners.discord.AttachmentOnlyChannels;
 import net.purelic.spring.listeners.discord.GuildMessageReceived;
+import net.purelic.spring.listeners.discord.ReactionRoles;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.Chat;
@@ -50,7 +51,10 @@ import net.purelic.spring.utils.TaskUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
 import java.util.function.Function;
 
 public class Spring extends Plugin {
@@ -58,8 +62,7 @@ public class Spring extends Plugin {
     private static Spring plugin;
 
     private BungeeCommandManager<CommandSender> bungeeCmdMgr;
-    private JDA4CommandManager<JDACommandSender> jdaCmdMgr;
-    private List<net.purelic.spring.commands.DiscordCommand> discordCommands;
+    private JDA4CommandManager<DiscordUser> jdaCmdMgr;
 
     @Override
     public void onEnable() {
@@ -115,7 +118,9 @@ public class Spring extends Plugin {
 
     private void registerListeners() {
         // Discord
+        this.registerListener(new AttachmentOnlyChannels());
         this.registerListener(new GuildMessageReceived());
+        this.registerListener(new ReactionRoles());
 
         // Party
         this.registerListener(new PartyJoin());
@@ -147,7 +152,14 @@ public class Spring extends Plugin {
         this.registerCommandManagers();
 
         // Discord
+        this.registerCommand(new EmbedCommand());
+        this.registerCommand(new EmbedEditCommand());
+        this.registerCommand(new MuteCommand());
+        this.registerCommand(new NukeCommand());
+        this.registerCommand(new ReactCommand());
+        this.registerCommand(new SpeakCommand());
         this.registerCommand(new TempMuteCommand());
+        this.registerCommand(new UnmuteCommand());
 
         // League
         this.registerCommand(new LeaveCommand());
@@ -220,26 +232,26 @@ public class Spring extends Plugin {
                     MessageReceivedEvent event = sender.getEvent().orElse(null);
 
                     if (sender instanceof JDAPrivateSender) {
-                        return new JDAPrivateSender(event, sender.getUser(), ((JDAPrivateSender) sender).getPrivateChannel());
+                        JDAPrivateSender jdaPrivateSender = (JDAPrivateSender) sender;
+                        return new PrivateUser(event, jdaPrivateSender.getUser(), jdaPrivateSender.getPrivateChannel());
                     }
 
                     if (sender instanceof JDAGuildSender) {
                         JDAGuildSender jdaGuildSender = (JDAGuildSender) sender;
-                        return new JDAGuildSender(event, jdaGuildSender.getMember(), jdaGuildSender.getTextChannel());
+                        return new GuildUser(event, jdaGuildSender.getMember(), jdaGuildSender.getTextChannel());
                     }
 
                     throw new UnsupportedOperationException();
                 },
                 user -> {
                     MessageReceivedEvent event = user.getEvent().orElse(null);
-
-                    if (user instanceof JDAPrivateSender) {
-                        JDAPrivateSender privateUser = (JDAPrivateSender) user;
+                    if (user instanceof PrivateUser) {
+                        PrivateUser privateUser = (PrivateUser) user;
                         return new JDAPrivateSender(event, privateUser.getUser(), privateUser.getPrivateChannel());
                     }
 
-                    if (user instanceof JDAGuildSender) {
-                        JDAGuildSender guildUser = (JDAGuildSender) user;
+                    if (user instanceof GuildUser) {
+                        GuildUser guildUser = (GuildUser) user;
                         return new JDAGuildSender(event, guildUser.getMember(), guildUser.getTextChannel());
                     }
 
@@ -251,6 +263,11 @@ public class Spring extends Plugin {
             this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(RoleArgument.class), parserParameters ->
                 new RoleArgument.MessageParser<>(
                     new HashSet<>(Arrays.asList(RoleArgument.ParserMode.values()))
+                ));
+
+            this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(ChannelArgument.class), parserParameters ->
+                new ChannelArgument.MessageParser<>(
+                    new HashSet<>(Arrays.asList(ChannelArgument.ParserMode.values()))
                 ));
         } catch (final Exception e) {
             e.printStackTrace();

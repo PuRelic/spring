@@ -3,6 +3,7 @@ package net.purelic.spring.managers;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.spring.Spring;
+import net.purelic.spring.discord.Role;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.utils.DiscordUtils;
 import net.purelic.spring.utils.DiscordWebhook;
@@ -36,6 +37,7 @@ public class DiscordManager {
     public static void sendServerNotification(GameServer server) {
         try {
             DiscordWebhook webhook = getWebhook(alertsWebhook);
+            webhook.setContent("<@&" + Role.LOOKING_TO_PLAY + ">");
             webhook.addEmbed(new DiscordWebhook.EmbedObject()
                     .setColor(Color.GREEN)
                     .setDescription("A new server is now online!")

@@ -7,6 +7,7 @@ public enum GameType {
     HEAD_HUNTER("Head Hunter"),
     KING_OF_THE_HILL("King of the Hill"),
     CAPTURE_THE_FLAG("Capture the Flag"),
+    SURVIVAL_GAMES("Survival Games"),
     ;
 
     private final String name;
