@@ -15,21 +15,21 @@ public class LeaveCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("leave")
-                .senderType(ProxiedPlayer.class)
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    LeagueTeam team = LeagueManager.getTeam(player);
+            .senderType(ProxiedPlayer.class)
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                LeagueTeam team = LeagueManager.getTeam(player);
 
-                    if (team == null) {
-                        CommandUtils.sendErrorMessage(player, "You aren't currently in a league queue!");
-                        return;
-                    }
+                if (team == null) {
+                    CommandUtils.sendErrorMessage(player, "You aren't currently in a league queue!");
+                    return;
+                }
 
-                    String message = player.getName() + " has removed your team from the queue " + ChatColor.GRAY + " (/leave)";
+                String message = player.getName() + " has removed your team from the queue " + ChatColor.GRAY + " (/leave)";
 
-                    team.getPlayers().forEach(pl -> CommandUtils.sendAlertMessage(pl, message));
-                    LeagueManager.removeFromQueue(team);
-                });
+                team.getPlayers().forEach(pl -> CommandUtils.sendAlertMessage(pl, message));
+                LeagueManager.removeFromQueue(team);
+            });
     }
 
 }

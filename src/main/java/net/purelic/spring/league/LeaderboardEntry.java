@@ -30,9 +30,9 @@ public class LeaderboardEntry {
     public String toString() {
         LeagueRank rank = LeagueRank.getRank(this.value);
         return ChatColor.RESET + this.name + ChatColor.GRAY + " - " +
-                rank.getFlair() + " " + rank.getName() +
-                ChatColor.DARK_GRAY + " (" + ChatColor.GRAY +
-                this.value + ChatColor.DARK_GRAY + ")";
+            rank.getFlair() + " " + rank.getName() +
+            ChatColor.DARK_GRAY + " (" + ChatColor.GRAY +
+            this.value + ChatColor.DARK_GRAY + ")";
     }
 
 }

@@ -22,10 +22,10 @@ public class PlayerDisconnect implements Listener {
         Analytics.endSession(player);
 
         Spring.sendPluginMessage(
-                player,
-                "QuitMessage",
-                player.getUniqueId().toString(),
-                "");
+            player,
+            "QuitMessage",
+            player.getUniqueId().toString(),
+            "");
     }
 
 }

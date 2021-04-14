@@ -19,8 +19,8 @@ public class PostLogin implements Listener {
 
         if (protocol.value() != Protocol.MINECRAFT_1_8.value()) {
             ComponentBuilder legacyWarning =
-                    new ComponentBuilder("WARNING  ").color(ChatColor.YELLOW).bold(true)
-                        .append("PuRelic is optimized for 1.8 - some features might not be supported on " + protocol.getFullLabel()).reset();
+                new ComponentBuilder("WARNING  ").color(ChatColor.YELLOW).bold(true)
+                    .append("PuRelic is optimized for 1.8 - some features might not be supported on " + protocol.getFullLabel()).reset();
             player.sendMessage(legacyWarning.create());
         }
 

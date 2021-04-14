@@ -10,10 +10,10 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.managers.ServerManager;
+import net.purelic.spring.party.Party;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
-import net.purelic.spring.party.Party;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,14 +50,14 @@ public class ServerUtils {
 
     public static GameServer getPrivateServerById(String id) {
         return ServerManager.getPrivateServers(false).stream()
-                .filter(s -> s.getId().equals(id))
-                .findFirst().orElse(null);
+            .filter(s -> s.getId().equals(id))
+            .findFirst().orElse(null);
     }
 
     public static int totalPlaying(List<GameServer> servers) {
         return servers.stream()
-                .filter(gs -> gs.getServerInfo() != null)
-                .mapToInt(gs -> gs.getServerInfo().getPlayers().size()).sum();
+            .filter(gs -> gs.getServerInfo() != null)
+            .mapToInt(gs -> gs.getServerInfo().getPlayers().size()).sum();
     }
 
     public static boolean isServerFull(GameServer server, ProxiedPlayer player) {
@@ -175,7 +175,7 @@ public class ServerUtils {
             server.getPlayers().stream().filter(PermissionUtils::isStaff).count() :
             server.getPlayers().size();
 
-        if (online == 0 && staffOnly) return new BaseComponent[] {};
+        if (online == 0 && staffOnly) return new BaseComponent[]{};
 
         return new ComponentBuilder(ChatUtils.BULLET).color(ChatColor.GRAY)
             .append(name).color(ChatColor.AQUA)

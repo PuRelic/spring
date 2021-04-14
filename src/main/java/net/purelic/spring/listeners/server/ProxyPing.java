@@ -27,11 +27,11 @@ public class ProxyPing implements Listener {
 
     private BaseComponent getMotd() {
         return new TextComponent(
-                ChatColor.translateAlternateColorCodes('&', SettingsManager.getMotdHeader()) +
+            ChatColor.translateAlternateColorCodes('&', SettingsManager.getMotdHeader()) +
                 "\n" + ChatColor.RESET +
                 (SettingsManager.isMaintenanceMode() ?
-                        SettingsManager.getMotdMaintenance()
-                        : SettingsManager.getMotdFooter())
+                    SettingsManager.getMotdMaintenance()
+                    : SettingsManager.getMotdFooter())
         );
     }
 

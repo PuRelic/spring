@@ -19,43 +19,43 @@ public class PartyRenameCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("party", "p")
-                .literal("rename")
-                .senderType(ProxiedPlayer.class)
-                .argument(StringArgument.greedy("name"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    String name = c.get("name");
-                    Party party = PartyManager.getParty(player);
+            .literal("rename")
+            .senderType(ProxiedPlayer.class)
+            .argument(StringArgument.greedy("name"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                String name = c.get("name");
+                Party party = PartyManager.getParty(player);
 
-                    if (party == null) {
-                        CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
-                        return;
-                    }
+                if (party == null) {
+                    CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
+                    return;
+                }
 
-                    if (player != party.getLeader()) {
-                        CommandUtils.sendErrorMessage(player, "Only party leaders can rename the party!");
-                        return;
-                    }
+                if (player != party.getLeader()) {
+                    CommandUtils.sendErrorMessage(player, "Only party leaders can rename the party!");
+                    return;
+                }
 
-                    if (!PermissionUtils.isDonator(player)) {
-                        CommandUtils.sendErrorMessage(player, "Only premium players can set custom party names!");
-                        return;
-                    }
+                if (!PermissionUtils.isDonator(player)) {
+                    CommandUtils.sendErrorMessage(player, "Only premium players can set custom party names!");
+                    return;
+                }
 
-                    if (name.length() < 3 || name.length() > 16) {
-                        CommandUtils.sendErrorMessage(player, "Party names must be between 3 and 16 characters longer!");
-                        return;
-                    }
+                if (name.length() < 3 || name.length() > 16) {
+                    CommandUtils.sendErrorMessage(player, "Party names must be between 3 and 16 characters longer!");
+                    return;
+                }
 
-                    if (!name.matches(this.regex)) {
-                        CommandUtils.sendErrorMessage(player, "Party names can only contain alphanumeric characters and spaces!");
-                        return;
-                    }
+                if (!name.matches(this.regex)) {
+                    CommandUtils.sendErrorMessage(player, "Party names can only contain alphanumeric characters and spaces!");
+                    return;
+                }
 
-                    new PartyRenamedEvent(party, name).track();
-                    party.setName(name);
-                    party.sendMessage("The party has been renamed to \"" + name + "\"!");
-                });
+                new PartyRenamedEvent(party, name).track();
+                party.setName(name);
+                party.sendMessage("The party has been renamed to \"" + name + "\"!");
+            });
     }
 
 }

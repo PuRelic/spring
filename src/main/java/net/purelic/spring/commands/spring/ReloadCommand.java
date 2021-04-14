@@ -14,19 +14,19 @@ public class ReloadCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("spring")
-                .senderType(ProxiedPlayer.class)
-                .literal("reload")
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+            .senderType(ProxiedPlayer.class)
+            .literal("reload")
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
 
-                    if (!PermissionUtils.isAdmin(player)) {
-                        CommandUtils.sendNoPermissionMessage(player);
-                        return;
-                    }
+                if (!PermissionUtils.isAdmin(player)) {
+                    CommandUtils.sendNoPermissionMessage(player);
+                    return;
+                }
 
-                    Spring.getPlugin().reloadConfig();
-                    CommandUtils.sendSuccessMessage(player, "Spring config reloaded!");
-                });
+                Spring.getPlugin().reloadConfig();
+                CommandUtils.sendSuccessMessage(player, "Spring config reloaded!");
+            });
     }
 
 }

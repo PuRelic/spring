@@ -2,4 +2,4 @@ name: Spring
 main: net.purelic.spring.Spring
 version: 1.0
 author: Without_Regret
-depends: [protocolize-plugin, proxy-commons]
+depends: [ protocolize-plugin, proxy-commons ]

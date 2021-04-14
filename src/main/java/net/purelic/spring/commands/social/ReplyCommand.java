@@ -13,25 +13,25 @@ public class ReplyCommand extends MessageCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("r")
-                .senderType(ProxiedPlayer.class)
-                .argument(StringArgument.greedy("message"))
-                .handler(c -> {
-                    ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
-                    ProxiedPlayer recipient = messages.get(sender);
-                    String message = c.get("message");
+            .senderType(ProxiedPlayer.class)
+            .argument(StringArgument.greedy("message"))
+            .handler(c -> {
+                ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
+                ProxiedPlayer recipient = messages.get(sender);
+                String message = c.get("message");
 
-                    if (recipient == null) {
-                        CommandUtils.sendErrorMessage(sender, "You have no one to reply to!");
-                        return;
-                    }
+                if (recipient == null) {
+                    CommandUtils.sendErrorMessage(sender, "You have no one to reply to!");
+                    return;
+                }
 
-                    if (!recipient.isConnected()) {
-                        CommandUtils.sendErrorMessage(sender, recipient.getName() + " is no longer online!");
-                        return;
-                    }
+                if (!recipient.isConnected()) {
+                    CommandUtils.sendErrorMessage(sender, recipient.getName() + " is no longer online!");
+                    return;
+                }
 
-                    sendPM(sender, recipient, message);
-                });
+                sendPM(sender, recipient, message);
+            });
     }
 
 }

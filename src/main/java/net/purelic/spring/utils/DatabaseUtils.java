@@ -25,8 +25,8 @@ public class DatabaseUtils {
         data.put("snapshot_id", server.getSnapshotId());
 
         Commons.getFirestore().collection("server_ips")
-                .document(id)
-                .set(data, SetOptions.merge());
+            .document(id)
+            .set(data, SetOptions.merge());
     }
 
     public static void removeServerDoc(GameServer server) {
@@ -68,8 +68,8 @@ public class DatabaseUtils {
 
     public static void updatePlayerDoc(UUID uuid, String field, Object value) {
         Commons.getFirestore().collection("players")
-                .document(uuid.toString())
-                .update(field, value);
+            .document(uuid.toString())
+            .update(field, value);
     }
 
     @SuppressWarnings("unchecked")

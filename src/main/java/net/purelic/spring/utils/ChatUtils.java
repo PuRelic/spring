@@ -41,8 +41,8 @@ public class ChatUtils {
 
     public static ComponentBuilder getHeader(String header, boolean bold, ChatColor primary, ChatColor secondary, boolean padding) {
         return new ComponentBuilder((padding ? "\n" : "") + "                    ").color(secondary).strikethrough(true)
-                .append("   " +  header + "   ").reset().color(primary).bold(bold)
-                .append("                    " + (padding ? "\n" : "")).reset().color(secondary).strikethrough(true);
+            .append("   " + header + "   ").reset().color(primary).bold(bold)
+            .append("                    " + (padding ? "\n" : "")).reset().color(secondary).strikethrough(true);
     }
 
     public static void broadcastMessage(String message) {

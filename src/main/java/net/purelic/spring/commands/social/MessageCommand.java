@@ -24,18 +24,18 @@ public class MessageCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("msg", "tell")
-                .senderType(ProxiedPlayer.class)
-                .argument(PlayerArgument.of("player"))
-                .argument(StringArgument.greedy("message"))
-                .handler(c -> {
-                    ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
-                    ProxiedPlayer recipient = c.get("player");
-                    String message = c.get("message");
+            .senderType(ProxiedPlayer.class)
+            .argument(PlayerArgument.of("player"))
+            .argument(StringArgument.greedy("message"))
+            .handler(c -> {
+                ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
+                ProxiedPlayer recipient = c.get("player");
+                String message = c.get("message");
 
-                    messages.put(sender, recipient);
-                    messages.put(recipient, sender);
-                    sendPM(sender, recipient, message);
-                });
+                messages.put(sender, recipient);
+                messages.put(recipient, sender);
+                sendPM(sender, recipient, message);
+            });
     }
 
     protected static void sendPM(ProxiedPlayer sender, ProxiedPlayer recipient, String message) {
@@ -43,11 +43,11 @@ public class MessageCommand implements ProxyCommand {
 
         if (sameServer) {
             Spring.sendPluginMessage(
-                    sender,
-                    "PrivateMessage",
-                    sender.getUniqueId().toString(),
-                    recipient.getUniqueId().toString(),
-                    message);
+                sender,
+                "PrivateMessage",
+                sender.getUniqueId().toString(),
+                recipient.getUniqueId().toString(),
+                message);
         } else {
             sendFancyPM(sender, recipient, message, true);
             sendFancyPM(sender, recipient, message, false);

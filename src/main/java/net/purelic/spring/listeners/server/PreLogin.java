@@ -20,8 +20,8 @@ public class PreLogin implements Listener {
         String playerName = event.getConnection().getName();
 
         if (SettingsManager.isMaxPlayerEnforced()
-                && Spring.getPlugin().getProxy().getOnlineCount() >= SettingsManager.getMaxPlayers()
-                && !this.canBypass(playerName, true)) {
+            && Spring.getPlugin().getProxy().getOnlineCount() >= SettingsManager.getMaxPlayers()
+            && !this.canBypass(playerName, true)) {
             event.setCancelled(true);
             event.setCancelReason(new TextComponent(SettingsManager.getServerFullMessage()));
         } else if (SettingsManager.isMaintenanceMode() && !this.canBypass(playerName, false)) {
@@ -30,14 +30,14 @@ public class PreLogin implements Listener {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "BooleanMethodIsAlwaysInverted" })
+    @SuppressWarnings({"unchecked", "BooleanMethodIsAlwaysInverted"})
     private boolean canBypass(String playerName, boolean includePremium) {
         QueryDocumentSnapshot doc = DatabaseUtils.getPlayerDoc(playerName);
 
         if (doc == null) return false;
 
         return Rank.parseRanks((List<Object>) doc.getData().getOrDefault(Rank.PATH, new ArrayList<>()))
-                .stream().anyMatch(rank -> rank.isStaff() || (includePremium && (rank == Rank.CREATOR || rank == Rank.PREMIUM)));
+            .stream().anyMatch(rank -> rank.isStaff() || (includePremium && (rank == Rank.CREATOR || rank == Rank.PREMIUM)));
     }
 
 }

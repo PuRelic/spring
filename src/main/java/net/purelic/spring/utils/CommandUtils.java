@@ -17,11 +17,11 @@ public class CommandUtils {
     @SuppressWarnings("deprecation")
     private static BaseComponent[] getPrefix(String hover, ChatColor primary, ChatColor secondary) {
         return
-                new ComponentBuilder("[").color(secondary).bold(true)
-                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).color(primary).create()))
-                        .append("!", ComponentBuilder.FormatRetention.ALL).color(primary)
-                        .append("] ", ComponentBuilder.FormatRetention.ALL).color(secondary)
-                        .create();
+            new ComponentBuilder("[").color(secondary).bold(true)
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).color(primary).create()))
+                .append("!", ComponentBuilder.FormatRetention.ALL).color(primary)
+                .append("] ", ComponentBuilder.FormatRetention.ALL).color(secondary)
+                .create();
     }
 
     private static BaseComponent[] getErrorPrefix() {

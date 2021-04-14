@@ -73,35 +73,35 @@ public class GameServer {
 
     public GameServer(ProxiedPlayer player, ServerType type, Playlist playlist) {
         this(
-                player.getUniqueId().toString(),
-                player.getName(),
-                PermissionUtils.isDonator(player) ? ServerSize.BASIC : ServerSize.LITE,
-                type,
-                playlist,
-                type == ServerType.GAME_DEVELOPMENT ?
-                    (PermissionUtils.isDonator(player) ? 10 : 4) :
-                    (PermissionUtils.isDonator(player) ? 20 : 8),
-                0,
-                0,
-                false,
-                true,
-                ProfileManager.getProfile(player).hasBetaFeatures()
+            player.getUniqueId().toString(),
+            player.getName(),
+            PermissionUtils.isDonator(player) ? ServerSize.BASIC : ServerSize.LITE,
+            type,
+            playlist,
+            type == ServerType.GAME_DEVELOPMENT ?
+                (PermissionUtils.isDonator(player) ? 10 : 4) :
+                (PermissionUtils.isDonator(player) ? 20 : 8),
+            0,
+            0,
+            false,
+            true,
+            ProfileManager.getProfile(player).hasBetaFeatures()
         );
     }
 
     public GameServer(PublicServer server) {
         this(
-                UUID.randomUUID().toString(),
-                server.isRanked() ? "League" : server.getPlaylist().getName().replaceAll(" ", ""),
-                server.isRanked() ? ServerSize.BASIC : ServerSize.PREMIUM,
-                ServerType.CUSTOM_GAMES,
-                server.getPlaylist(),
-                server.getMaxPlayers(),
-                server.getMinParty(),
-                server.getMaxParty(),
-                server.isRanked(),
-                false,
-                false
+            UUID.randomUUID().toString(),
+            server.isRanked() ? "League" : server.getPlaylist().getName().replaceAll(" ", ""),
+            server.isRanked() ? ServerSize.BASIC : ServerSize.PREMIUM,
+            ServerType.CUSTOM_GAMES,
+            server.getPlaylist(),
+            server.getMaxPlayers(),
+            server.getMinParty(),
+            server.getMaxParty(),
+            server.isRanked(),
+            false,
+            false
         );
     }
 
@@ -282,9 +282,9 @@ public class GameServer {
                 if (ServerUtils.inHub(player)) TaskUtils.scheduleTask(() -> this.connect(player), 1);
             }
         } else if (!this.isPrivate
-                && online
-                && ServerManager.getPublicServers(this.playlist, true).size() == 1
-                && !this.ranked) {
+            && online
+            && ServerManager.getPublicServers(this.playlist, true).size() == 1
+            && !this.ranked) {
             ChatUtils.broadcastMessage("A " + this.playlist.getName() + " server is now open! Join now with" + ChatColor.AQUA + " /server " + this.name);
             DiscordManager.sendServerNotification(this);
 
@@ -361,17 +361,17 @@ public class GameServer {
 
         item.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD + this.name + (this.isVisible() ? "" : "" + ChatColor.RESET + ChatColor.GRAY + " (Hidden)"));
         item.setLore(Arrays.asList(
-                ChatColor.WHITE + "" + ChatColor.ITALIC + this.type.getName() + (this.beta ? ChatColor.GRAY + " (Beta)" : ""),
-                ChatColor.AQUA + "" + this.getPlayersOnline() + ChatColor.DARK_GRAY + "/" + ChatColor.DARK_AQUA + this.maxPlayers + ChatColor.GRAY + " Players",
-                "",
-                ChatColor.GRAY + "Playlist: " + (this.playlist == null ? "N/A" : ChatColor.AQUA + this.playlist.getName()),
-                ChatColor.GRAY + "Status: " + (this.playlist == null ? "N/A" : this.status.toString()),
-                ChatColor.GRAY + "Map: " + (this.map == null ? "N/A" : ChatColor.YELLOW + this.map),
-                ChatColor.GRAY + "Game Mode: " + (this.gameMode == null ? "N/A" : ChatColor.GOLD + this.gameMode),
-                "",
-                ChatColor.ITALIC + "" + ChatColor.GRAY + "Server Info",
-                ChatColor.GRAY + "Region: " + ChatColor.DARK_AQUA + this.region.getName(),
-                ChatColor.GRAY + "Hardware: " + ChatColor.DARK_AQUA + this.size.getName()
+            ChatColor.WHITE + "" + ChatColor.ITALIC + this.type.getName() + (this.beta ? ChatColor.GRAY + " (Beta)" : ""),
+            ChatColor.AQUA + "" + this.getPlayersOnline() + ChatColor.DARK_GRAY + "/" + ChatColor.DARK_AQUA + this.maxPlayers + ChatColor.GRAY + " Players",
+            "",
+            ChatColor.GRAY + "Playlist: " + (this.playlist == null ? "N/A" : ChatColor.AQUA + this.playlist.getName()),
+            ChatColor.GRAY + "Status: " + (this.playlist == null ? "N/A" : this.status.toString()),
+            ChatColor.GRAY + "Map: " + (this.map == null ? "N/A" : ChatColor.YELLOW + this.map),
+            ChatColor.GRAY + "Game Mode: " + (this.gameMode == null ? "N/A" : ChatColor.GOLD + this.gameMode),
+            "",
+            ChatColor.ITALIC + "" + ChatColor.GRAY + "Server Info",
+            ChatColor.GRAY + "Region: " + ChatColor.DARK_AQUA + this.region.getName(),
+            ChatColor.GRAY + "Hardware: " + ChatColor.DARK_AQUA + this.size.getName()
         ));
 
         item.setFlag(ItemFlag.HIDE_ATTRIBUTES, true);
@@ -383,7 +383,7 @@ public class GameServer {
     @SuppressWarnings("deprecation")
     public TextComponent getTextComponent() {
         TextComponent component = new TextComponent(
-                ChatColor.GRAY + " • " + ChatColor.AQUA + this.name + ChatColor.GRAY + " » " +
+            ChatColor.GRAY + " • " + ChatColor.AQUA + this.name + ChatColor.GRAY + " » " +
                 ChatColor.AQUA + this.getPlayersOnline() + ChatColor.DARK_GRAY + "/" + ChatColor.DARK_AQUA + this.maxPlayers + ChatColor.GRAY + " Players"
         );
 
@@ -469,7 +469,8 @@ public class GameServer {
             this.destroy();
             if (this.isPrivate) {
                 ProxiedPlayer player = this.proxy.getPlayer(UUID.fromString(this.id));
-                if (player != null) CommandUtils.sendErrorMessage(player, "There was an issue creating your private server, please try again!");
+                if (player != null)
+                    CommandUtils.sendErrorMessage(player, "There was an issue creating your private server, please try again!");
             }
         }
     }
@@ -477,10 +478,10 @@ public class GameServer {
     @SuppressWarnings("deprecation")
     private void addServer(InetSocketAddress address) {
         ServerInfo serverInfo = this.proxy.constructServerInfo(
-                this.name,
-                address,
-                "", // motd
-                false);
+            this.name,
+            address,
+            "", // motd
+            false);
 
         this.plugin.getProxy().getServers().put(this.name, serverInfo);
         this.serverInfo = serverInfo;
@@ -536,14 +537,14 @@ public class GameServer {
 
         // scale server
         if (!this.isPrivate
-                && ServerUtils.allServersFull(this.playlist)
-                && !ServerUtils.isMaxServers(this.playlist)) {
+            && ServerUtils.allServersFull(this.playlist)
+            && !ServerUtils.isMaxServers(this.playlist)) {
             ServerManager.createPublicServer(this);
         }
 
         if (party != null
-                && party.isLeader(player)
-                && fromHub) {
+            && party.isLeader(player)
+            && fromHub) {
             TaskUtils.scheduleTask(() -> party.warp(this), 1L);
         }
 

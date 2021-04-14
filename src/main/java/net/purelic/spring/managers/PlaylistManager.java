@@ -21,10 +21,10 @@ public class PlaylistManager {
     public static void loadPlaylists(Configuration config) {
         PLAYLISTS.clear();
         config.getList("playlists")
-                .forEach(data -> {
-                    Playlist playlist = new Playlist((Map<String, Object>) data);
-                    PLAYLISTS.put(playlist.getName(), playlist);
-                });
+            .forEach(data -> {
+                Playlist playlist = new Playlist((Map<String, Object>) data);
+                PLAYLISTS.put(playlist.getName(), playlist);
+            });
     }
 
     public static Playlist getPlaylist(String name) {
@@ -33,8 +33,8 @@ public class PlaylistManager {
 
     public static void openSelectorInventory(ProxiedPlayer player) {
         List<Playlist> playlists = PLAYLISTS.values().stream()
-                .filter(playlist -> !playlist.isArchived())
-                .collect(Collectors.toList());
+            .filter(playlist -> !playlist.isArchived())
+            .collect(Collectors.toList());
 
         int rows = Math.max((playlists.size() / 9) + (playlists.size() % 9 == 0 ? 0 : 1), 1);
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(rows), new TextComponent("Choose a playlist:"));

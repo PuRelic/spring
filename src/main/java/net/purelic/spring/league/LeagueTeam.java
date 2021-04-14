@@ -47,7 +47,7 @@ public class LeagueTeam {
 
     public void sendLegacyMessage(String message) {
         this.players.stream().filter(Protocol::isLegacy)
-                .forEach(player -> player.sendMessage(new TextComponent(message)));
+            .forEach(player -> player.sendMessage(new TextComponent(message)));
     }
 
     public boolean isOnline() {

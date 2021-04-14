@@ -16,20 +16,20 @@ public class PurgeCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("spring")
-                .literal("purge")
-                .senderType(ProxiedPlayer.class)
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+            .literal("purge")
+            .senderType(ProxiedPlayer.class)
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
 
-                    if (!PermissionUtils.isAdmin(player)) {
-                        CommandUtils.sendNoPermissionMessage(player);
-                        return;
-                    }
+                if (!PermissionUtils.isAdmin(player)) {
+                    CommandUtils.sendNoPermissionMessage(player);
+                    return;
+                }
 
-                    int servers = ServerManager.getGameServers().size();
-                    new ArrayList<>(ServerManager.getGameServers().values()).forEach(ServerManager::removeServer);
-                    CommandUtils.sendSuccessMessage(player, "Purged " + servers + " server(s)!");
-                });
+                int servers = ServerManager.getGameServers().size();
+                new ArrayList<>(ServerManager.getGameServers().values()).forEach(ServerManager::removeServer);
+                CommandUtils.sendSuccessMessage(player, "Purged " + servers + " server(s)!");
+            });
     }
 
 }

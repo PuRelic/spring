@@ -12,11 +12,11 @@ public class PrivateServerCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("ps")
-                .senderType(ProxiedPlayer.class)
-               .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    InventoryManager.openPrivateServerInv(player);
-                });
+            .senderType(ProxiedPlayer.class)
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                InventoryManager.openPrivateServerInv(player);
+            });
     }
 
 }

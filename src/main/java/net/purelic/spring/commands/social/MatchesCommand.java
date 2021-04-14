@@ -15,19 +15,19 @@ public class MatchesCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("matches")
-                .senderType(ProxiedPlayer.class)
-                .argument(PlayerArgument.optional("player"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    Optional<ProxiedPlayer> targetArg = c.getOptional("player");
+            .senderType(ProxiedPlayer.class)
+            .argument(PlayerArgument.optional("player"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                Optional<ProxiedPlayer> targetArg = c.getOptional("player");
 
-                    if (targetArg.isPresent()) {
-                        ProxiedPlayer target = targetArg.get();
-                        InventoryManager.openMatchesMenu(player, target);
-                    } else {
-                        InventoryManager.openMatchesMenu(player);
-                    }
-                });
+                if (targetArg.isPresent()) {
+                    ProxiedPlayer target = targetArg.get();
+                    InventoryManager.openMatchesMenu(player, target);
+                } else {
+                    InventoryManager.openMatchesMenu(player);
+                }
+            });
     }
 
 }

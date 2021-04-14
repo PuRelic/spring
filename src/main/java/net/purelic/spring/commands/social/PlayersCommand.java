@@ -14,17 +14,17 @@ public class PlayersCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("players", "online")
-                .senderType(ProxiedPlayer.class)
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    int online = ProxyServer.getInstance().getOnlineCount();
+            .senderType(ProxiedPlayer.class)
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                int online = ProxyServer.getInstance().getOnlineCount();
 
-                    if (online == 1) {
-                        CommandUtils.sendAlertMessage(player, "Forever alone :(");
-                    } else {
-                        CommandUtils.sendAlertMessage(player, "There are currently " + ChatColor.AQUA + online + ChatColor.RESET + " players online");
-                    }
-                });
+                if (online == 1) {
+                    CommandUtils.sendAlertMessage(player, "Forever alone :(");
+                } else {
+                    CommandUtils.sendAlertMessage(player, "There are currently " + ChatColor.AQUA + online + ChatColor.RESET + " players online");
+                }
+            });
     }
 
 }

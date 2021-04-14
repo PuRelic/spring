@@ -27,9 +27,9 @@ public class LeaderboardManager {
     private static Set<Playlist> getRankedPlaylists() {
         Set<Playlist> playlists = new HashSet<>();
         ServerManager.getPublicServerTypes()
-                .values().stream()
-                .filter(PublicServer::isRanked)
-                .forEach(server -> playlists.add(server.getPlaylist()));
+            .values().stream()
+            .filter(PublicServer::isRanked)
+            .forEach(server -> playlists.add(server.getPlaylist()));
         return playlists;
     }
 

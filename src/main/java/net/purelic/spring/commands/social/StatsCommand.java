@@ -15,19 +15,19 @@ public class StatsCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("stats")
-                .senderType(ProxiedPlayer.class)
-                .argument(PlayerArgument.optional("player"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    Optional<ProxiedPlayer> targetArg = c.getOptional("player");
+            .senderType(ProxiedPlayer.class)
+            .argument(PlayerArgument.optional("player"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                Optional<ProxiedPlayer> targetArg = c.getOptional("player");
 
-                    if (targetArg.isPresent()) {
-                        ProxiedPlayer target = targetArg.get();
-                        InventoryManager.openStatsMenu(player, target);
-                    } else {
-                        InventoryManager.openStatsMenu(player);
-                    }
-                });
+                if (targetArg.isPresent()) {
+                    ProxiedPlayer target = targetArg.get();
+                    InventoryManager.openStatsMenu(player, target);
+                } else {
+                    InventoryManager.openStatsMenu(player);
+                }
+            });
     }
 
 }

@@ -15,20 +15,20 @@ public class PartyChatCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("pchat", "pc")
-                .senderType(ProxiedPlayer.class)
-                .argument(StringArgument.greedy("message"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    String message = c.get("message");
-                    Party party = PartyManager.getParty(player);
+            .senderType(ProxiedPlayer.class)
+            .argument(StringArgument.greedy("message"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                String message = c.get("message");
+                Party party = PartyManager.getParty(player);
 
-                    if (party == null) {
-                        CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
-                        return;
-                    }
+                if (party == null) {
+                    CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
+                    return;
+                }
 
-                    party.sendMessage(player, message);
-                });
+                party.sendMessage(player, message);
+            });
     }
 
 }

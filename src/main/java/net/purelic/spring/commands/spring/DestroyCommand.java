@@ -15,21 +15,21 @@ public class DestroyCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("spring")
-                .literal("destroy")
-                .senderType(ProxiedPlayer.class)
-                .argument(StringArgument.of("server"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    String server = c.get("server");
+            .literal("destroy")
+            .senderType(ProxiedPlayer.class)
+            .argument(StringArgument.of("server"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                String server = c.get("server");
 
-                    if (!PermissionUtils.isAdmin(player)) {
-                        CommandUtils.sendNoPermissionMessage(player);
-                        return;
-                    }
+                if (!PermissionUtils.isAdmin(player)) {
+                    CommandUtils.sendNoPermissionMessage(player);
+                    return;
+                }
 
-                    ServerManager.removeServer(server);
-                    CommandUtils.sendSuccessMessage(player, "Server \"" + server + "\" was destroyed!");
-                });
+                ServerManager.removeServer(server);
+                CommandUtils.sendSuccessMessage(player, "Server \"" + server + "\" was destroyed!");
+            });
     }
 
 }

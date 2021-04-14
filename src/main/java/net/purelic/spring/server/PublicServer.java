@@ -141,25 +141,25 @@ public class PublicServer {
 
             if (this.isRanked()) {
                 item.setLore(Arrays.asList(
-                        ChatColor.WHITE + this.playlist.getDescription(),
-                        "",
-                        ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
-                        ChatColor.GRAY + "Party Required: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
-                        "",
-                        ChatColor.WHITE + "L-Click to Join Queue",
-                        servers.size() > 0 ? browse : ""
+                    ChatColor.WHITE + this.playlist.getDescription(),
+                    "",
+                    ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
+                    ChatColor.GRAY + "Party Required: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
+                    "",
+                    ChatColor.WHITE + "L-Click to Join Queue",
+                    servers.size() > 0 ? browse : ""
                 ));
 
                 ItemAction.SELECT_LEAGUE.apply(item, this.playlist.getName());
             } else {
                 item.setLore(Arrays.asList(
-                        ChatColor.WHITE + this.playlist.getDescription(),
-                        "",
-                        ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
-                        ChatColor.GRAY + "Party: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
-                        "",
-                        ChatColor.GRAY + "L-Click to " + ChatColor.GREEN + "Quick Join",
-                        browse
+                    ChatColor.WHITE + this.playlist.getDescription(),
+                    "",
+                    ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
+                    ChatColor.GRAY + "Party: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
+                    "",
+                    ChatColor.GRAY + "L-Click to " + ChatColor.GREEN + "Quick Join",
+                    browse
                 ));
 
                 ItemAction.SELECT_PUBLIC.apply(item, this.playlist.getName());

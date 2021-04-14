@@ -36,7 +36,7 @@ public class Leaderboard {
         this.refresh();
     }
 
-    @SuppressWarnings({ "unchecked", "ConstantConditions" })
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
     public void refresh() {
         if (this.docRef != null && !this.isServerOnline()) return;
 

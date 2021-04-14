@@ -24,6 +24,8 @@ public enum ServerRegion {
         return this.slug;
     }
 
-    public String getName() { return this.name; }
+    public String getName() {
+        return this.name;
+    }
 
 }

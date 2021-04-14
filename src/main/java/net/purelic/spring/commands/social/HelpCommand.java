@@ -33,8 +33,7 @@ public class HelpCommand implements ProxyCommand {
 
                     .append(new CommandBuilder("/website", "Learn more about PuRelic").toComponent())
 
-                    .append(new CommandBuilder("/docs", "Documentation for map and game development").toComponent())
-                    ;
+                    .append(new CommandBuilder("/docs", "Documentation for map and game development").toComponent());
 
                 ChatUtils.sendMessage(player, builder);
             });

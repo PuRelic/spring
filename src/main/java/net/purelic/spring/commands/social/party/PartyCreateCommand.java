@@ -17,26 +17,26 @@ public class PartyCreateCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("party", "p")
-                .literal("create")
-                .senderType(ProxiedPlayer.class)
-                .argument(StringArgument.optional("name", StringArgument.StringMode.GREEDY))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    Optional<String> nameArg = c.getOptional("name");
+            .literal("create")
+            .senderType(ProxiedPlayer.class)
+            .argument(StringArgument.optional("name", StringArgument.StringMode.GREEDY))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                Optional<String> nameArg = c.getOptional("name");
 
-                    if (PartyManager.hasParty(player)) {
-                        CommandUtils.sendErrorMessage(player, "You're currently in a party!");
-                        return;
-                    }
+                if (PartyManager.hasParty(player)) {
+                    CommandUtils.sendErrorMessage(player, "You're currently in a party!");
+                    return;
+                }
 
-                    if (nameArg.isPresent() && !PermissionUtils.isDonator(player)) {
-                        CommandUtils.sendErrorMessage(player, "Only premium players can set custom party names!");
-                        return;
-                    }
+                if (nameArg.isPresent() && !PermissionUtils.isDonator(player)) {
+                    CommandUtils.sendErrorMessage(player, "Only premium players can set custom party names!");
+                    return;
+                }
 
-                    String name = nameArg.orElse(player.getName());
-                    PartyManager.createParty(player, name);
-                });
+                String name = nameArg.orElse(player.getName());
+                PartyManager.createParty(player, name);
+            });
     }
 
 }

@@ -27,10 +27,10 @@ public class ServerConnected implements Listener {
         ServerManager.setLastServer(player);
 
         Spring.sendPluginMessage(
-                player,
-                "QuitMessage",
-                player.getUniqueId().toString(),
-                to.getName());
+            player,
+            "QuitMessage",
+            player.getUniqueId().toString(),
+            to.getName());
     }
 
 }

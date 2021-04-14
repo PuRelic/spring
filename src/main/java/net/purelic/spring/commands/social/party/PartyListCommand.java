@@ -16,28 +16,28 @@ public class PartyListCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("party", "p")
-                .literal("list")
-                .senderType(ProxiedPlayer.class)
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    Party party = PartyManager.getParty(player);
+            .literal("list")
+            .senderType(ProxiedPlayer.class)
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                Party party = PartyManager.getParty(player);
 
-                    if (party == null) {
-                        CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
-                        return;
-                    }
+                if (party == null) {
+                    CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
+                    return;
+                }
 
-                    String message = "Party Members (" + ChatColor.AQUA + party.getMembers().size() + ChatColor.RESET + "): ";
-                    String separator = ChatColor.GRAY + ", " + ChatColor.RESET;
-                    boolean first = true;
+                String message = "Party Members (" + ChatColor.AQUA + party.getMembers().size() + ChatColor.RESET + "): ";
+                String separator = ChatColor.GRAY + ", " + ChatColor.RESET;
+                boolean first = true;
 
-                    for (ProxiedPlayer member : party.getMembers()) {
-                        message += (first ? "" : separator) + member.getName();
-                        if (first) first = false;
-                    }
+                for (ProxiedPlayer member : party.getMembers()) {
+                    message += (first ? "" : separator) + member.getName();
+                    if (first) first = false;
+                }
 
-                    PartyUtils.sendPartyMessage(player, message);
-                });
+                PartyUtils.sendPartyMessage(player, message);
+            });
     }
 
 }

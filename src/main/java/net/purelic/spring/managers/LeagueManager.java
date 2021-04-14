@@ -149,8 +149,8 @@ public class LeagueManager {
 
     public static GameServer findServer(Playlist playlist) {
         return ServerManager.getPublicServers(playlist, true)
-                .stream().filter(server -> server.getStatus() == ServerStatus.STARTING)
-                .findFirst().orElse(null);
+            .stream().filter(server -> server.getStatus() == ServerStatus.STARTING)
+            .findFirst().orElse(null);
     }
 
     public static boolean isQueued(LeagueTeam team) {

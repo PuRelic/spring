@@ -16,19 +16,19 @@ public class PingCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("ping")
-                .senderType(ProxiedPlayer.class)
-                .argument(PlayerArgument.optional("player"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    Optional<ProxiedPlayer> targetArg = c.getOptional("player");
+            .senderType(ProxiedPlayer.class)
+            .argument(PlayerArgument.optional("player"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                Optional<ProxiedPlayer> targetArg = c.getOptional("player");
 
-                    if (targetArg.isPresent()) {
-                        ProxiedPlayer target = targetArg.get();
-                        CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(" + target.getName() + " has a ping of " + target.getPing() + "ms)");
-                    } else {
-                        CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(You have a ping of " + player.getPing() + "ms)");
-                    }
-                });
+                if (targetArg.isPresent()) {
+                    ProxiedPlayer target = targetArg.get();
+                    CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(" + target.getName() + " has a ping of " + target.getPing() + "ms)");
+                } else {
+                    CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(You have a ping of " + player.getPing() + "ms)");
+                }
+            });
     }
 
 }

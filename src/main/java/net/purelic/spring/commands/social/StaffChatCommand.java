@@ -24,21 +24,21 @@ public class StaffChatCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("sc")
-                .senderType(ProxiedPlayer.class)
-                .argument(StringArgument.greedy("message"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    String message = player.getName() + ": " + c.get("message");
+            .senderType(ProxiedPlayer.class)
+            .argument(StringArgument.greedy("message"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                String message = player.getName() + ": " + c.get("message");
 
-                    if (!PermissionUtils.isStaff(player)) {
-                        CommandUtils.sendNoPermissionMessage(player);
-                        return;
-                    }
+                if (!PermissionUtils.isStaff(player)) {
+                    CommandUtils.sendNoPermissionMessage(player);
+                    return;
+                }
 
-                    ProxyServer.getInstance().getPlayers().stream()
-                        .filter(PermissionUtils::isStaff)
-                        .forEach(staff -> this.sendStaffMessage(staff, message));
-                });
+                ProxyServer.getInstance().getPlayers().stream()
+                    .filter(PermissionUtils::isStaff)
+                    .forEach(staff -> this.sendStaffMessage(staff, message));
+            });
     }
 
     private BaseComponent[] getPrefix() {

@@ -35,8 +35,10 @@ public class SeenCommand implements ProxyCommand {
                         CommandUtils.sendNoPlayerMessage(player, target);
                     } else {
                         Timestamp lastSeen = doc.getTimestamp("last_seen");
-                        if (lastSeen == null) CommandUtils.sendErrorMessage(player, "There was an error fetching information about this player!");
-                        else CommandUtils.sendAlertMessage(player, ChatColor.DARK_AQUA + doc.getString("name") + ChatColor.RESET + " was last seen " + ChatUtils.format(lastSeen));
+                        if (lastSeen == null)
+                            CommandUtils.sendErrorMessage(player, "There was an error fetching information about this player!");
+                        else
+                            CommandUtils.sendAlertMessage(player, ChatColor.DARK_AQUA + doc.getString("name") + ChatColor.RESET + " was last seen " + ChatUtils.format(lastSeen));
                     }
                 }
             });

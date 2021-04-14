@@ -146,6 +146,7 @@ public class DiscordWebhook {
     }
 
     public static class EmbedObject {
+
         private String title;
         private String description;
         private String url;
@@ -239,6 +240,7 @@ public class DiscordWebhook {
         }
 
         private static class Footer {
+
             private final String text;
             private final String iconUrl;
 
@@ -254,9 +256,11 @@ public class DiscordWebhook {
             private String getIconUrl() {
                 return iconUrl;
             }
+
         }
 
         private static class Thumbnail {
+
             private final String url;
 
             private Thumbnail(String url) {
@@ -266,9 +270,11 @@ public class DiscordWebhook {
             private String getUrl() {
                 return url;
             }
+
         }
 
         private static class Image {
+
             private final String url;
 
             private Image(String url) {
@@ -278,9 +284,11 @@ public class DiscordWebhook {
             private String getUrl() {
                 return url;
             }
+
         }
 
         private static class Author {
+
             private final String name;
             private final String url;
             private final String iconUrl;
@@ -302,9 +310,11 @@ public class DiscordWebhook {
             private String getIconUrl() {
                 return iconUrl;
             }
+
         }
 
         private static class Field {
+
             private final String name;
             private final String value;
             private final boolean inline;
@@ -326,7 +336,9 @@ public class DiscordWebhook {
             private boolean isInline() {
                 return inline;
             }
+
         }
+
     }
 
     private static class JSONObject {
@@ -376,6 +388,7 @@ public class DiscordWebhook {
         private String quote(String string) {
             return "\"" + string + "\"";
         }
+
     }
 
 }

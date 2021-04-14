@@ -26,7 +26,7 @@ public enum StatSection {
     CAPTURE_THE_FLAG("Capture the Flag", 33, ItemType.WHITE_BANNER, StatType.FLAGS),
     ;
 
-    private final StatType[] defaultStats = new StatType[] { StatType.GAMES_PLAYED, StatType.WINS, StatType.KILLS, StatType.DEATHS };
+    private final StatType[] defaultStats = new StatType[]{StatType.GAMES_PLAYED, StatType.WINS, StatType.KILLS, StatType.DEATHS};
     private final String key;
     private final String name;
     private final int slot;

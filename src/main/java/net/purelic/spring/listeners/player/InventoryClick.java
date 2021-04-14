@@ -106,11 +106,11 @@ public class InventoryClick implements Listener {
                 case LEADERBOARD:
                     String lbUrl = Analytics.urlBuilder(player, "https://purelic.net/leaderboards", "league_gui");
                     player.sendMessage(new ComponentBuilder("View the rest of the leaderboard online")
-                            .append(" » ").color(ChatColor.GRAY)
-                            .append("purelic.net/leaderboards").color(ChatColor.AQUA)
-                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
-                            .event(new ClickEvent(ClickEvent.Action.OPEN_URL, lbUrl))
-                            .create());
+                        .append(" » ").color(ChatColor.GRAY)
+                        .append("purelic.net/leaderboards").color(ChatColor.AQUA)
+                        .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Open").create()))
+                        .event(new ClickEvent(ClickEvent.Action.OPEN_URL, lbUrl))
+                        .create());
                     break;
                 case STATS:
                     String profileUrl = Analytics.urlBuilder(player, "https://purelic.net/players/" + player.getName(), "stats_gui");

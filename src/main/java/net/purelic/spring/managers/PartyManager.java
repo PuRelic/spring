@@ -29,13 +29,13 @@ public class PartyManager {
 
     public static void cacheParties() {
         Commons.getGeneralCache().put("parties",
-                PARTIES.values().stream()
-                        .map(Party::toData)
-                        .collect(Collectors.toSet()));
+            PARTIES.values().stream()
+                .map(Party::toData)
+                .collect(Collectors.toSet()));
     }
 
     public static Party createParty(ProxiedPlayer player) {
-       return createParty(player, player.getName());
+        return createParty(player, player.getName());
     }
 
     public static Party createParty(ProxiedPlayer player, String name) {
@@ -74,8 +74,8 @@ public class PartyManager {
 
     public static PartyInvite getInvite(ProxiedPlayer invited, Party party) {
         return INVITES.getOrDefault(invited, new HashSet<>())
-                .stream().filter(pi -> pi.getParty() == party)
-                .findFirst().orElse(null);
+            .stream().filter(pi -> pi.getParty() == party)
+            .findFirst().orElse(null);
     }
 
     public static boolean hasInvite(ProxiedPlayer invited, Party party) {
@@ -91,8 +91,8 @@ public class PartyManager {
 
     public static void removeInvite(PartyInvite invite) {
         INVITES.values().stream()
-                .filter(invites -> invites.contains(invite))
-                .forEach(invites -> invites.remove(invite));
+            .filter(invites -> invites.contains(invite))
+            .forEach(invites -> invites.remove(invite));
 
         ProxiedPlayer invited = invite.getInvited();
         if (INVITES.get(invited).isEmpty()) INVITES.remove(invited);

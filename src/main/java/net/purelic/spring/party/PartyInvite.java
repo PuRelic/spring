@@ -48,16 +48,16 @@ public class PartyInvite {
     @SuppressWarnings("deprecation")
     public void send() {
         BaseComponent[] message = new ComponentBuilder(this.sender.getName() + " has invited you to " + (this.party.hasCustomName() ? this.party.getName() + "'s" : "their") + " party  ")
-                .append("[ACCEPT]")
-                    .color(ChatColor.GREEN)
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Accept").color(ChatColor.GREEN).create()))
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + this.sender.getName()))
-                .append("  ")
-                .append("[DENY]")
-                    .color(ChatColor.RED)
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Deny").color(ChatColor.RED).create()))
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party deny " + this.sender.getName()))
-                .create();
+            .append("[ACCEPT]")
+            .color(ChatColor.GREEN)
+            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Accept").color(ChatColor.GREEN).create()))
+            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + this.sender.getName()))
+            .append("  ")
+            .append("[DENY]")
+            .color(ChatColor.RED)
+            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Deny").color(ChatColor.RED).create()))
+            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party deny " + this.sender.getName()))
+            .create();
 
         PartyUtils.sendPartyMessage(this.invited, message);
         this.party.sendMessage(this.sender.getName() + " invited " + this.invited.getName() + " to the party! They have 30 seconds to respond.");

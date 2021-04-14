@@ -46,12 +46,12 @@ public class CommandBuilder {
     @SuppressWarnings("deprecation")
     public BaseComponent[] toComponent() {
         ComponentBuilder builder =
-                new ComponentBuilder("\n")
-                    .append(" • ").color(ChatColor.GRAY)
-                    .append(this.command).color(this.color)
-                    .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, this.command + " "))
-                    .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Suggest").color(this.color).create()))
-                    .append("").event(this.resetHover());
+            new ComponentBuilder("\n")
+                .append(" • ").color(ChatColor.GRAY)
+                .append(this.command).color(this.color)
+                .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, this.command + " "))
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Suggest").color(this.color).create()))
+                .append("").event(this.resetHover());
 
         for (BaseComponent[] argument : this.arguments) {
             builder.append(" ").append(argument);
@@ -65,7 +65,7 @@ public class CommandBuilder {
     @SuppressWarnings("deprecation")
     private HoverEvent resetHover() {
         // required to reset the hover for the text following it
-        return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[] {});
+        return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{});
     }
 
 }

@@ -16,23 +16,23 @@ public class RejoinCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("rejoin")
-                .senderType(ProxiedPlayer.class)
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    GameServer lastServer = ServerManager.getLastServer(player);
+            .senderType(ProxiedPlayer.class)
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                GameServer lastServer = ServerManager.getLastServer(player);
 
-                    if (lastServer == null) {
-                        CommandUtils.sendErrorMessage(player, "Could not find the last server you were on!");
-                        return;
-                    }
+                if (lastServer == null) {
+                    CommandUtils.sendErrorMessage(player, "Could not find the last server you were on!");
+                    return;
+                }
 
-                    ComponentBuilder message = new ComponentBuilder("Sending you to ").color(ChatColor.GREEN)
-                        .append(lastServer.getName()).color(ChatColor.AQUA)
-                        .append("...").color(ChatColor.GREEN);
+                ComponentBuilder message = new ComponentBuilder("Sending you to ").color(ChatColor.GREEN)
+                    .append(lastServer.getName()).color(ChatColor.AQUA)
+                    .append("...").color(ChatColor.GREEN);
 
-                    CommandUtils.sendSuccessMessage(player, message.create());
-                    lastServer.connect(player);
-                });
+                CommandUtils.sendSuccessMessage(player, message.create());
+                lastServer.connect(player);
+            });
     }
 
 }

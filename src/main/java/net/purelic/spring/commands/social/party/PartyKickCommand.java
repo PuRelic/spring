@@ -15,36 +15,36 @@ public class PartyKickCommand implements ProxyCommand {
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("party", "p")
-                .literal("kick")
-                .senderType(ProxiedPlayer.class)
-                .argument(PlayerArgument.of("member"))
-                .handler(c -> {
-                    ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                    ProxiedPlayer target = c.get("member");
-                    Party party = PartyManager.getParty(player);
+            .literal("kick")
+            .senderType(ProxiedPlayer.class)
+            .argument(PlayerArgument.of("member"))
+            .handler(c -> {
+                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
+                ProxiedPlayer target = c.get("member");
+                Party party = PartyManager.getParty(player);
 
-                    if (party == null) {
-                        CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
-                        return;
-                    }
+                if (party == null) {
+                    CommandUtils.sendErrorMessage(player, "You aren't currently in a party!");
+                    return;
+                }
 
-                    if (player != party.getLeader()) {
-                        CommandUtils.sendErrorMessage(player, "Only party leaders can kick members!");
-                        return;
-                    }
+                if (player != party.getLeader()) {
+                    CommandUtils.sendErrorMessage(player, "Only party leaders can kick members!");
+                    return;
+                }
 
-                    if (!party.getMembers().contains(target)) {
-                        CommandUtils.sendErrorMessage(player, "That player is not currently in your party!");
-                        return;
-                    }
+                if (!party.getMembers().contains(target)) {
+                    CommandUtils.sendErrorMessage(player, "That player is not currently in your party!");
+                    return;
+                }
 
-                    if (target == player) {
-                        party.remove(player, false);
-                        return;
-                    }
+                if (target == player) {
+                    party.remove(player, false);
+                    return;
+                }
 
-                    party.remove(target, true);
-                });
+                party.remove(target, true);
+            });
     }
 
 }

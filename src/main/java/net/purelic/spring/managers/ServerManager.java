@@ -10,11 +10,17 @@ import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.commons.Commons;
 import net.purelic.spring.Spring;
-import net.purelic.spring.server.*;
+import net.purelic.spring.server.GameServer;
+import net.purelic.spring.server.Playlist;
+import net.purelic.spring.server.PublicServer;
+import net.purelic.spring.server.ServerType;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.ServerUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ServerManager {
@@ -30,10 +36,10 @@ public class ServerManager {
         PUBLIC_SERVERS.clear();
 
         config.getList("servers")
-                .forEach(data -> {
-                    PublicServer server = new PublicServer((Map<String, Object>) data);
-                    PUBLIC_SERVERS.put(server.getPlaylist().getName(), server);
-                });
+            .forEach(data -> {
+                PublicServer server = new PublicServer((Map<String, Object>) data);
+                PUBLIC_SERVERS.put(server.getPlaylist().getName(), server);
+            });
     }
 
     public static void loadServerCache() {
@@ -61,8 +67,8 @@ public class ServerManager {
 
     public static List<GameServer> getGameServers(PublicServer server) {
         return getPublicServers(true).stream()
-                .filter(gs -> gs.getPlaylist().getName().equals(server.getPlaylist().getName()))
-                .collect(Collectors.toList());
+            .filter(gs -> gs.getPlaylist().getName().equals(server.getPlaylist().getName()))
+            .collect(Collectors.toList());
     }
 
     public static void addToQueue(ProxiedPlayer player, Playlist playlist) {
@@ -81,27 +87,27 @@ public class ServerManager {
 
     public static void clearQueues() {
         QUEUED.keySet().forEach(player ->
-                CommandUtils.sendAlertMessage(player, "Playlists have been updated and you were removed from the queue. Please re-queue"));
+            CommandUtils.sendAlertMessage(player, "Playlists have been updated and you were removed from the queue. Please re-queue"));
         QUEUED.forEach((player, server) -> server.setStarting(false));
         QUEUED.clear();
     }
 
     public static List<GameServer> getPublicServers(boolean visibleOnly) {
         return GAME_SERVERS.values().stream()
-                .filter(server -> !server.isPrivate() && (!visibleOnly || server.isVisible()))
-                .collect(Collectors.toList());
+            .filter(server -> !server.isPrivate() && (!visibleOnly || server.isVisible()))
+            .collect(Collectors.toList());
     }
 
     public static List<GameServer> getPublicServers(Playlist playlist, boolean visibleOnly) {
         return getPublicServers(visibleOnly).stream()
-                .filter(server -> server.getPlaylist().getName().equals(playlist.getName()))
-                .collect(Collectors.toList());
+            .filter(server -> server.getPlaylist().getName().equals(playlist.getName()))
+            .collect(Collectors.toList());
     }
 
     public static List<GameServer> getPrivateServers(boolean visibleOnly) {
-       return GAME_SERVERS.values().stream()
-                .filter(server -> server.isPrivate() && (!visibleOnly || server.isVisible()))
-                .collect(Collectors.toList());
+        return GAME_SERVERS.values().stream()
+            .filter(server -> server.isPrivate() && (!visibleOnly || server.isVisible()))
+            .collect(Collectors.toList());
     }
 
     public static List<GameServer> getRankedServers(boolean visibleOnly) {

@@ -15,10 +15,10 @@ public class PartyUtils {
     private static BaseComponent[] getPrefix(String prefix) {
         return
             new ComponentBuilder("[").color(SECONDARY_COLOR)
-                    .append(prefix).color(PRIMARY_COLOR)
-                    .append("]").color(SECONDARY_COLOR)
-                    .append(" ").reset()
-                    .create();
+                .append(prefix).color(PRIMARY_COLOR)
+                .append("]").color(SECONDARY_COLOR)
+                .append(" ").reset()
+                .create();
     }
 
     public static void sendPartyMessage(ProxiedPlayer player, String message) {

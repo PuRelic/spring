@@ -39,10 +39,10 @@ public class DiscordManager {
             DiscordWebhook webhook = getWebhook(alertsWebhook);
             webhook.setContent("<@&" + Role.LOOKING_TO_PLAY + ">");
             webhook.addEmbed(new DiscordWebhook.EmbedObject()
-                    .setColor(Color.GREEN)
-                    .setDescription("A new server is now online!")
-                    .addField("Server", "/server " + server.getName(), false)
-                    .addField("Players Online", "" + Spring.getPlugin().getProxy().getOnlineCount(), false)
+                .setColor(Color.GREEN)
+                .setDescription("A new server is now online!")
+                .addField("Server", "/server " + server.getName(), false)
+                .addField("Players Online", "" + Spring.getPlugin().getProxy().getOnlineCount(), false)
             );
             webhook.execute();
         } catch (IOException e) {
