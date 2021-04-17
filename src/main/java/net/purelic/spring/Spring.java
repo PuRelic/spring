@@ -36,9 +36,7 @@ import net.purelic.spring.commands.social.party.*;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
-import net.purelic.spring.listeners.discord.AttachmentOnlyChannels;
-import net.purelic.spring.listeners.discord.GuildMessageReceived;
-import net.purelic.spring.listeners.discord.ReactionRoles;
+import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.Chat;
@@ -61,12 +59,15 @@ public class Spring extends Plugin {
 
     private static Spring plugin;
 
+    private Configuration config;
     private BungeeCommandManager<CommandSender> bungeeCmdMgr;
     private JDA4CommandManager<DiscordUser> jdaCmdMgr;
 
     @Override
     public void onEnable() {
         plugin = this;
+
+        this.config = this.getConfig();
 
         this.getProxy().registerChannel("purelic:spring");
         this.reloadConfig();
@@ -97,14 +98,14 @@ public class Spring extends Plugin {
     }
 
     public void reloadConfig() {
-        Configuration config = this.getConfig();
-        Arrays.stream(ServerType.values()).forEach(type -> type.setSnapshotId(config));
-        PlaylistManager.loadPlaylists(config);
-        ServerManager.loadPublicServers(config);
-        InventoryManager.loadServerSelector(config);
-        SettingsManager.loadSettings(config);
-        DiscordManager.loadDiscordWebhooks(config);
+        Arrays.stream(ServerType.values()).forEach(type -> type.setSnapshotId(this.config));
+        PlaylistManager.loadPlaylists(this.config);
+        ServerManager.loadPublicServers(this.config);
+        InventoryManager.loadServerSelector(this.config);
+        SettingsManager.loadSettings(this.config);
+        DiscordManager.loadDiscordWebhooks(this.config);
         LeagueManager.reloadSeason();
+        CensoredWordFilter.updateFilter(this.config);
     }
 
     public Configuration getConfig() {
@@ -119,7 +120,11 @@ public class Spring extends Plugin {
     private void registerListeners() {
         // Discord
         this.registerListener(new AttachmentOnlyChannels());
+        this.registerListener(new CensoredWordFilter());
+        this.registerListener(new DiscordTempMute());
         this.registerListener(new GuildMessageReceived());
+        this.registerListener(new InviteTracker());
+        this.registerListener(new LinkChannelFilter());
         this.registerListener(new ReactionRoles());
 
         // Party
@@ -154,12 +159,16 @@ public class Spring extends Plugin {
         // Discord
         this.registerCommand(new EmbedCommand());
         this.registerCommand(new EmbedEditCommand());
+        this.registerCommand(new LinkCommand());
         this.registerCommand(new MuteCommand());
         this.registerCommand(new NukeCommand());
         this.registerCommand(new ReactCommand());
         this.registerCommand(new SpeakCommand());
         this.registerCommand(new TempMuteCommand());
+        this.registerCommand(new UnlinkCommand());
         this.registerCommand(new UnmuteCommand());
+        this.registerCommand(new VerifyCommand());
+        this.registerCommand(new WhoIsCommand());
 
         // League
         this.registerCommand(new LeaveCommand());

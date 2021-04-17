@@ -20,8 +20,9 @@ public class AttachmentOnlyChannels implements Listener {
     @EventHandler
     public void onDiscordMessage(DiscordMessageEvent event) {
         if (CHANNELS.contains(event.getChannelId())
-            && (!event.hasAttachments() && !event.hasEmbeds())
-            && !DiscordUtils.hasRole(event.getSender(), Role.any(Role.staff(), Role.MEDIA))
+            && !event.hasAttachments()
+            && !event.hasEmbeds()
+            && !DiscordUtils.hasRole(event.getSender(), Role.staff())
         ) {
             event.getMessage().delete().queue();
         }

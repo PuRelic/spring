@@ -1,5 +1,6 @@
 package net.purelic.spring.listeners.discord;
 
+import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -21,8 +22,12 @@ public class ReactionRoles extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
+        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+
+        if (!reactionEmote.isEmoji()) return;
+
+        String emoji = reactionEmote.getEmoji();
         String messageId = event.getMessageId();
-        String emoji = event.getReactionEmote().getEmoji();
 
         if (messageId.equals(ALERT_MESSAGE)) {
             String roleId = this.alertRoles.get(emoji);
@@ -35,8 +40,12 @@ public class ReactionRoles extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionRemove(GuildMessageReactionRemoveEvent event) {
+        MessageReaction.ReactionEmote reactionEmote = event.getReactionEmote();
+
+        if (!reactionEmote.isEmoji()) return;
+
+        String emoji = reactionEmote.getEmoji();
         String messageId = event.getMessageId();
-        String emoji = event.getReactionEmote().getEmoji();
 
         if (messageId.equals(ALERT_MESSAGE)) {
             String roleId = this.alertRoles.get(emoji);

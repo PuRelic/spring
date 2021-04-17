@@ -72,6 +72,7 @@ public class Analytics {
             .traits(ImmutableMap.<String, Object>builder()
                 .put("name", player.getName())
                 .put("joined", profile.getJoined().toDate())
+                .put("discord_linked", profile.hasDiscordLinked())
                 .build()
             )
             .context(ImmutableMap.<String, Object>builder().put("ip", player.getAddress().getAddress().getHostAddress()).build())
@@ -106,6 +107,20 @@ public class Analytics {
                 .anonymousId(ip)
                 .properties(properties)
                 .context(ImmutableMap.<String, Object>builder().put("ip", ip).build())
+        );
+    }
+
+    public static void track(DiscordAnalyticsEvent event) {
+        TrackMessage.Builder track = TrackMessage.builder(event.getName())
+            .timestamp(Timestamp.now().toDate())
+            .anonymousId(event.getUserId());
+
+        if (event.hasLinkedId()) {
+            track.userId(event.getPlayerId().toString());
+        }
+
+        Commons.getAnalytics().enqueue(
+            track.properties(event.getProperties())
         );
     }
 

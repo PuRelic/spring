@@ -10,29 +10,41 @@ import net.purelic.spring.utils.DatabaseUtils;
 
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 public class Profile {
 
     private static final Long STARTING_ELO = 250L;
 
     private final UUID uuid;
-    private final Set<Rank> ranks;
+    private final String name;
+    private final List<Rank> ranks;
     private final Map<String, Object> stats;
     private final List<Map<String, Object>> matches;
     private final Timestamp joined;
     private boolean betaFeatures;
+    private boolean discordLinked;
 
-    @SuppressWarnings("unchecked")
     public Profile(UUID uuid, Map<String, Object> data) {
         this.uuid = uuid;
+        this.name = (String) data.get("name");
         this.ranks = Rank.parseRanks((List<Object>) data.getOrDefault(Rank.PATH, new ArrayList<>()));
         this.stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
         this.matches = (List<Map<String, Object>>) data.getOrDefault("recent_matches", new ArrayList<>());
         this.joined = (Timestamp) data.getOrDefault("joined", Timestamp.now());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
+        this.discordLinked = (boolean) data.getOrDefault("discord_linked", false);
     }
 
-    public Set<Rank> getRanks() {
+    public String getName() {
+        return this.name;
+    }
+
+    public List<Rank> getRanks() {
         return this.ranks;
+    }
+
+    public boolean hasRank(Rank rank) {
+        return this.ranks.contains(rank);
     }
 
     public boolean hasBetaFeatures() {
@@ -44,7 +56,6 @@ public class Profile {
         DatabaseUtils.updatePlayerDoc(this.uuid, Preference.BETA_FEATURES.getFullPath(), this.betaFeatures);
     }
 
-    @SuppressWarnings("unchecked")
     private Object getPreference(Preference preference, Map<String, Object> data, Object defaultValue) {
         Map<String, Object> preferences = (Map<String, Object>) data.getOrDefault(Preference.PATH, new HashMap<>());
         return preferences.getOrDefault(preference.getKey(), defaultValue);
@@ -59,12 +70,10 @@ public class Profile {
         return this.stats;
     }
 
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getStats(StatSection section) {
         return (Map<String, Object>) this.stats.getOrDefault(section.getKey(), new HashMap<>());
     }
 
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getTotalStats(StatSection section) {
         return (Map<String, Object>) this.getStats(section).getOrDefault("total", new HashMap<>());
     }
@@ -84,13 +93,13 @@ public class Profile {
         preferences.put(Preference.BETA_FEATURES.getKey(), this.betaFeatures);
         data.put(Preference.PATH, preferences);
 
+        data.put("name", this.name);
         data.put("stats", this.stats);
         data.put("recent_matches", this.matches);
 
         return data;
     }
 
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getRankedStats(Playlist pl) {
         Map<String, Object> ranked = (Map<String, Object>) this.stats.getOrDefault("ranked", new HashMap<>());
         Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason().getId(), new HashMap<>());
@@ -114,6 +123,15 @@ public class Profile {
 
     public Timestamp getJoined() {
         return this.joined;
+    }
+
+    public boolean hasDiscordLinked() {
+        return this.discordLinked;
+    }
+
+    public void setDiscordLinked(boolean discordLinked) {
+        this.discordLinked = discordLinked;
+        DatabaseUtils.updatePlayerDoc(this.uuid, "discord_linked", this.discordLinked);
     }
 
 }

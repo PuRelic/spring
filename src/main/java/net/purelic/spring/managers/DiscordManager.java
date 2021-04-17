@@ -1,17 +1,19 @@
 package net.purelic.spring.managers;
 
+import net.dv8tion.jda.api.entities.User;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.spring.Spring;
 import net.purelic.spring.discord.Role;
+import net.purelic.spring.profile.DiscordProfile;
+import net.purelic.spring.profile.Profile;
+import net.purelic.spring.profile.Rank;
 import net.purelic.spring.server.GameServer;
-import net.purelic.spring.utils.DiscordUtils;
-import net.purelic.spring.utils.DiscordWebhook;
-import net.purelic.spring.utils.ServerUtils;
-import net.purelic.spring.utils.TaskUtils;
+import net.purelic.spring.utils.*;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.UUID;
 
 public class DiscordManager {
 
@@ -73,6 +75,35 @@ public class DiscordManager {
     private static void startTasks() {
         TaskUtils.runTimer(DiscordUtils::updateOnlineCount, 5); // refresh every 5 seconds
         TaskUtils.runTimer(DiscordUtils::updateMemberCount, 600); // refresh every 10 minutes
+    }
+
+    public static DiscordProfile getProfile(User user) {
+        return new DiscordProfile(DatabaseUtils.getDiscordDoc(user));
+    }
+
+    public static UUID getLinkedId(User user) {
+        String playerId = (String) DatabaseUtils.getDiscordDoc(user).get("player_uuid");
+        return playerId == null ? null : UUID.fromString(playerId);
+    }
+
+    public static void syncRoles(ProxiedPlayer player, User user) {
+        syncRoles(ProfileManager.getProfile(player), user);
+    }
+
+    public static void syncRoles(UUID playerId, User user) {
+        syncRoles(ProfileManager.getProfile(playerId), user);
+    }
+
+    private static void syncRoles(Profile profile, User user) {
+        for (Rank rank : Rank.values()) {
+            if (!rank.hasDiscordRole()) continue;
+
+            if (profile.hasRank(rank)) {
+                DiscordUtils.addRole(user, rank.getDiscordRole()).queue();
+            } else {
+                DiscordUtils.removeRole(user, rank.getDiscordRole()).queue();
+            }
+        }
     }
 
 }

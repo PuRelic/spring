@@ -5,12 +5,12 @@ import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.profile.Rank;
 
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 public class PermissionUtils {
 
     private static boolean hasRank(ProxiedPlayer player, Rank... ranks) {
-        Set<Rank> playerRanks = ProfileManager.getProfile(player).getRanks();
+        List<Rank> playerRanks = ProfileManager.getProfile(player).getRanks();
 
         for (Rank rank : ranks) {
             if (playerRanks.contains(rank)) return true;
@@ -19,6 +19,7 @@ public class PermissionUtils {
         return false;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isAdmin(ProxiedPlayer player) {
         return hasRank(player, Rank.ADMIN);
     }

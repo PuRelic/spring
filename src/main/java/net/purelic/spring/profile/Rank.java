@@ -1,30 +1,32 @@
 package net.purelic.spring.profile;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import net.purelic.spring.discord.Role;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public enum Rank {
 
-    ADMIN("Admin", true),
-    DEVELOPER("Developer", true),
-    MAP_DEVELOPER("Map Developer", true),
-    MODERATOR("Moderator", true),
-    HELPER("Helper", true),
-    PREMIUM("Premium", false),
-    CREATOR("Creator", false),
+    ADMIN("Admin", true, Role.ADMIN),
+    DEVELOPER("Developer", true, null),
+    MAP_DEVELOPER("Map Developer", true, Role.MAP_DEVELOPER),
+    MODERATOR("Moderator", true, null),
+    HELPER("Helper", true, Role.HELPER),
+    CREATOR("Creator", false, null),
+    PREMIUM("Premium", false, null),
+    OG_PLAYER("OG Player", false, Role.OG_PLAYER),
     ;
 
     public static final String PATH = "ranks";
 
     private final String name;
     private final boolean staff;
+    private final String discordRole;
 
-    Rank(String name, boolean staff) {
+    Rank(String name, boolean staff, String discordRole) {
         this.name = name;
         this.staff = staff;
+        this.discordRole = discordRole;
     }
 
     public String getName() {
@@ -35,11 +37,19 @@ public enum Rank {
         return this.staff;
     }
 
-    public static Set<Rank> parseRanks(List<Object> rankValues) {
-        Set<Rank> ranks = new HashSet<>();
+    public boolean hasDiscordRole() {
+        return this.discordRole != null;
+    }
+
+    public String getDiscordRole() {
+        return this.discordRole;
+    }
+
+    public static List<Rank> parseRanks(List<Object> rankValues) {
+        List<Rank> ranks = new ArrayList<>();
 
         for (Rank rank : values()) {
-            if (rankValues.contains(rank.name)) {
+            if (rankValues.contains(rank.getName())) {
                 ranks.add(rank);
             }
         }
