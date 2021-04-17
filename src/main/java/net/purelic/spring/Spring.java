@@ -67,8 +67,6 @@ public class Spring extends Plugin {
     public void onEnable() {
         plugin = this;
 
-        this.config = this.getConfig();
-
         this.getProxy().registerChannel("purelic:spring");
         this.reloadConfig();
         this.registerCommands();
@@ -98,6 +96,7 @@ public class Spring extends Plugin {
     }
 
     public void reloadConfig() {
+        this.config = this.getConfig();
         Arrays.stream(ServerType.values()).forEach(type -> type.setSnapshotId(this.config));
         PlaylistManager.loadPlaylists(this.config);
         ServerManager.loadPublicServers(this.config);
