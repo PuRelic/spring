@@ -25,6 +25,7 @@ public class PublicServer {
     private final int minParty;
     private final int maxParty;
     private final boolean ranked;
+    private final String serverName;
     private final Set<ProxiedPlayer> queued;
     private boolean starting;
 
@@ -39,6 +40,7 @@ public class PublicServer {
         this.minParty = (int) data.getOrDefault("min_party", 0);
         this.maxParty = (int) data.getOrDefault("max_party", 0);
         this.ranked = (boolean) data.getOrDefault("ranked", false);
+        this.serverName = (String) data.getOrDefault("server_name", this.playlist.getName());
         this.queued = new HashSet<>();
         this.starting = false;
     }
@@ -77,6 +79,10 @@ public class PublicServer {
 
     public boolean isRanked() {
         return this.ranked;
+    }
+
+    public String getServerName() {
+        return this.serverName;
     }
 
     public Set<ProxiedPlayer> getQueued() {

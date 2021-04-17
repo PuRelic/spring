@@ -92,7 +92,7 @@ public class GameServer {
     public GameServer(PublicServer server) {
         this(
             UUID.randomUUID().toString(),
-            server.isRanked() ? "League" : server.getPlaylist().getName().replaceAll(" ", ""),
+            server.isRanked() ? "League" : server.getServerName().replaceAll(" ", ""),
             server.isRanked() ? ServerSize.BASIC : ServerSize.PREMIUM,
             ServerType.CUSTOM_GAMES,
             server.getPlaylist(),
