@@ -25,6 +25,7 @@ import net.purelic.spring.league.LeagueMatch;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.utils.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -80,7 +81,7 @@ public class GameServer {
             playlist,
             type == ServerType.GAME_DEVELOPMENT ?
                 (PermissionUtils.isDonator(player) ? 10 : 5) :
-                (PermissionUtils.isDonator(player) ? 40 : 20),
+                (PermissionUtils.isDonator(player) ? 32 : 8),
             0,
             0,
             false,
@@ -93,7 +94,7 @@ public class GameServer {
         this(
             UUID.randomUUID().toString(),
             server.isRanked() ? "League" : server.getServerName().replaceAll(" ", ""),
-            server.isRanked() ? ServerSize.BASIC : ServerSize.PREMIUM,
+            ServerSize.BASIC,
             ServerType.CUSTOM_GAMES,
             server.getPlaylist(),
             server.getMaxPlayers(),
@@ -353,7 +354,8 @@ public class GameServer {
     }
 
     public ItemStack getItem() {
-        ItemStack item = new ItemStack(this.isPrivate ? ItemType.PLAYER_HEAD : this.status.getItemType());
+        ItemType itemType = this.isPrivate ? ItemType.PLAYER_HEAD : (this.isFull() ? ItemType.RED_WOOL : ItemType.LIME_WOOL);
+        ItemStack item = new ItemStack(itemType);
 
         if (this.isPrivate) {
             item.setSkullOwner(this.name);
@@ -397,7 +399,7 @@ public class GameServer {
 
     private void setDroplet() {
         Droplet droplet = new Droplet();
-        droplet.setName(this.name.replaceAll("_", "-"));
+        droplet.setName(this.getDropletName());
         droplet.setSize(new Size(this.size.getSlug()).getSlug());
         droplet.setRegion(new Region(this.region.getSlug()));
         droplet.setImage(new Image(this.snapshotId));
@@ -407,6 +409,11 @@ public class GameServer {
         droplet.setEnableIpv6(false);
         droplet.setEnablePrivateNetworking(false);
         this.droplet = droplet;
+    }
+
+    private String getDropletName() {
+        String replaced = this.name.replaceAll("_", "-");
+        return StringUtils.stripEnd(replaced, "-");
     }
 
     public void create() {
