@@ -8,6 +8,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.analytics.Analytics;
 import net.purelic.spring.commands.social.DiscordInviteCommand;
+import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.utils.Protocol;
 
 public class PostLogin implements Listener {
@@ -24,7 +25,7 @@ public class PostLogin implements Listener {
             player.sendMessage(legacyWarning.create());
         }
 
-        DiscordInviteCommand.sendDiscordMessage(player);
+        if (!ProfileManager.getProfile(player).hasDiscordLinked()) DiscordInviteCommand.sendDiscordMessage(player);
         Analytics.startSession(player);
     }
 
