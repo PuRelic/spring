@@ -23,6 +23,7 @@ public enum ItemAction {
     MATCH,
     PRIVATE_SERVER,
     NOTHING,
+    QUICK_JOIN,
     ;
 
     public void apply(ItemStack item) {

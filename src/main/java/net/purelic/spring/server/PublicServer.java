@@ -161,11 +161,7 @@ public class PublicServer {
                 item.setLore(Arrays.asList(
                     ChatColor.WHITE + this.playlist.getDescription(),
                     "",
-                    ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing",
-                    ChatColor.GRAY + "Party: " + ChatColor.AQUA + ServerUtils.getPartyString(this),
-                    "",
-                    ChatColor.GRAY + "L-Click to " + ChatColor.GREEN + "Quick Join",
-                    browse
+                    ChatColor.AQUA + "" + totalPlayers + ChatColor.GRAY + " Playing"
                 ));
 
                 ItemAction.SELECT_PUBLIC.apply(item, this.playlist.getName());

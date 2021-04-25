@@ -4,6 +4,8 @@ import de.exceptionflug.protocolize.inventory.Inventory;
 import de.exceptionflug.protocolize.inventory.InventoryModule;
 import de.exceptionflug.protocolize.inventory.InventoryType;
 import de.exceptionflug.protocolize.items.ItemStack;
+import de.exceptionflug.protocolize.items.ItemType;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
@@ -15,6 +17,7 @@ import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 import net.purelic.spring.server.ServerType;
+import net.purelic.spring.utils.ItemAction;
 import net.purelic.spring.utils.ItemUtils;
 import net.purelic.spring.utils.PermissionUtils;
 import net.purelic.spring.utils.ServerUtils;
@@ -54,6 +57,16 @@ public class InventoryManager {
     public static void openServerSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(selectorRows), new TextComponent("Select a playlist:"));
         ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem()));
+        inventory.setItem(48, ItemUtils.getPrivateServerItem());
+        inventory.setItem(50, ItemUtils.getLeagueServerItem());
+
+        // private servers
+        List<GameServer> privateServers = ServerManager.getPrivateServers(!PermissionUtils.isStaff(player));
+
+        if (privateServers.size() > 0) {
+            inventory.setItem(49, ItemUtils.getPrivateServerItem(privateServers));
+        }
+
         InventoryModule.sendInventory(player, inventory);
     }
 
@@ -91,7 +104,12 @@ public class InventoryManager {
         int rows = Math.max((servers.size() / 9) + (servers.size() % 9 == 0 ? 0 : 1), 1);
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(rows), new TextComponent("Select a server:"));
 
+        ItemStack quickJoin = new ItemStack(ItemType.EMERALD);
+        quickJoin.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + "Quick Join");
+        ItemAction.QUICK_JOIN.apply(quickJoin, playlist.getName());
+
         List<ItemStack> items = new ArrayList<>();
+        items.add(quickJoin);
         servers.forEach(server -> items.add(server.getItem()));
         inventory.setItems(items);
 

@@ -87,11 +87,13 @@ public class InventoryClick implements Listener {
                     InventoryManager.openServerSelector(player);
                     break;
                 case SELECT_PUBLIC:
-                    if (clickType == ClickType.LEFT_CLICK) {
-                        ServerUtils.quickJoin(player, playlist);
-                    } else {
-                        InventoryManager.openPublicServerSelector(player, playlist, false);
-                    }
+                    int servers = ServerManager.getPublicServers(playlist, true).size();
+
+                    if (servers == 1) ServerUtils.quickJoin(player, playlist);
+                    else InventoryManager.openPublicServerSelector(player, playlist, false);
+                    break;
+                case QUICK_JOIN:
+                    ServerUtils.quickJoin(player, playlist);
                     break;
                 case SELECT_LEAGUE:
                     if (clickType == ClickType.LEFT_CLICK) {
