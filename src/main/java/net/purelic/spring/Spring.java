@@ -39,8 +39,7 @@ import net.purelic.spring.commands.spring.ReloadCommand;
 import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
-import net.purelic.spring.listeners.player.Chat;
-import net.purelic.spring.listeners.player.InventoryClick;
+import net.purelic.spring.listeners.player.*;
 import net.purelic.spring.listeners.server.*;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.server.ServerType;
@@ -133,11 +132,11 @@ public class Spring extends Plugin {
         // Player
         this.registerListener(new Chat());
         this.registerListener(new InventoryClick());
-
-        // Server
         this.registerListener(new PlayerDisconnect());
         this.registerListener(new PostLogin());
         this.registerListener(new PreLogin());
+
+        // Server
         this.registerListener(new ProxyPing());
         this.registerListener(new ServerKick());
         this.registerListener(new ServerConnected());

@@ -1,4 +1,4 @@
-package net.purelic.spring.listeners.server;
+package net.purelic.spring.listeners.player;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
