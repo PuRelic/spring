@@ -18,7 +18,7 @@ public class SeenCommand implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
-        return mgr.commandBuilder("seen")
+        return mgr.commandBuilder("seen", "find")
             .senderType(ProxiedPlayer.class)
             .argument(StringArgument.of("player"))
             .handler(c -> {
@@ -27,7 +27,7 @@ public class SeenCommand implements ProxyCommand {
                 ProxiedPlayer online = Spring.getPlayer(target);
 
                 if (online != null) {
-                    FindCommand.sendFoundMessage(player, online);
+                    this.sendFoundMessage(player, online);
                 } else {
                     QueryDocumentSnapshot doc = DatabaseUtils.getPlayerDoc(target);
 
@@ -35,13 +35,21 @@ public class SeenCommand implements ProxyCommand {
                         CommandUtils.sendNoPlayerMessage(player, target);
                     } else {
                         Timestamp lastSeen = doc.getTimestamp("last_seen");
-                        if (lastSeen == null)
+
+                        if (lastSeen == null) {
                             CommandUtils.sendErrorMessage(player, "There was an error fetching information about this player!");
-                        else
+                        } else {
                             CommandUtils.sendAlertMessage(player, ChatColor.DARK_AQUA + doc.getString("name") + ChatColor.RESET + " was last seen " + ChatUtils.format(lastSeen));
+                        }
                     }
                 }
             });
+    }
+
+    private void sendFoundMessage(ProxiedPlayer player, ProxiedPlayer target) {
+        CommandUtils.sendAlertMessage(player,
+            ChatColor.AQUA + target.getName() + ChatColor.RESET + " is currently playing on server " +
+                ChatColor.AQUA + target.getServer().getInfo().getName());
     }
 
 }

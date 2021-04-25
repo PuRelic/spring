@@ -200,7 +200,6 @@ public class Spring extends Plugin {
         this.registerCommand(new BroadcastCommand());
         this.registerCommand(new DiscordInviteCommand());
         this.registerCommand(new DocsCommand());
-        this.registerCommand(new FindCommand());
         this.registerCommand(new HelpCommand());
         this.registerCommand(new MatchesCommand());
         this.registerCommand(new MessageCommand());
@@ -253,6 +252,7 @@ public class Spring extends Plugin {
                 },
                 user -> {
                     MessageReceivedEvent event = user.getEvent().orElse(null);
+
                     if (user instanceof PrivateUser) {
                         PrivateUser privateUser = (PrivateUser) user;
                         return new JDAPrivateSender(event, privateUser.getUser(), privateUser.getPrivateChannel());
