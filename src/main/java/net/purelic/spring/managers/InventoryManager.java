@@ -56,12 +56,12 @@ public class InventoryManager {
 
     public static void openServerSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(selectorRows), new TextComponent("Select a playlist:"));
-        ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem()));
+        ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem(player)));
         inventory.setItem(48, ItemUtils.getPrivateServerItem());
         inventory.setItem(50, ItemUtils.getLeagueServerItem());
 
         // private servers
-        List<GameServer> privateServers = ServerManager.getPrivateServers(!PermissionUtils.isStaff(player));
+        List<GameServer> privateServers = ServerManager.getPrivateServers(false);
 
         if (privateServers.size() > 0) {
             inventory.setItem(49, ItemUtils.getPrivateServerItem(privateServers));
@@ -77,7 +77,7 @@ public class InventoryManager {
 
         ServerManager.getPublicServerTypes().values().stream().filter(PublicServer::isRanked).forEach(server -> {
             Playlist playlist = server.getPlaylist();
-            inventory.setItem(server.getSlot(), server.toItem());
+            inventory.setItem(server.getSlot(), server.toItem(player));
             inventory.setItem(server.getSlot() + 9, LeaderboardManager.getLeaderboard(playlist).toItem());
             inventory.setItem(server.getSlot() - 9, LeagueRank.toItem(player, playlist));
         });
