@@ -65,6 +65,10 @@ public class DatabaseUtils {
         return getDocumentData("discord_users", user.getId());
     }
 
+    public static Map<String, Object> getIPDoc(String ip) {
+        return getDocumentData("player_ips", ip);
+    }
+
     private static Map<String, Object> getDocumentData(String collection, String id) {
         try {
             DocumentReference docRef = FIRESTORE.collection(collection).document(id);
@@ -112,6 +116,14 @@ public class DatabaseUtils {
         data.put("referrals", 0);
 
         docRef.set(data);
+    }
+
+    public static void createIPDoc(String ip, Map<String, Object> data) {
+        FIRESTORE.collection("player_ips").document(ip).set(data);
+    }
+
+    public static void updateIPDoc(String ip, Map<String, Object> data) {
+        updateDocument("player_ips", ip, data);
     }
 
     public static void updatePlayerDoc(UUID uuid, String field, Object value) {

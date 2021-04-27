@@ -36,8 +36,13 @@ public class ServerUtils {
         return player.getServer().getInfo() == getHub();
     }
 
+    @SuppressWarnings("deprecation")
+    public static String getIP(ProxiedPlayer player) {
+        return player.getAddress().getAddress().getHostAddress();
+    }
+
     public static String getValidName(String name) {
-        return !ServerManager.getGameServers().containsKey(name) ? name : ServerUtils.getValidName(name, 1);
+        return !ServerManager.getGameServers().containsKey(name) ? name : ServerUtils.getValidName(name, 2);
     }
 
     public static String getValidName(String name, int i) {

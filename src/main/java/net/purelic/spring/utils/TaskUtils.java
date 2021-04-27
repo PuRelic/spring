@@ -13,7 +13,11 @@ public class TaskUtils {
     }
 
     public static ScheduledTask scheduleTask(Runnable runnable, long delay) {
-        return getScheduler().schedule(Spring.getPlugin(), runnable, delay, TimeUnit.SECONDS);
+        return scheduleTask(runnable, delay, TimeUnit.SECONDS);
+    }
+
+    public static ScheduledTask scheduleTask(Runnable runnable, long delay, TimeUnit timeUnit) {
+        return getScheduler().schedule(Spring.getPlugin(), runnable, delay, timeUnit);
     }
 
     public static ScheduledTask runAsync(Runnable runnable) {
