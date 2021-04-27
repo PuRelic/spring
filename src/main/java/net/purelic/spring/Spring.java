@@ -33,9 +33,11 @@ import net.purelic.spring.commands.parsers.*;
 import net.purelic.spring.commands.server.*;
 import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
+import net.purelic.spring.commands.spring.CreateCommand;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
+import net.purelic.spring.commands.staff.AltsCommand;
 import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
@@ -157,6 +159,7 @@ public class Spring extends Plugin {
         // Discord
         this.registerCommand(new EmbedCommand());
         this.registerCommand(new EmbedEditCommand());
+        this.registerCommand(new GiveawayCommand());
         this.registerCommand(new LinkCommand());
         this.registerCommand(new MuteCommand());
         this.registerCommand(new NukeCommand());
@@ -212,9 +215,13 @@ public class Spring extends Plugin {
         this.registerCommand(new WebsiteCommand());
 
         // Spring
+        this.registerCommand(new CreateCommand());
         this.registerCommand(new DestroyCommand());
         this.registerCommand(new PurgeCommand());
         this.registerCommand(new ReloadCommand());
+
+        // Staff
+        this.registerCommand(new AltsCommand());
     }
 
     private void registerCommandManagers() {
