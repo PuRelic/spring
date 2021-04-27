@@ -46,6 +46,7 @@ public class GameServer {
     private final int snapshotId;
     private final boolean isPrivate;
     private final boolean beta;
+    private final boolean notify;
     private final Playlist playlist;
     private final int maxPlayers;
     private final int minParty;
@@ -86,7 +87,8 @@ public class GameServer {
             0,
             false,
             true,
-            ProfileManager.getProfile(player).hasBetaFeatures()
+            ProfileManager.getProfile(player).hasBetaFeatures(),
+            false
         );
     }
 
@@ -94,7 +96,7 @@ public class GameServer {
         this(
             UUID.randomUUID().toString(),
             server.isRanked() ? "League" : server.getServerName().replaceAll(" ", ""),
-            ServerSize.BASIC,
+            server.getServerSize(),
             ServerType.CUSTOM_GAMES,
             server.getPlaylist(),
             server.getMaxPlayers(),
@@ -102,7 +104,25 @@ public class GameServer {
             server.getMaxParty(),
             server.isRanked(),
             false,
-            false
+            false,
+            true
+        );
+    }
+
+    public GameServer(String name, Playlist playlist, int maxPlayers, boolean notify) {
+        this(
+            UUID.randomUUID().toString(),
+            name,
+            ServerSize.BASIC,
+            ServerType.CUSTOM_GAMES,
+            playlist,
+            maxPlayers,
+            0,
+            0,
+            false,
+            false,
+            false,
+            notify
         );
     }
 
@@ -117,6 +137,7 @@ public class GameServer {
         this.region = ServerRegion.valueOf((String) data.get("region"));
         this.type = ServerType.valueOf((String) data.get("type"));
         this.beta = (boolean) data.get("beta");
+        this.notify = (boolean) data.getOrDefault("notify", false);
         this.isPrivate = (boolean) data.get("private");
         this.playlist = PlaylistManager.getPlaylist((String) data.get("playlist"));
         this.maxPlayers = (int) data.get("max_players");
@@ -142,11 +163,12 @@ public class GameServer {
         this.droplet = Commons.getDigitalOcean().getDropletInfo(this.dropletId);
     }
 
-    private GameServer(String id, String name, ServerSize size, ServerType type, Playlist playlist, int maxPlayers, int minParty, int maxParty, boolean ranked, boolean isPrivate, boolean beta) {
+    private GameServer(String id, String name, ServerSize size, ServerType type, Playlist playlist, int maxPlayers,
+                       int minParty, int maxParty, boolean ranked, boolean isPrivate, boolean beta, boolean notify) {
         this.plugin = Spring.getPlugin();
         this.proxy = this.plugin.getProxy();
         this.id = id;
-        this.name = isPrivate ? ServerUtils.getValidName(name) : ServerUtils.getValidName(name, 1);
+        this.name = ServerUtils.getValidName(name);
         this.createdAt = Timestamp.now();
         this.size = size;
         this.region = ServerRegion.NYC;
@@ -154,6 +176,7 @@ public class GameServer {
         this.snapshotId = beta ? type.getBetaSnapshotId() : type.getSnapshotId();
         this.isPrivate = isPrivate;
         this.beta = beta;
+        this.notify = notify;
         this.playlist = type == ServerType.GAME_DEVELOPMENT ? null : playlist;
         this.maxPlayers = maxPlayers;
         this.minParty = minParty;
@@ -285,7 +308,8 @@ public class GameServer {
         } else if (!this.isPrivate
             && online
             && ServerManager.getPublicServers(this.playlist, true).size() == 1
-            && !this.ranked) {
+            && !this.ranked
+            && this.notify) {
             ChatUtils.broadcastMessage("A " + this.playlist.getName() + " server is now open! Join now with" + ChatColor.AQUA + " /server " + this.name);
             DiscordManager.sendServerNotification(this);
 
@@ -361,9 +385,9 @@ public class GameServer {
             item.setSkullOwner(this.name);
         }
 
-        item.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD + this.name + (this.isVisible() ? "" : "" + ChatColor.RESET + ChatColor.GRAY + " (Hidden)"));
+        item.setDisplayName((this.isVisible() && !this.isFull() ? ChatColor.GREEN : ChatColor.RED) + "" + ChatColor.BOLD + this.name);
         item.setLore(Arrays.asList(
-            ChatColor.WHITE + "" + ChatColor.ITALIC + this.type.getName() + (this.beta ? ChatColor.GRAY + " (Beta)" : ""),
+            (this.beta ? "" + ChatColor.BOLD + ChatColor.GREEN + "BETA " + ChatColor.RESET : "") + ChatColor.WHITE + "" + ChatColor.ITALIC + this.type.getName(),
             ChatColor.AQUA + "" + this.getPlayersOnline() + ChatColor.DARK_GRAY + "/" + ChatColor.DARK_AQUA + this.maxPlayers + ChatColor.GRAY + " Players",
             "",
             ChatColor.GRAY + "Playlist: " + (this.playlist == null ? "N/A" : ChatColor.AQUA + this.playlist.getName()),
@@ -529,7 +553,7 @@ public class GameServer {
         }
 
         if (ServerUtils.isServerFull(this, player)) {
-            CommandUtils.sendErrorMessage(player, "This server is full!");
+            CommandUtils.sendErrorMessage(player, "This server is full! Premium players can join full servers - consider donating at purelic.net/donate");
             return;
         }
 
@@ -568,6 +592,7 @@ public class GameServer {
         data.put("max_players", this.maxPlayers);
         data.put("private", this.isPrivate);
         data.put("beta", this.beta);
+        data.put("notify", this.notify);
         data.put("droplet_id", this.dropletId);
         data.put("snapshot_id", this.snapshotId);
         data.put("ip", this.ip);

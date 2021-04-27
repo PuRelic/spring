@@ -26,6 +26,7 @@ public class PublicServer {
     private final int maxParty;
     private final boolean ranked;
     private final String serverName;
+    private final ServerSize serverSize;
     private final Set<ProxiedPlayer> queued;
     private boolean starting;
 
@@ -41,6 +42,7 @@ public class PublicServer {
         this.maxParty = (int) data.getOrDefault("max_party", 0);
         this.ranked = (boolean) data.getOrDefault("ranked", false);
         this.serverName = (String) data.getOrDefault("server_name", this.playlist.getName());
+        this.serverSize = ServerSize.valueOf((String) data.getOrDefault("server_size", ServerSize.BASIC.name()));
         this.queued = new HashSet<>();
         this.starting = false;
     }
@@ -85,6 +87,10 @@ public class PublicServer {
         return this.serverName;
     }
 
+    public ServerSize getServerSize() {
+        return this.serverSize;
+    }
+
     public Set<ProxiedPlayer> getQueued() {
         return this.queued;
     }
@@ -114,7 +120,7 @@ public class PublicServer {
         if (!starting) this.queued.clear();
     }
 
-    public ItemStack toItem() {
+    public ItemStack toItem(ProxiedPlayer player) {
         List<GameServer> servers = ServerManager.getGameServers(this);
         int totalServers = servers.size();
 
@@ -128,7 +134,7 @@ public class PublicServer {
                     "",
                     ChatColor.GREEN + "Server starting...",
                     "",
-                    ChatColor.WHITE + "Click to Join Queue"
+                    this.queued.contains(player) ? ChatColor.GREEN + "You are queued!" : ChatColor.WHITE + "Click to Join Queue"
                 ));
             } else {
                 item.setLore(Arrays.asList(
@@ -136,7 +142,7 @@ public class PublicServer {
                     "",
                     ChatColor.AQUA + "" + this.queued.size() + ChatColor.DARK_GRAY + "/" + ChatColor.GRAY + this.queue + " Queued",
                     "",
-                    ChatColor.WHITE + "Click to Join Queue"
+                    this.queued.contains(player) ? ChatColor.GREEN + "You are queued!" : ChatColor.WHITE + "Click to Join Queue"
                 ));
             }
 

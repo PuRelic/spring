@@ -138,7 +138,7 @@ public class ServerManager {
         addServer(new GameServer(player, ServerType.CUSTOM_GAMES, playlist));
     }
 
-    private static void addServer(GameServer server) {
+    public static void addServer(GameServer server) {
         GAME_SERVERS.put(server.getName(), server);
         server.create();
         DocumentManager.addServerDoc(server);
