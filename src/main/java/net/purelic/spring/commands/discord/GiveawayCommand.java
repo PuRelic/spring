@@ -1,6 +1,7 @@
 package net.purelic.spring.commands.discord;
 
 import cloud.commandframework.Command;
+import cloud.commandframework.arguments.standard.IntegerArgument;
 import cloud.commandframework.jda.JDA4CommandManager;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -21,9 +22,11 @@ public class GiveawayCommand implements DiscordCommand {
         return mgr.commandBuilder("giveaway")
             .senderType(GuildUser.class)
             .permission(Role.ADMIN)
+            .argument(IntegerArgument.<DiscordUser>newBuilder("winners").withMin(1).withMax(10).asOptionalWithDefault("1"))
             .handler(c -> {
                 GuildUser sender = (GuildUser) c.getSender();
                 MessageChannel channel = sender.getChannel();
+                int winners = c.get("winners");
 
                 List<Member> verified = DiscordUtils.getGuild().getMembers().stream()
                     .filter(member ->
@@ -33,7 +36,9 @@ public class GiveawayCommand implements DiscordCommand {
 
                 Collections.shuffle(verified);
 
-                channel.sendMessage("\uD83C\uDF89 " + verified.get(0).getAsMention() + " \uD83C\uDF89").queue();
+                for (int i = 0; i < winners; i++) {
+                    channel.sendMessage("\uD83C\uDF89 " + verified.get(i).getAsMention() + " \uD83C\uDF89").queue();
+                }
             });
     }
 
