@@ -42,7 +42,10 @@ import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.*;
-import net.purelic.spring.listeners.server.*;
+import net.purelic.spring.listeners.server.ProxyPing;
+import net.purelic.spring.listeners.server.ServerConnected;
+import net.purelic.spring.listeners.server.ServerKick;
+import net.purelic.spring.listeners.server.SpringPluginMessage;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.server.ServerType;
 import net.purelic.spring.utils.DiscordUtils;
@@ -255,7 +258,7 @@ public class Spring extends Plugin {
                         return new GuildUser(event, jdaGuildSender.getMember(), jdaGuildSender.getTextChannel());
                     }
 
-                    throw new UnsupportedOperationException();
+                    return new WebhookUser(event, sender.getUser(), sender.getChannel());
                 },
                 user -> {
                     MessageReceivedEvent event = user.getEvent().orElse(null);
