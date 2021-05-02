@@ -22,6 +22,7 @@ import net.purelic.spring.utils.PermissionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class AltsCommand implements ProxyCommand {
@@ -56,6 +57,7 @@ public class AltsCommand implements ProxyCommand {
 
                     if (querySnapshot.isEmpty()) return;
 
+                    List<String> ids = new ArrayList<>();
                     List<AltAccount> accounts = new ArrayList<>();
 
                     for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
@@ -65,6 +67,10 @@ public class AltsCommand implements ProxyCommand {
 
                         for (Map<String, Object> data : accountsData) {
                             AltAccount account = new AltAccount(data);
+
+                            if (ids.contains(account.getId())) continue;
+
+                            ids.add(account.getId());
                             accounts.add(account);
                         }
                     }
