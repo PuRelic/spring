@@ -12,7 +12,6 @@ import net.purelic.spring.server.GameServer;
 import net.purelic.spring.utils.*;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.UUID;
 
 public class DiscordManager {
@@ -37,39 +36,31 @@ public class DiscordManager {
     }
 
     public static void sendServerNotification(GameServer server) {
-        try {
-            DiscordWebhook webhook = getWebhook(alertsWebhook);
-            webhook.setContent("<@&" + Role.LOOKING_TO_PLAY + ">");
-            webhook.addEmbed(new DiscordWebhook.EmbedObject()
-                .setColor(Color.GREEN)
-                .setDescription("A new server is now online!")
-                .addField("Server", "/server " + server.getName(), false)
-                .addField("Players Online", "" + Spring.getPlugin().getProxy().getOnlineCount(), false)
-            );
-            webhook.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DiscordWebhook webhook = getWebhook(alertsWebhook);
+        webhook.setContent("<@&" + Role.LOOKING_TO_PLAY + ">");
+        webhook.addEmbed(new DiscordWebhook.EmbedObject()
+            .setColor(Color.GREEN)
+            .setDescription("A new server is now online!")
+            .addField("Server", "/server " + server.getName(), false)
+            .addField("Players Online", "" + Spring.getPlugin().getProxy().getOnlineCount(), false)
+        );
+        webhook.execute();
     }
 
     public static void sendSupportNotification(ProxiedPlayer player, String request) {
-        try {
-            GameServer server = ServerUtils.getGameServer(player);
-            String serverType = server == null ? "n/a" : server.getType().getName();
+        GameServer server = ServerUtils.getGameServer(player);
+        String serverType = server == null ? "n/a" : server.getType().getName();
 
-            DiscordWebhook webhook = getWebhook(supportWebhook);
-            webhook.addEmbed(new DiscordWebhook.EmbedObject()
-                .setColor(Color.MAGENTA)
-                .addField("Request", request, false)
-                .addField("Server", player.getServer().getInfo().getName(), false)
-                .addField("Server Type", serverType, false)
-                .addField("Staff Online", "" + ServerUtils.getStaffOnline(), false)
-                .setAuthor(player.getName(), "https://purelic.net/players/" + player.getName(), "https://crafatar.com/renders/head/" + player.getUniqueId().toString() + "?size=128&overlay")
-            );
-            webhook.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DiscordWebhook webhook = getWebhook(supportWebhook);
+        webhook.addEmbed(new DiscordWebhook.EmbedObject()
+            .setColor(Color.MAGENTA)
+            .addField("Request", request, false)
+            .addField("Server", player.getServer().getInfo().getName(), false)
+            .addField("Server Type", serverType, false)
+            .addField("Staff Online", "" + ServerUtils.getStaffOnline(), false)
+            .setAuthor(player.getName(), "https://purelic.net/players/" + player.getName(), "https://crafatar.com/renders/head/" + player.getUniqueId().toString() + "?size=128&overlay")
+        );
+        webhook.execute();
     }
 
     private static void startTasks() {
