@@ -41,9 +41,10 @@ public enum Protocol {
     MINECRAFT_1_16_2(751, "1.16.2"),
     MINECRAFT_1_16_3(753, "1.16.3"),
     MINECRAFT_1_16_4(754, "1.16.4"),
+    MINECRAFT_1_16_5(755, "1.16.5"),
     ;
 
-    public final static Protocol MINECRAFT_LATEST = MINECRAFT_1_16_4;
+    public final static Protocol MINECRAFT_LATEST = MINECRAFT_1_16_5;
 
     private final int protocol;
     private final String fullLabel;
