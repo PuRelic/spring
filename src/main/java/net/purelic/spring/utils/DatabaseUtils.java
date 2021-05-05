@@ -130,6 +130,10 @@ public class DatabaseUtils {
         updateDocument("players", uuid.toString(), field, value);
     }
 
+    public static void updatePlayerDoc(UUID uuid, Map<String, Object> values) {
+        updateDocument("players", uuid.toString(), values);
+    }
+
     public static void updateDiscordDoc(String id, String field, Object value) {
         updateDocument("discord_users", id, field, value);
     }
@@ -173,6 +177,68 @@ public class DatabaseUtils {
 
     public static Timestamp timestampOf(OffsetDateTime offsetDateTime) {
         return Timestamp.of(new Date(offsetDateTime.toInstant().toEpochMilli()));
+    }
+
+    @SuppressWarnings("all")
+    public static void banIp(UUID uuid, Timestamp expiration) {
+        try {
+            QuerySnapshot snapshot = FIRESTORE
+                .collection("player_ips")
+                .whereArrayContains("uuids", uuid.toString())
+                .get()
+                .get();
+
+            Map<String, Object> updates = new HashMap<>();
+
+            for (QueryDocumentSnapshot doc : snapshot.getDocuments()) {
+                boolean banned = doc.getBoolean("banned");
+
+                if (banned) {
+                    Timestamp currentExpiration = doc.getTimestamp("expiration");
+
+                    if (currentExpiration == null) continue; // perma banned
+
+                    if (expiration == null || currentExpiration.compareTo(expiration) < 0) {
+                        updates.put("expiration", expiration == null ? FieldValue.delete() : expiration);
+                    }
+                } else {
+                    updates.put("banned", true);
+                    if (expiration != null) updates.put("expiration", expiration);
+                }
+
+                if (!updates.isEmpty()) {
+                    FIRESTORE
+                        .collection("player_ips")
+                        .document(doc.getId())
+                        .update(updates);
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void unbanIp(UUID uuid) {
+        try {
+            QuerySnapshot snapshot = FIRESTORE
+                .collection("player_ips")
+                .whereArrayContains("uuids", uuid.toString())
+                .get()
+                .get();
+
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("banned", false);
+            updates.put("expiration", FieldValue.delete());
+
+            for (QueryDocumentSnapshot doc : snapshot.getDocuments()) {
+                FIRESTORE
+                    .collection("player_ips")
+                    .document(doc.getId())
+                    .update(updates);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
 }

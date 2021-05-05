@@ -37,11 +37,12 @@ import net.purelic.spring.commands.spring.CreateCommand;
 import net.purelic.spring.commands.spring.DestroyCommand;
 import net.purelic.spring.commands.spring.PurgeCommand;
 import net.purelic.spring.commands.spring.ReloadCommand;
-import net.purelic.spring.commands.staff.AltsCommand;
+import net.purelic.spring.commands.staff.*;
 import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.*;
+import net.purelic.spring.listeners.punishment.*;
 import net.purelic.spring.listeners.server.ProxyPing;
 import net.purelic.spring.listeners.server.ServerConnected;
 import net.purelic.spring.listeners.server.ServerKick;
@@ -137,6 +138,7 @@ public class Spring extends Plugin {
         // Player
         this.registerListener(new Chat());
         this.registerListener(new InventoryClick());
+        this.registerListener(new Login());
         this.registerListener(new PlayerDisconnect());
         this.registerListener(new PostLogin());
         this.registerListener(new PreLogin());
@@ -146,6 +148,13 @@ public class Spring extends Plugin {
         this.registerListener(new ServerKick());
         this.registerListener(new ServerConnected());
         this.registerListener(new SpringPluginMessage());
+
+        // Punishment
+        this.registerListener(new PlayerBan());
+        this.registerListener(new PlayerKick());
+        this.registerListener(new PlayerPunish());
+        this.registerListener(new PlayerWarn());
+        this.registerListener(new PunishmentAppeal());
     }
 
     private void registerListener(ListenerAdapter listener) {
@@ -226,6 +235,14 @@ public class Spring extends Plugin {
 
         // Staff
         this.registerCommand(new AltsCommand());
+        this.registerCommand(new AppealCommand());
+        this.registerCommand(new BanCommand());
+        this.registerCommand(new KickCommand());
+        this.registerCommand(new LookupCommand());
+        this.registerCommand(new PunishCommand());
+        this.registerCommand(new ReportCommand());
+        this.registerCommand(new TempBanCommand());
+        this.registerCommand(new WarnCommand());
     }
 
     private void registerCommandManagers() {

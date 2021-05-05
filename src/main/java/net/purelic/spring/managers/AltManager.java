@@ -2,31 +2,29 @@ package net.purelic.spring.managers;
 
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.FieldValue;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.purelic.spring.profile.AltAccount;
 import net.purelic.spring.utils.DatabaseUtils;
 import net.purelic.spring.utils.ServerUtils;
-import net.purelic.spring.utils.TaskUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class AltManager {
 
+    // returns true if the player is ban evading
     @SuppressWarnings("unchecked")
-    public static void track(ProxiedPlayer player) {
-        String ip = ServerUtils.getIP(player);
-        String uuid = player.getUniqueId().toString();
+    public static boolean track(PendingConnection connection) {
+        String ip = ServerUtils.getIP(connection);
+        String uuid = connection.getUniqueId().toString();
+        String name = connection.getName();
         Map<String, Object> data = DatabaseUtils.getIPDoc(ip);
 
         if (data.isEmpty()) { // first time seeing this ip
-            createIPDoc(player, ip);
-            return;
+            createIPDoc(uuid, name, ip);
+            return false;
         }
 
         List<Map<String, Object>> accounts = (List<Map<String, Object>>) data.get("accounts");
@@ -36,7 +34,7 @@ public class AltManager {
             uuids.add(uuid);
             data.put("uuids", uuids);
 
-            accounts.add(new AltAccount(player).toData(false));
+            accounts.add(new AltAccount(uuid, name).toData(false));
             data.put("accounts", accounts);
         } else { // known account for this ip
             List<Map<String, Object>> accountsCopy = new ArrayList<>();
@@ -46,7 +44,7 @@ public class AltManager {
                 AltAccount account = new AltAccount(accountData);
 
                 if (account.getId().equals(uuid)) {
-                    account.setName(player.getName());
+                    account.setName(name);
                     accountsCopy.add(account.toData(true));
                 } else {
                     accountsCopy.add(account.toData(false));
@@ -56,10 +54,10 @@ public class AltManager {
             data.put("accounts", accountsCopy);
         }
 
-        // if they can bypass ban evasion or are not currently banned we can return
+        // if they can bypass ban evasion or are not currently banned
         if ((boolean) data.get("bypass") || !((boolean) data.get("banned"))) {
             DatabaseUtils.updateIPDoc(ip, data);
-            return;
+            return false;
         }
 
         Timestamp unbannedAt = (Timestamp) data.get("unbanned_at");
@@ -67,21 +65,23 @@ public class AltManager {
         if (unbannedAt != null && unbannedAt.compareTo(Timestamp.now()) < 0) { // not banned
             data.put("banned", false);
             data.put("unbanned_at", FieldValue.delete());
-        } else { // banned
-            TaskUtils.scheduleTask(() -> player.disconnect(getBanEvasionMessage()), 500, TimeUnit.MILLISECONDS);
+            DatabaseUtils.updateIPDoc(ip, data);
+            return false;
         }
 
+        // banned
         DatabaseUtils.updateIPDoc(ip, data);
+        return true;
     }
 
-    private static void createIPDoc(ProxiedPlayer player, String ip) {
+    private static void createIPDoc(String uuid, String name, String ip) {
         Map<String, Object> data = new HashMap<>();
 
         List<String> uuids = new ArrayList<>();
-        uuids.add(player.getUniqueId().toString());
+        uuids.add(uuid);
 
         List<Map<String, Object>> accounts = new ArrayList<>();
-        accounts.add(new AltAccount(player).toData(false));
+        accounts.add(new AltAccount(uuid, name).toData(false));
 
         data.put("uuids", uuids);
         data.put("accounts", accounts);
@@ -89,15 +89,6 @@ public class AltManager {
         data.put("bypass", false);
 
         DatabaseUtils.createIPDoc(ip, data);
-    }
-
-    private static TextComponent getBanEvasionMessage() {
-        return new TextComponent(
-            ChatColor.RED + "" + ChatColor.BOLD + "Disconnected!\n\n" + ChatColor.RESET +
-            ChatColor.RED + "Ban Evasion\n\n" +
-            ChatColor.WHITE + "Please read the rules at " + ChatColor.AQUA + "purelic.net/rules\n" +
-            ChatColor.WHITE + "or appeal your ban at " + ChatColor.AQUA + "purelic.net/appeal"
-        );
     }
 
 }

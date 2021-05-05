@@ -24,6 +24,7 @@ public enum ItemAction {
     PRIVATE_SERVER,
     NOTHING,
     QUICK_JOIN,
+    APPEAL,
     ;
 
     public void apply(ItemStack item) {

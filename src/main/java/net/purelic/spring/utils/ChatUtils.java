@@ -90,7 +90,7 @@ public class ChatUtils {
         sendMessage(player, new TextComponent(message));
     }
 
-    public static void sendMessage(ProxiedPlayer player, BaseComponent[] message) {
+    public static void sendMessage(ProxiedPlayer player, BaseComponent... message) {
         sendMessage(player, new TextComponent(message));
     }
 

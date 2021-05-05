@@ -20,9 +20,9 @@ import net.purelic.spring.utils.DatabaseUtils;
 import net.purelic.spring.utils.PermissionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class AltsCommand implements ProxyCommand {
@@ -57,8 +57,7 @@ public class AltsCommand implements ProxyCommand {
 
                     if (querySnapshot.isEmpty()) return;
 
-                    List<String> ids = new ArrayList<>();
-                    List<AltAccount> accounts = new ArrayList<>();
+                    Map<String, AltAccount> accounts = new HashMap<>();
 
                     for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
                         List<Map<String, Object>> accountsData = (List<Map<String, Object>>) documentSnapshot.get("accounts");
@@ -67,17 +66,19 @@ public class AltsCommand implements ProxyCommand {
 
                         for (Map<String, Object> data : accountsData) {
                             AltAccount account = new AltAccount(data);
+                            String id = account.getId();
 
-                            if (ids.contains(account.getId())) continue;
-
-                            ids.add(account.getId());
-                            accounts.add(account);
+                            if (accounts.containsKey(id)) {
+                                accounts.put(id, account.merge(accounts.get(id)));
+                            } else {
+                                accounts.put(id, account);
+                            }
                         }
                     }
 
                     ComponentBuilder message = ChatUtils.getHeader(doc.getString("name") + "'s Alts");
 
-                    for (AltAccount account : accounts) {
+                    for (AltAccount account : accounts.values()) {
                         message.append("\n").reset().append(account.toComponent());
                     }
 

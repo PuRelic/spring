@@ -11,6 +11,7 @@ import net.purelic.spring.analytics.events.PlayerConnectedEvent;
 import net.purelic.spring.analytics.events.PlayerDisconnectedEvent;
 import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.profile.Profile;
+import net.purelic.spring.utils.ServerUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +76,7 @@ public class Analytics {
                 .put("discord_linked", profile.hasDiscordLinked())
                 .build()
             )
-            .context(ImmutableMap.<String, Object>builder().put("ip", player.getAddress().getAddress().getHostAddress()).build())
+            .context(ImmutableMap.<String, Object>builder().put("ip", ServerUtils.getIP(player)).build())
         );
     }
 
@@ -88,7 +89,7 @@ public class Analytics {
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(event.getPlayerId());
 
         if (player != null) {
-            track.context(ImmutableMap.<String, Object>builder().put("ip", player.getAddress().getAddress().getHostAddress()).build());
+            track.context(ImmutableMap.<String, Object>builder().put("ip", ServerUtils.getIP(player)).build());
         }
 
         Map<String, Object> properties = event.getProperties();

@@ -6,7 +6,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.utils.ChatUtils;
 
 import java.util.HashMap;
@@ -16,9 +15,9 @@ public class AltAccount {
 
     private final String uuid;
     private String name;
-    private final Timestamp firstSeen;
-    private final Timestamp lastSeen;
-    private final long totalLogins;
+    private Timestamp firstSeen;
+    private Timestamp lastSeen;
+    private long totalLogins;
 
     public AltAccount(Map<String, Object> data) {
         this.uuid = (String) data.get("uuid");
@@ -28,9 +27,9 @@ public class AltAccount {
         this.totalLogins = (long) data.get("total_logins");
     }
 
-    public AltAccount(ProxiedPlayer player) {
-        this.uuid = player.getUniqueId().toString();
-        this.name = player.getName();
+    public AltAccount(String uuid, String name) {
+        this.uuid = uuid;
+        this.name = name;
         this.firstSeen = Timestamp.now();
         this.lastSeen = this.firstSeen;
         this.totalLogins = 1;
@@ -44,6 +43,18 @@ public class AltAccount {
         this.name = name;
     }
 
+    public Timestamp getFirstSeen() {
+        return this.firstSeen;
+    }
+
+    public Timestamp getLastSeen() {
+        return this.lastSeen;
+    }
+
+    public long getTotalLogins() {
+        return this.totalLogins;
+    }
+
     public Map<String, Object> toData(boolean update) {
         Map<String, Object> data = new HashMap<>();
         data.put("uuid", this.uuid);
@@ -52,6 +63,20 @@ public class AltAccount {
         data.put("last_seen", update ? Timestamp.now() : this.lastSeen);
         data.put("total_logins", update ? this.totalLogins + 1 : this.totalLogins);
         return data;
+    }
+
+    public AltAccount merge(AltAccount altAccount) {
+        if (this.firstSeen.getSeconds() > altAccount.getFirstSeen().getSeconds()) {
+            this.firstSeen = altAccount.getFirstSeen();
+        }
+
+        if (this.lastSeen.getSeconds() > altAccount.getLastSeen().getSeconds()) {
+            this.lastSeen = altAccount.getLastSeen();
+        }
+
+        this.totalLogins += altAccount.getTotalLogins();
+
+        return this;
     }
 
     @SuppressWarnings("deprecation")

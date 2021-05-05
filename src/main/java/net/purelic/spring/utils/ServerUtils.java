@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.managers.ServerManager;
@@ -34,6 +35,15 @@ public class ServerUtils {
 
     public static boolean inHub(ProxiedPlayer player) {
         return player.getServer().getInfo() == getHub();
+    }
+
+    public static boolean sameServer(ProxiedPlayer player, ProxiedPlayer other) {
+        return getServerName(player).equals(getServerName(other));
+    }
+
+    @SuppressWarnings("deprecation")
+    public static String getIP(PendingConnection connection) {
+        return connection.getAddress().getAddress().getHostAddress();
     }
 
     @SuppressWarnings("deprecation")
@@ -196,6 +206,10 @@ public class ServerUtils {
 
     public static int getStaffOnline() {
         return (int) ProxyServer.getInstance().getPlayers().stream().filter(PermissionUtils::isStaff).count();
+    }
+
+    public static String getServerName(ProxiedPlayer player) {
+        return player.getServer().getInfo().getName();
     }
 
 }

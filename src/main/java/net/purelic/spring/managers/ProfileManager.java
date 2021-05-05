@@ -18,7 +18,10 @@ public class ProfileManager {
     }
 
     public static void reloadProfile(ProxiedPlayer player) {
-        UUID uuid = player.getUniqueId();
+        reloadProfile(player.getUniqueId());
+    }
+
+    public static void reloadProfile(UUID uuid) {
         removeProfile(uuid);
         loadProfile(uuid);
     }
@@ -28,7 +31,13 @@ public class ProfileManager {
     }
 
     public static Profile getProfile(UUID uuid) {
-        if (!PROFILES.containsKey(uuid)) loadProfile(uuid);
+        return getProfile(uuid, false);
+    }
+
+    public static Profile getProfile(UUID uuid, boolean reload) {
+        if (reload) reloadProfile(uuid);
+        else if (!PROFILES.containsKey(uuid)) loadProfile(uuid);
+
         return PROFILES.get(uuid);
     }
 

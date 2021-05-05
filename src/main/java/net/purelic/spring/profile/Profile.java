@@ -2,10 +2,14 @@ package net.purelic.spring.profile;
 
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.FieldValue;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.LeagueManager;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.profile.stats.StatSection;
+import net.purelic.spring.punishment.Punishment;
+import net.purelic.spring.punishment.PunishmentType;
 import net.purelic.spring.server.Playlist;
+import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.DatabaseUtils;
 
 import java.util.*;
@@ -20,9 +24,14 @@ public class Profile {
     private final List<Rank> ranks;
     private final Map<String, Object> stats;
     private final List<Map<String, Object>> matches;
+    private final List<Map<String, Object>> punishmentsData;
     private final Timestamp joined;
     private boolean betaFeatures;
     private boolean discordLinked;
+
+    // punishments
+    private final List<Punishment> punishments;
+    private final Map<String, Punishment> punishmentMap;
 
     public Profile(UUID uuid, Map<String, Object> data) {
         this.uuid = uuid;
@@ -33,6 +42,14 @@ public class Profile {
         this.joined = (Timestamp) data.getOrDefault("joined", Timestamp.now());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
         this.discordLinked = (boolean) data.getOrDefault("discord_linked", false);
+        this.punishmentsData = (List<Map<String, Object>>) data.getOrDefault("punishments", new ArrayList<>());
+        this.punishments = new ArrayList<>();
+        this.punishmentMap = new HashMap<>();
+        this.setPunishments(this.punishmentsData);
+    }
+
+    public UUID getId() {
+        return this.uuid;
     }
 
     public String getName() {
@@ -96,6 +113,10 @@ public class Profile {
         data.put("name", this.name);
         data.put("stats", this.stats);
         data.put("recent_matches", this.matches);
+        data.put("punishments", this.punishmentsData);
+        data.put("joined", this.joined);
+        data.put("beta_features", this.betaFeatures);
+        data.put("discord_linked", this.discordLinked);
 
         return data;
     }
@@ -132,6 +153,73 @@ public class Profile {
     public void setDiscordLinked(boolean discordLinked) {
         this.discordLinked = discordLinked;
         DatabaseUtils.updatePlayerDoc(this.uuid, "discord_linked", this.discordLinked);
+    }
+
+    public void setPunishments(List<Map<String, Object>> punishments) {
+        for (Map<String, Object> punishmentData : punishments) {
+            Punishment punishment = new Punishment(this, punishmentData);
+            this.punishments.add(punishment);
+            this.punishmentMap.put(punishment.getPunishmentId(), punishment);
+        }
+    }
+
+    public void addPunishment(Punishment punishment) {
+        this.punishments.add(punishment);
+        this.punishmentMap.put(punishment.getPunishmentId(), punishment);
+    }
+
+    public void appealPunishment(ProxiedPlayer appellant, String id) {
+        Punishment punishment = this.getPunishment(id);
+
+        if (punishment == null) {
+            CommandUtils.sendErrorMessage(appellant, "Could not find a punishment with that id!");
+        } else {
+            punishment.appeal(appellant.getUniqueId());
+        }
+    }
+
+    public List<Punishment> getPunishments() {
+        return this.punishments;
+    }
+
+    public Punishment getPunishment(String id) {
+        return this.punishmentMap.get(id);
+    }
+
+    public void updatePunishments() {
+        List<Map<String, Object>> punishments = new ArrayList<>();
+
+        for (Punishment punishment : this.punishments) {
+            punishments.add(punishment.toData());
+        }
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("punishments", punishments);
+
+        DatabaseUtils.updatePlayerDoc(this.uuid, values);
+    }
+
+    public PunishmentType getNextPunishmentSeverity() {
+        PunishmentType type = PunishmentType.WARN;
+
+        for (Punishment punishment : this.getPunishments()) {
+            if (punishment.isAppealed() || punishment.isStale()) continue;
+
+            switch (punishment.getType()) {
+                case PERMA_BAN:
+                case TEMP_BAN:
+                    type = PunishmentType.PERMA_BAN;
+                    break;
+                case KICK:
+                    type = PunishmentType.TEMP_BAN;
+                    break;
+                case WARN:
+                    type = PunishmentType.KICK;
+                    break;
+            }
+        }
+
+        return type;
     }
 
 }

@@ -8,10 +8,14 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.managers.ServerManager;
 import net.purelic.spring.profile.Profile;
+import net.purelic.spring.punishment.Punishment;
+import net.purelic.spring.punishment.PunishmentType;
 import net.purelic.spring.server.GameServer;
+import net.querz.nbt.tag.CompoundTag;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class ItemUtils {
 
@@ -136,6 +140,40 @@ public class ItemUtils {
         ItemAction.STOP.apply(item, serverName);
 
         return item;
+    }
+
+    public static ItemStack getPunishmentItem(Punishment punishment, UUID punishedId) {
+        PunishmentType type = punishment.getType();
+
+        String expiration = !punishment.hasExpirationTimestamp() ? "" :
+            ChatColor.DARK_AQUA + (punishment.isExpired() ? "Expired " : "Expires ") +
+                ChatUtils.format(punishment.getExpirationTimestamp().toDate());
+
+        List<String> lore = Arrays.asList(
+            ChatColor.WHITE + punishment.getReason(),
+            "",
+            ChatColor.DARK_AQUA + "Punished by " + Fetcher.getNameOf(punishment.getPunisher()),
+            ChatColor.DARK_AQUA + "Received " + ChatUtils.format(punishment.getTimestamp().toDate()),
+            expiration
+        );
+
+        ItemStack item = new ItemStack(type.getMaterial());
+        item.setDisplayName("" + ChatColor.RESET + getPunishmentColor(punishment) + ChatColor.BOLD + type.getName());
+        item.setLore(lore);
+
+        CompoundTag itemTag = (CompoundTag) item.getNBTTag();
+        itemTag.putString("punished_uuid", punishedId.toString());
+        ItemAction.APPEAL.apply(item, punishment.getPunishmentId());
+
+        return item;
+    }
+
+    public static ChatColor getPunishmentColor(Punishment punishment) {
+        if (punishment.isAppealed()) return ChatColor.GREEN;
+        if (punishment.getType() == PunishmentType.PERMA_BAN) return ChatColor.RED;
+        if (punishment.isStale()) return ChatColor.GRAY;
+        if (punishment.isExpired()) return ChatColor.YELLOW;
+        return ChatColor.RED;
     }
 
 }

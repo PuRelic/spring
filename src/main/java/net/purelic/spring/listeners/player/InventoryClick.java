@@ -13,13 +13,14 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.analytics.Analytics;
 import net.purelic.spring.managers.*;
+import net.purelic.spring.profile.Profile;
+import net.purelic.spring.punishment.Punishment;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.ServerType;
-import net.purelic.spring.utils.CommandUtils;
-import net.purelic.spring.utils.ItemAction;
-import net.purelic.spring.utils.PermissionUtils;
-import net.purelic.spring.utils.ServerUtils;
+import net.purelic.spring.utils.*;
 import net.querz.nbt.tag.CompoundTag;
+
+import java.util.UUID;
 
 public class InventoryClick implements Listener {
 
@@ -135,6 +136,17 @@ public class InventoryClick implements Listener {
                     break;
                 case PRIVATE_SERVER:
                     InventoryManager.openPrivateServerInv(player);
+                    break;
+                case APPEAL:
+                    UUID punishedId = UUID.fromString(tag.getString("punished_uuid"));
+
+                    Profile profile = ProfileManager.getProfile(punishedId);
+                    Punishment punishment = profile.getPunishment(value);
+                    punishment.appeal(player);
+
+                    CommandUtils.sendSuccessMessage(player,"Successfully appealed " + Fetcher.getNameOf(punishedId) +
+                        "'s " + punishment.getType().getName().toLowerCase() + "!");
+                    DiscordManager.sendAppeal(player, Fetcher.getNameOf(punishedId), punishedId, punishment.getReason(), punishment.getType());
                     break;
             }
         }

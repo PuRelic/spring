@@ -7,6 +7,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.Spring;
 import net.purelic.spring.managers.InventoryManager;
+import net.purelic.spring.utils.PunishmentUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -48,6 +49,11 @@ public class SpringPluginMessage implements Listener {
                 }
                 case "ViewMatches": {
                     InventoryManager.openMatchesMenu(player);
+                    break;
+                }
+                case "AutoBan": {
+                    String reason = in.readUTF();
+                    PunishmentUtils.autoBan(player, reason);
                     break;
                 }
             }

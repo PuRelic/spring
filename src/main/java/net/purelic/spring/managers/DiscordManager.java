@@ -8,6 +8,7 @@ import net.purelic.spring.discord.Role;
 import net.purelic.spring.profile.DiscordProfile;
 import net.purelic.spring.profile.Profile;
 import net.purelic.spring.profile.Rank;
+import net.purelic.spring.punishment.PunishmentType;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.utils.*;
 
@@ -21,10 +22,14 @@ public class DiscordManager {
 
     private static String alertsWebhook;
     private static String supportWebhook;
+    private static String reportsWebhook;
+    private static String guardianWebhook;
 
     public static void loadDiscordWebhooks(Configuration config) {
         alertsWebhook = config.getString("discord.alerts_webhook");
         supportWebhook = config.getString("discord.support_webhook");
+        reportsWebhook = config.getString("discord.reports_webhook");
+        guardianWebhook = config.getString("discord.guardian_webhook");
         startTasks();
     }
 
@@ -36,13 +41,17 @@ public class DiscordManager {
     }
 
     public static void sendServerNotification(GameServer server) {
+        int online = Spring.getPlugin().getProxy().getOnlineCount();
+
+        if (online <= 1) return;
+
         DiscordWebhook webhook = getWebhook(alertsWebhook);
         webhook.setContent("<@&" + Role.LOOKING_TO_PLAY + ">");
         webhook.addEmbed(new DiscordWebhook.EmbedObject()
             .setColor(Color.GREEN)
             .setDescription("A new server is now online!")
             .addField("Server", "/server " + server.getName(), false)
-            .addField("Players Online", "" + Spring.getPlugin().getProxy().getOnlineCount(), false)
+            .addField("Players Online", "" + online, false)
         );
         webhook.execute();
     }
@@ -55,10 +64,74 @@ public class DiscordManager {
         webhook.addEmbed(new DiscordWebhook.EmbedObject()
             .setColor(Color.MAGENTA)
             .addField("Request", request, false)
-            .addField("Server", player.getServer().getInfo().getName(), false)
+            .addField("Server", ServerUtils.getServerName(player), false)
             .addField("Server Type", serverType, false)
             .addField("Staff Online", "" + ServerUtils.getStaffOnline(), false)
             .setAuthor(player.getName(), "https://purelic.net/players/" + player.getName(), "https://crafatar.com/renders/head/" + player.getUniqueId().toString() + "?size=128&overlay")
+        );
+        webhook.execute();
+    }
+
+    public static void sendAppeal(ProxiedPlayer staff, String punishedName, UUID punishedId, String reason, PunishmentType type) {
+        DiscordWebhook webhook = getWebhook(reportsWebhook);
+        webhook.setAvatarUrl("https://purelic.net/siteicon.png");
+        webhook.setUsername("Guardian");
+        webhook.addEmbed(new DiscordWebhook.EmbedObject()
+            .setColor(Color.GREEN)
+            .addField("Type", "Appeal", false)
+            .addField("Reason", reason, false)
+            .addField("Severity", type.getName(), false)
+            .addField("Server", ServerUtils.getServerName(staff), false)
+            .setFooter("Appealed by " + staff.getName(), "https://crafatar.com/renders/head/" + staff.getUniqueId().toString() + "?size=128&overlay")
+            .setAuthor(punishedName, "https://purelic.net/players/" + punishedName, "https://crafatar.com/renders/head/" + punishedId.toString() + "?size=128&overlay")
+        );
+        webhook.execute();
+    }
+
+    public static void sendPunishment(ProxiedPlayer punisher, String punishedName, UUID punishedId, String reason, PunishmentType type) {
+        DiscordWebhook webhook = getWebhook(reportsWebhook);
+        webhook.setAvatarUrl("https://purelic.net/siteicon.png");
+        webhook.setUsername("Guardian");
+        webhook.addEmbed(new DiscordWebhook.EmbedObject()
+            .setColor(Color.RED)
+            .addField("Type", "Punishment", false)
+            .addField("Reason", reason, false)
+            .addField("Severity", type.getName(), false)
+            .addField("Server", ServerUtils.getServerName(punisher), false)
+            .setFooter("Punished by " + punisher.getName(), "https://crafatar.com/renders/head/" + punisher.getUniqueId().toString() + "?size=128&overlay")
+            .setAuthor(punishedName, "https://purelic.net/players/" + punishedName, "https://crafatar.com/renders/head/" + punishedId.toString() + "?size=128&overlay")
+        );
+        webhook.execute();
+    }
+
+    public static void sendPunishment(ProxiedPlayer punished, String reason, PunishmentType type) {
+        DiscordWebhook webhook = getWebhook(reportsWebhook);
+        webhook.setAvatarUrl("https://purelic.net/siteicon.png");
+        webhook.setUsername("Guardian");
+        webhook.addEmbed(new DiscordWebhook.EmbedObject()
+            .setColor(Color.RED)
+            .addField("Type", "Punishment", false)
+            .addField("Reason", reason, false)
+            .addField("Severity", type.getName(), false)
+            .addField("Server", ServerUtils.getServerName(punished), false)
+            .setFooter("Automatic Punishment", "https://purelic.net/siteicon.png")
+            .setAuthor(punished.getName(), "https://purelic.net/players/" + punished.getName(), "https://crafatar.com/renders/head/" + punished.getUniqueId().toString() + "?size=128&overlay")
+        );
+        webhook.execute();
+    }
+
+    public static void sendReport(ProxiedPlayer reporter, ProxiedPlayer reported, String reason) {
+        DiscordWebhook webhook = getWebhook(reportsWebhook);
+        webhook.setAvatarUrl("https://purelic.net/siteicon.png");
+        webhook.setUsername("Guardian");
+        webhook.addEmbed(new DiscordWebhook.EmbedObject()
+            .setColor(Color.ORANGE)
+            .addField("Type", "Report", false)
+            .addField("Reason", reason, false)
+            .addField("Server", ServerUtils.getServerName(reported), false)
+            .addField("Ping", reported.getPing() + "", false)
+            .setFooter("Reported by " + reporter.getName(), "https://crafatar.com/renders/head/" + reporter.getUniqueId().toString() + "?size=128&overlay")
+            .setAuthor(reported.getName(), "https://purelic.net/players/" + reported.getName(), "https://crafatar.com/renders/head/" + reported.getUniqueId().toString() + "?size=128&overlay")
         );
         webhook.execute();
     }
