@@ -6,9 +6,9 @@ import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.utils.CommandUtils;
-import net.purelic.spring.utils.PermissionUtils;
 
 import java.util.Optional;
 
@@ -29,8 +29,8 @@ public class PartyCreateCommand implements ProxyCommand {
                     return;
                 }
 
-                if (nameArg.isPresent() && !PermissionUtils.isDonator(player)) {
-                    CommandUtils.sendErrorMessage(player, "Only premium players can set custom party names!");
+                if (nameArg.isPresent()
+                    && Permission.notPremium(c, "Only premium players can set custom party names!")) {
                     return;
                 }
 

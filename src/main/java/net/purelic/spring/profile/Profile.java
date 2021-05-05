@@ -60,8 +60,12 @@ public class Profile {
         return this.ranks;
     }
 
-    public boolean hasRank(Rank rank) {
-        return this.ranks.contains(rank);
+    public boolean hasRank(Rank... ranks) {
+        for (Rank rank : ranks) {
+            if (this.ranks.contains(rank)) return true;
+        }
+
+        return false;
     }
 
     public boolean hasBetaFeatures() {

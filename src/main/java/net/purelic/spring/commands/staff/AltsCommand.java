@@ -13,13 +13,12 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.commons.Commons;
 import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.profile.AltAccount;
 import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.DatabaseUtils;
-import net.purelic.spring.utils.PermissionUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +31,11 @@ public class AltsCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("alts")
             .senderType(ProxiedPlayer.class)
+            .permission(Permission.isStaff())
             .argument(StringArgument.of("player"))
             .handler(c -> {
                 ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
                 String target = c.get("player");
-
-                if (!PermissionUtils.isStaff(sender)) {
-                    CommandUtils.sendNoPermissionMessage(sender);
-                    return;
-                }
 
                 QueryDocumentSnapshot doc = DatabaseUtils.getPlayerDoc(target);
 

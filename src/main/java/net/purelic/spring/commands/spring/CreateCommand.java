@@ -8,12 +8,12 @@ import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.managers.PlaylistManager;
 import net.purelic.spring.managers.ServerManager;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.utils.CommandUtils;
-import net.purelic.spring.utils.PermissionUtils;
 
 public class CreateCommand implements ProxyCommand {
 
@@ -22,6 +22,7 @@ public class CreateCommand implements ProxyCommand {
         return mgr.commandBuilder("spring")
             .literal("create")
             .senderType(ProxiedPlayer.class)
+            .permission(Permission.isStaff())
             .argument(StringArgument.of("name"))
             .argument(StringArgument.quoted("playlist"))
             .argument(IntegerArgument.<CommandSender>newBuilder("max players").withMin(0).withMax(80).asOptionalWithDefault("40"))
@@ -32,11 +33,6 @@ public class CreateCommand implements ProxyCommand {
                 String playlistName = c.get("playlist");
                 int maxPlayers = c.get("max players");
                 boolean notify = c.get("notify");
-
-                if (!PermissionUtils.isStaff(player)) {
-                    CommandUtils.sendNoPermissionMessage(player);
-                    return;
-                }
 
                 Playlist playlist = PlaylistManager.getPlaylist(playlistName);
 

@@ -35,7 +35,7 @@ public class PermissionUtils {
     }
 
     public static boolean isAdmin(UUID uuid) {
-        return hasRank(uuid, Rank.ADMIN);
+        return hasRank(uuid, Rank.ADMIN, Rank.DEVELOPER);
     }
 
     public static boolean isStaff(ProxiedPlayer player) {

@@ -12,12 +12,16 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.analytics.Analytics;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.profile.Profile;
 import net.purelic.spring.punishment.Punishment;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.ServerType;
-import net.purelic.spring.utils.*;
+import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.utils.Fetcher;
+import net.purelic.spring.utils.ItemAction;
+import net.purelic.spring.utils.ServerUtils;
 import net.querz.nbt.tag.CompoundTag;
 
 import java.util.UUID;
@@ -47,8 +51,9 @@ public class InventoryClick implements Listener {
                 case CREATE:
                     ServerType serverType = ServerType.valueOf(value);
 
-                    if (serverType.isPremium() && !PermissionUtils.isDonator(player)) {
-                        CommandUtils.sendErrorMessage(player, serverType.getName() + " servers are only available for Premium players. Consider donating at purelic.net/donate");
+                    if (serverType.isPremium()
+                        && Permission.notPremium(player,
+                        serverType.getName() + " servers are only available for Premium players!")) {
                         break;
                     }
 
@@ -62,8 +67,8 @@ public class InventoryClick implements Listener {
                     ServerManager.removeServer(value);
                     break;
                 case BETA:
-                    if (!PermissionUtils.isDonator(player)) {
-                        CommandUtils.sendErrorMessage(player, "Enabling Beta Features is only available for Premium players. Consider donating at purelic.net/donate");
+                    if (Permission.notPremium(player,
+                        "Enabling Beta Features is only available for Premium players!")) {
                         break;
                     }
 
@@ -144,7 +149,7 @@ public class InventoryClick implements Listener {
                     Punishment punishment = profile.getPunishment(value);
                     punishment.appeal(player);
 
-                    CommandUtils.sendSuccessMessage(player,"Successfully appealed " + Fetcher.getNameOf(punishedId) +
+                    CommandUtils.sendSuccessMessage(player, "Successfully appealed " + Fetcher.getNameOf(punishedId) +
                         "'s " + punishment.getType().getName().toLowerCase() + "!");
                     DiscordManager.sendAppeal(player, Fetcher.getNameOf(punishedId), punishedId, punishment.getReason(), punishment.getType());
                     break;

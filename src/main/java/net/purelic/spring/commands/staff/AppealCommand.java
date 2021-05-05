@@ -12,14 +12,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
 import net.purelic.spring.commands.ProxyCommand;
-import net.purelic.spring.utils.PunishmentUtils;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.profile.Profile;
 import net.purelic.spring.punishment.Punishment;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.Fetcher;
 import net.purelic.spring.utils.ItemUtils;
-import net.purelic.spring.utils.PermissionUtils;
+import net.purelic.spring.utils.PunishmentUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +30,7 @@ public class AppealCommand extends PunishmentUtils implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("appeal")
             .senderType(ProxiedPlayer.class)
+            .permission(Permission.isStaff())
             .argument(StringArgument.of("player"))
             .argument(StringArgument.optional("punishment id"))
             .handler(c -> {
@@ -38,11 +39,6 @@ public class AppealCommand extends PunishmentUtils implements ProxyCommand {
                 ProxiedPlayer targetPlayer = Spring.getPlayer(target);
                 boolean targetOnline = targetPlayer != null;
                 Optional<Object> punishmentIdArg = c.getOptional("punishment id");
-
-                if (!PermissionUtils.isStaff(player)) {
-                    CommandUtils.sendNoPermissionMessage(player);
-                    return;
-                }
 
                 Profile punishmentProfile;
                 UUID targetId;

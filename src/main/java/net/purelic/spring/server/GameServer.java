@@ -21,6 +21,7 @@ import net.purelic.spring.Spring;
 import net.purelic.spring.analytics.events.ServerCreatedEvent;
 import net.purelic.spring.analytics.events.ServerDestroyedEvent;
 import net.purelic.spring.analytics.events.ServerStartedEvent;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.league.LeagueMatch;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.party.Party;
@@ -553,7 +554,9 @@ public class GameServer {
         }
 
         if (ServerUtils.isServerFull(this, player)) {
-            CommandUtils.sendErrorMessage(player, "This server is full! Premium players can join full servers - consider donating at purelic.net/donate");
+            if (!Permission.notPremium(player, "This server is full only! Only Premium players can join full servers.")) {
+                CommandUtils.sendErrorMessage(player, "This server is at maximum capacity!");
+            }
             return;
         }
 

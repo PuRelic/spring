@@ -11,7 +11,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
-import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.utils.PermissionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -25,15 +25,11 @@ public class StaffChatCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("sc")
             .senderType(ProxiedPlayer.class)
+            .permission(Permission.isStaff())
             .argument(StringArgument.greedy("message"))
             .handler(c -> {
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                 String message = player.getName() + ": " + c.get("message");
-
-                if (!PermissionUtils.isStaff(player)) {
-                    CommandUtils.sendNoPermissionMessage(player);
-                    return;
-                }
 
                 ProxyServer.getInstance().getPlayers().stream()
                     .filter(PermissionUtils::isStaff)
