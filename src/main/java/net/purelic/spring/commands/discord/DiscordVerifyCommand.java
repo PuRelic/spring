@@ -17,13 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class LinkCommand implements DiscordCommand {
+public class DiscordVerifyCommand implements DiscordCommand {
 
     public static final Map<String, User> CODES = new HashMap<>();
 
     @Override
     public Command.Builder<DiscordUser> getCommandBuilder(JDA4CommandManager<DiscordUser> mgr) {
-        return mgr.commandBuilder("link")
+        return mgr.commandBuilder("verify")
             .senderType(GuildUser.class)
             .handler(c -> {
                 GuildUser sender = (GuildUser) c.getSender();

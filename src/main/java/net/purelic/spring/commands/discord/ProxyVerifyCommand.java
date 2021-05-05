@@ -20,7 +20,7 @@ import net.purelic.spring.utils.DiscordUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VerifyCommand implements ProxyCommand {
+public class ProxyVerifyCommand implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
@@ -36,17 +36,17 @@ public class VerifyCommand implements ProxyCommand {
                     return;
                 }
 
-                if (!LinkCommand.CODES.containsKey(code)) {
+                if (!DiscordVerifyCommand.CODES.containsKey(code)) {
                     CommandUtils.sendErrorMessage(player, "This verification code is either invalid or expired!");
                     return;
                 }
 
                 // Get the user that requested verification
-                User user = LinkCommand.CODES.get(code);
+                User user = DiscordVerifyCommand.CODES.get(code);
 
                 // Add the verified role
                 DiscordUtils.addRole(user, Role.VERIFIED).queue();
-                LinkCommand.CODES.remove(code);
+                DiscordVerifyCommand.CODES.remove(code);
 
                 // Sync roles
                 DiscordManager.syncRoles(player, user);

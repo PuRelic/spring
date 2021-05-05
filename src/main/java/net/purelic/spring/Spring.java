@@ -169,19 +169,19 @@ public class Spring extends Plugin {
         this.registerCommandManagers();
 
         // Discord
+        this.registerCommand(new DiscordVerifyCommand());
         this.registerCommand(new EmbedCommand());
         this.registerCommand(new EmbedEditCommand());
         this.registerCommand(new GiveawayCommand());
-        this.registerCommand(new LinkCommand());
         this.registerCommand(new MuteCommand());
         this.registerCommand(new NukeCommand());
+        this.registerCommand(new ProxyVerifyCommand());
         this.registerCommand(new ReactCommand());
         this.registerCommand(new SpeakCommand());
         this.registerCommand(new TempMuteCommand());
         this.registerCommand(new TopReferrersCommand());
         this.registerCommand(new UnlinkCommand());
         this.registerCommand(new UnmuteCommand());
-        this.registerCommand(new VerifyCommand());
         this.registerCommand(new WhoIsCommand());
 
         // League
