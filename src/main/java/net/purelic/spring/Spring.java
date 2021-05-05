@@ -74,6 +74,8 @@ public class Spring extends Plugin {
 
         this.getProxy().registerChannel("purelic:spring");
         this.reloadConfig();
+        this.registerBungeeCommandManager();
+        this.registerJDACommandManager();
         this.registerCommands();
         this.registerListeners();
 
@@ -166,8 +168,6 @@ public class Spring extends Plugin {
     }
 
     private void registerCommands() {
-        this.registerCommandManagers();
-
         // Discord
         this.registerCommand(new DiscordVerifyCommand());
         this.registerCommand(new EmbedCommand());
@@ -245,18 +245,27 @@ public class Spring extends Plugin {
         this.registerCommand(new WarnCommand());
     }
 
-    private void registerCommandManagers() {
-        try {
-            final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction =
-                AsynchronousCommandExecutionCoordinator.<CommandSender>newBuilder().build();
+    private void registerBungeeCommandManager() {
+        final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction =
+            AsynchronousCommandExecutionCoordinator.<CommandSender>newBuilder().build();
 
+        final Function<CommandSender, CommandSender> mapperFunction = Function.identity();
+
+        try {
             this.bungeeCmdMgr = new BungeeCommandManager<>(
                 this,
                 executionCoordinatorFunction,
-                Function.identity(),
-                Function.identity()
+                mapperFunction,
+                mapperFunction
             );
+        } catch (final Exception e) {
+            System.out.println("Failed to register Bungee Command Manager");
+            e.printStackTrace();
+        }
+    }
 
+    private void registerJDACommandManager() {
+        try {
             this.jdaCmdMgr = new JDA4CommandManager<>(
                 Commons.getDiscordBot(),
                 message -> "!", // command prefix
@@ -293,20 +302,21 @@ public class Spring extends Plugin {
                     throw new UnsupportedOperationException();
                 }
             );
-
-            // Register custom parsers
-            this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(RoleArgument.class), parserParameters ->
-                new RoleArgument.MessageParser<>(
-                    new HashSet<>(Arrays.asList(RoleArgument.ParserMode.values()))
-                ));
-
-            this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(ChannelArgument.class), parserParameters ->
-                new ChannelArgument.MessageParser<>(
-                    new HashSet<>(Arrays.asList(ChannelArgument.ParserMode.values()))
-                ));
-        } catch (final Exception e) {
+        } catch (Exception e) {
+            System.out.println("Failed to register JDA Command Manager");
             e.printStackTrace();
         }
+
+        // Register custom parsers
+        this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(RoleArgument.class), parserParameters ->
+            new RoleArgument.MessageParser<>(
+                new HashSet<>(Arrays.asList(RoleArgument.ParserMode.values()))
+            ));
+
+        this.jdaCmdMgr.getParserRegistry().registerParserSupplier(TypeToken.get(ChannelArgument.class), parserParameters ->
+            new ChannelArgument.MessageParser<>(
+                new HashSet<>(Arrays.asList(ChannelArgument.ParserMode.values()))
+            ));
     }
 
     private void registerCommand(ProxyCommand command) {

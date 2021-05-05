@@ -28,6 +28,10 @@
             <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
+        <repository>
+            <id>incendo-snapshots</id>
+            <url>https://repo.incendo.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -46,12 +50,12 @@
         <dependency>
             <groupId>cloud.commandframework</groupId>
             <artifactId>cloud-bungee</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>cloud.commandframework</groupId>
             <artifactId>cloud-jda</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>de.exceptionflug</groupId>
