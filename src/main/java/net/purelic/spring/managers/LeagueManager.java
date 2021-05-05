@@ -9,19 +9,23 @@ import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 import net.purelic.spring.server.ServerStatus;
+import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.DatabaseUtils;
 import net.purelic.spring.utils.TaskUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LeagueManager {
 
-    private static final Map<LeagueTeam, ScheduledTask> QUEUE = new HashMap<>();
-    private static final Map<LeagueMatch, ScheduledTask> MATCHES = new HashMap<>();
+    private static final Map<Playlist, List<ProxiedPlayer>> SOLO_QUEUE = new HashMap<>();
+    private static final Map<Playlist, ScheduledTask> SOLO_MATCHES = new HashMap<>();
+    private static final Map<LeagueTeam, ScheduledTask> TEAM_QUEUE = new HashMap<>();
+    private static final Map<LeagueMatch, ScheduledTask> TEAM_MATCHES = new HashMap<>();
     private static Season currentSeason;
 
     public static void reloadSeason() {
@@ -34,90 +38,133 @@ public class LeagueManager {
     }
 
     public static void clearQueues() {
-        QUEUE.forEach((team, task) -> {
+        SOLO_QUEUE.forEach((playlist, players) -> players.forEach(player ->
+            ChatUtils.sendMessage(player, ChatColor.RED + "Playlists updated - queues cleared! Please rejoin.")
+        ));
+
+        SOLO_MATCHES.forEach((playlist, task) -> task.cancel());
+
+        TEAM_QUEUE.forEach((team, task) -> {
             team.sendMessage(ChatColor.RED + "Playlists updated - queues cleared! Please rejoin.", true);
             task.cancel();
         });
 
-        MATCHES.forEach((match, task) -> {
+        TEAM_MATCHES.forEach((match, task) -> {
             match.sendMessage(ChatColor.RED + "Playlists updated - queues cleared! Please rejoin.", true);
             task.cancel();
         });
 
-        QUEUE.clear();
-        MATCHES.clear();
+        TEAM_QUEUE.clear();
+        TEAM_MATCHES.clear();
     }
 
     public static void joinQueue(ProxiedPlayer player, Playlist playlist) {
+        PublicServer server = ServerManager.getPublicServer(playlist);
+        int minPartySize = server.getMinParty();
         Party party = PartyManager.getParty(player);
 
-        if (party == null) {
-            CommandUtils.sendErrorMessage(player, "You must be in a party to play league! Use /party create to start a party");
-            return;
+        if (minPartySize > 0) { // team queue
+            if (party == null) {
+                CommandUtils.sendErrorMessage(player, "You must be in a party to play league! Use /party create to start a party");
+                return;
+            }
+
+            if (!party.isLeader(player)) {
+                CommandUtils.sendErrorMessage(player, "Only the party leader can join a league queue!");
+                return;
+            }
+
+            if (party.size() != minPartySize) {
+                CommandUtils.sendErrorMessage(player, "You must have an exact party size of " + server.getMinParty() + " Players to join this queue!");
+                return;
+            }
+
+            if (anyQueued(party)) {
+                CommandUtils.sendErrorMessage(player, "You or someone in your party is already queued!");
+                return;
+            }
+
+            party.getMembers().forEach(member -> CommandUtils.sendSuccessMessage(member, "Joining " + playlist.getName() + " queue... Use /leave to leave the queue at any time"));
+
+            LeagueTeam team = new LeagueTeam(playlist, party);
+            joinTeamQueue(team);
+        } else { // solo queue
+            CommandUtils.sendSuccessMessage(player, "Joining " + playlist.getName() + " queue... Use /leave to leave the queue at any time");
+            joinSoloQueue(player, playlist);
         }
-
-        if (!party.isLeader(player)) {
-            CommandUtils.sendErrorMessage(player, "Only the party leader can join a league queue!");
-            return;
-        }
-
-        PublicServer server = ServerManager.getPublicServer(playlist);
-
-        if (party.size() != server.getMinParty()) {
-            CommandUtils.sendErrorMessage(player, "You must have an exact party size of " + server.getMinParty() + " Players to join this queue!");
-            return;
-        }
-
-        if (anyQueued(party)) {
-            CommandUtils.sendErrorMessage(player, "You or someone in your party is already queued!");
-            return;
-        }
-
-        party.getMembers().forEach(member -> CommandUtils.sendSuccessMessage(member, "Joining " + playlist.getName() + " queue... Use /leave to leave the queue at any time"));
 
         // if no servers are online, create a server on first successful queue join
         if (ServerManager.getGameServers().values().stream().noneMatch(gs -> gs.getPlaylist() == playlist)) {
             ServerManager.createPublicServer(server);
         }
-
-        LeagueTeam team = new LeagueTeam(playlist, party);
-        joinQueue(team);
     }
 
     private static boolean anyQueued(Party party) {
         return party.getMembers().stream().anyMatch(LeagueManager::isQueued);
     }
 
+    public static void cleanSoloQueue(Playlist playlist) {
+        List<ProxiedPlayer> offline = new ArrayList<>();
+
+        for (ProxiedPlayer player : SOLO_QUEUE.get(playlist)) {
+            if (!player.isConnected()) offline.add(player);
+        }
+
+        SOLO_QUEUE.get(playlist).removeAll(offline);
+
+        if (SOLO_QUEUE.get(playlist).size() == 0) {
+            SOLO_MATCHES.get(playlist).cancel();
+            SOLO_MATCHES.remove(playlist);
+        }
+    }
+
+    public static List<ProxiedPlayer> getSoloQueue(Playlist playlist) {
+        return SOLO_QUEUE.get(playlist);
+    }
+
     public static boolean isQueued(ProxiedPlayer player) {
-        return QUEUE.keySet().stream().anyMatch(team -> team.getPlayers().contains(player))
-            || MATCHES.keySet().stream().anyMatch(match -> match.getBlueTeam().getPlayers().contains(player))
-            || MATCHES.keySet().stream().anyMatch(match -> match.getRedTeam().getPlayers().contains(player));
+        return TEAM_QUEUE.keySet().stream().anyMatch(team -> team.getPlayers().contains(player))
+            || TEAM_MATCHES.keySet().stream().anyMatch(match -> match.getBlueTeam().getPlayers().contains(player))
+            || TEAM_MATCHES.keySet().stream().anyMatch(match -> match.getRedTeam().getPlayers().contains(player));
     }
 
     public static LeagueTeam getTeam(ProxiedPlayer player) {
-        LeagueTeam queued = QUEUE.keySet().stream().filter(team -> team.getPlayers().contains(player)).findFirst().orElse(null);
-        LeagueTeam blueTeam = MATCHES.keySet().stream().filter(match -> match.getBlueTeam().getPlayers().contains(player)).findFirst().map(LeagueMatch::getBlueTeam).orElse(null);
-        LeagueTeam redTeam = MATCHES.keySet().stream().filter(match -> match.getRedTeam().getPlayers().contains(player)).findFirst().map(LeagueMatch::getRedTeam).orElse(null);
+        LeagueTeam queued = TEAM_QUEUE.keySet().stream().filter(team -> team.getPlayers().contains(player)).findFirst().orElse(null);
+        LeagueTeam blueTeam = TEAM_MATCHES.keySet().stream().filter(match -> match.getBlueTeam().getPlayers().contains(player)).findFirst().map(LeagueMatch::getBlueTeam).orElse(null);
+        LeagueTeam redTeam = TEAM_MATCHES.keySet().stream().filter(match -> match.getRedTeam().getPlayers().contains(player)).findFirst().map(LeagueMatch::getRedTeam).orElse(null);
 
         if (queued != null) return queued;
         else if (blueTeam != null) return blueTeam;
         else return redTeam;
     }
 
-    public static void joinQueue(LeagueTeam team) {
+    private static void joinSoloQueue(ProxiedPlayer player, Playlist playlist) {
+        SOLO_QUEUE.putIfAbsent(playlist, new ArrayList<>());
+        SOLO_QUEUE.get(playlist).add(player);
+
+        // check if the queue size is full, then start server search and clear current queue
+
+        if (!SOLO_MATCHES.containsKey(playlist)) {
+            LeagueSoloMatchSearch search = new LeagueSoloMatchSearch(playlist);
+            ScheduledTask task = TaskUtils.runTimer(search, 1L);
+            SOLO_MATCHES.put(playlist, task);
+        }
+    }
+
+    public static void joinTeamQueue(LeagueTeam team) {
         LeagueMatchSearch search = new LeagueMatchSearch(team);
         ScheduledTask task = TaskUtils.runTimer(search, 1L);
-        QUEUE.put(team, task);
+        TEAM_QUEUE.put(team, task);
     }
 
     public static void removeFromQueue(LeagueTeam team) {
-        QUEUE.get(team).cancel();
-        QUEUE.remove(team);
+        TEAM_QUEUE.get(team).cancel();
+        TEAM_QUEUE.remove(team);
     }
 
     public static void removeFromQueue(LeagueMatch match) {
-        MATCHES.get(match).cancel();
-        MATCHES.remove(match);
+        TEAM_MATCHES.get(match).cancel();
+        TEAM_MATCHES.remove(match);
     }
 
     public static LeagueTeam findMatch(LeagueTeam team, int min, int max) {
@@ -133,7 +180,7 @@ public class LeagueManager {
         LeagueTeam closest = null;
         int tempDiff = Integer.MAX_VALUE;
 
-        for (LeagueTeam queued : QUEUE.keySet()) {
+        for (LeagueTeam queued : TEAM_QUEUE.keySet()) {
             if (queued == team || queued.getPlaylist() != playlist) continue;
 
             int diff = Math.abs(rating - queued.getRating());
@@ -154,11 +201,11 @@ public class LeagueManager {
     }
 
     public static boolean isQueued(LeagueTeam team) {
-        return QUEUE.containsKey(team);
+        return TEAM_QUEUE.containsKey(team);
     }
 
     public static boolean isQueued(LeagueMatch match) {
-        return MATCHES.containsKey(match);
+        return TEAM_MATCHES.containsKey(match);
     }
 
     public static void createMatch(LeagueTeam blue, LeagueTeam red) {
@@ -168,7 +215,7 @@ public class LeagueManager {
         LeagueMatch match = new LeagueMatch(blue, red);
         LeagueServerSearch search = new LeagueServerSearch(blue.getPlaylist(), match);
         ScheduledTask task = TaskUtils.runTimer(search, 1L);
-        MATCHES.put(match, task);
+        TEAM_MATCHES.put(match, task);
     }
 
     public static void startMatch(LeagueMatch match, GameServer server) {
@@ -177,7 +224,7 @@ public class LeagueManager {
         server.setRankedPlayers(match);
     }
 
-    public static int getAvgRating(Playlist pl, Set<ProxiedPlayer> players) {
+    public static int getAvgRating(Playlist pl, List<ProxiedPlayer> players) {
         AtomicInteger total = new AtomicInteger();
         players.forEach(player -> total.addAndGet(ProfileManager.getProfile(player).getRating(pl)));
         return total.get() / players.size();

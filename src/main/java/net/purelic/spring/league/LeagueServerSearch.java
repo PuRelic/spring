@@ -67,7 +67,7 @@ public class LeagueServerSearch implements Runnable {
 
     private void requeue(LeagueTeam team) {
         TaskUtils.scheduleTask(() -> {
-            LeagueManager.joinQueue(team);
+            LeagueManager.joinTeamQueue(team);
         }, 2);
     }
 

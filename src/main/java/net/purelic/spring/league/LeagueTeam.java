@@ -14,13 +14,13 @@ import java.util.*;
 public class LeagueTeam {
 
     private final Playlist playlist;
-    private final Set<ProxiedPlayer> players;
+    private final List<ProxiedPlayer> players;
     private final String name;
     private final int rating;
 
     public LeagueTeam(Playlist playlist, Party party) {
         this.playlist = playlist;
-        this.players = new HashSet<>(party.getMembers());
+        this.players = new ArrayList<>(party.getMembers());
         this.name = party.hasCustomName() ? party.getName() : null;
         this.rating = LeagueManager.getAvgRating(this.playlist, this.players);
     }
@@ -29,7 +29,7 @@ public class LeagueTeam {
         return this.playlist;
     }
 
-    public Set<ProxiedPlayer> getPlayers() {
+    public List<ProxiedPlayer> getPlayers() {
         return this.players;
     }
 
