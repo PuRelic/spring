@@ -8,6 +8,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.utils.NickUtils;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class PingCommand implements ProxyCommand {
 
                 if (targetArg.isPresent()) {
                     ProxiedPlayer target = targetArg.get();
-                    CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(" + target.getName() + " has a ping of " + target.getPing() + "ms)");
+                    CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(" + NickUtils.getDisplayName(target, player) + " has a ping of " + target.getPing() + "ms)");
                 } else {
                     CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(You have a ping of " + player.getPing() + "ms)");
                 }

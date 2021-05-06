@@ -151,10 +151,13 @@ public class InventoryManager {
         openStatsMenu(viewer, viewer);
     }
 
-    public static void openStatsMenu(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
-        ProfileManager.reloadProfile(statsPlayer);
-        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(statsPlayer.getName() + "'s Stats"));
-        Arrays.asList(StatSection.values()).forEach(section -> inventory.setItem(section.getSlot(), section.toItem(viewer, statsPlayer)));
+    public static void openStatsMenu(ProxiedPlayer viewer, ProxiedPlayer player) {
+        openMatchesMenu(viewer, ProfileManager.reloadProfile(player));
+    }
+
+    public static void openStatsMenu(ProxiedPlayer viewer, Profile profile) {
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(profile.getName() + "'s Stats"));
+        Arrays.asList(StatSection.values()).forEach(section -> inventory.setItem(section.getSlot(), section.toItem(viewer, profile)));
         InventoryModule.sendInventory(viewer, inventory);
     }
 
@@ -163,9 +166,11 @@ public class InventoryManager {
     }
 
     public static void openMatchesMenu(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
-        ProfileManager.reloadProfile(statsPlayer);
-        Profile profile = ProfileManager.getProfile(statsPlayer);
-        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(statsPlayer.getName() + "'s Recent Matches"));
+        openMatchesMenu(viewer, ProfileManager.reloadProfile(statsPlayer));
+    }
+
+    public static void openMatchesMenu(ProxiedPlayer viewer, Profile profile) {
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(profile.getName() + "'s Recent Matches"));
 
         int row = 1;
         int offset = 1;

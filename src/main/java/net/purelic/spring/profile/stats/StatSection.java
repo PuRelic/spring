@@ -4,7 +4,6 @@ import de.exceptionflug.protocolize.items.ItemStack;
 import de.exceptionflug.protocolize.items.ItemType;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.profile.Profile;
 import net.purelic.spring.utils.ItemAction;
 import net.purelic.spring.utils.Protocol;
@@ -49,8 +48,8 @@ public enum StatSection {
         return this.slot;
     }
 
-    public ItemStack toItem(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
-        Map<String, Object> stats = this.getStats(statsPlayer);
+    public ItemStack toItem(ProxiedPlayer viewer, Profile profile) {
+        Map<String, Object> stats = this.getStats(profile);
 
         ItemStack item = new ItemStack(this.useLegacyItem(viewer) ? ItemType.OAK_SIGN : this.itemType);
         item.setDisplayName("" + ChatColor.AQUA + ChatColor.BOLD + this.name + " Stats");
@@ -96,8 +95,7 @@ public enum StatSection {
         return ((Double) stats.getOrDefault(statType.getKey(), 0D)).intValue();
     }
 
-    private Map<String, Object> getStats(ProxiedPlayer player) {
-        Profile profile = ProfileManager.getProfile(player);
+    private Map<String, Object> getStats(Profile profile) {
         if (this == TOTAL) return profile.getStats(this);
         else return profile.getTotalStats(this);
     }

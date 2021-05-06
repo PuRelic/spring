@@ -17,13 +17,13 @@ public class ProfileManager {
         return PROFILES;
     }
 
-    public static void reloadProfile(ProxiedPlayer player) {
-        reloadProfile(player.getUniqueId());
+    public static Profile reloadProfile(ProxiedPlayer player) {
+        return  reloadProfile(player.getUniqueId());
     }
 
-    public static void reloadProfile(UUID uuid) {
+    public static Profile reloadProfile(UUID uuid) {
         removeProfile(uuid);
-        loadProfile(uuid);
+        return loadProfile(uuid);
     }
 
     public static Profile getProfile(ProxiedPlayer player) {
@@ -49,10 +49,11 @@ public class ProfileManager {
         PROFILES.remove(uuid);
     }
 
-    private static void loadProfile(UUID uuid) {
-        if (PROFILES.containsKey(uuid)) return;
+    private static Profile loadProfile(UUID uuid) {
+        if (PROFILES.containsKey(uuid)) return PROFILES.get(uuid);
         Profile profile = new Profile(uuid, DatabaseUtils.getPlayerDoc(uuid));
         PROFILES.put(uuid, profile);
+        return profile;
     }
 
     public static void loadProfileCache() {

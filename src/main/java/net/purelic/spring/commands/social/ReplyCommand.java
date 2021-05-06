@@ -20,13 +20,8 @@ public class ReplyCommand extends MessageCommand implements ProxyCommand {
                 ProxiedPlayer recipient = messages.get(sender);
                 String message = c.get("message");
 
-                if (recipient == null) {
+                if (recipient == null || !recipient.isConnected()) {
                     CommandUtils.sendErrorMessage(sender, "You have no one to reply to!");
-                    return;
-                }
-
-                if (!recipient.isConnected()) {
-                    CommandUtils.sendErrorMessage(sender, recipient.getName() + " is no longer online!");
                     return;
                 }
 
