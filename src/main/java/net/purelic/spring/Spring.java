@@ -33,10 +33,7 @@ import net.purelic.spring.commands.parsers.*;
 import net.purelic.spring.commands.server.*;
 import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
-import net.purelic.spring.commands.spring.CreateCommand;
-import net.purelic.spring.commands.spring.DestroyCommand;
-import net.purelic.spring.commands.spring.PurgeCommand;
-import net.purelic.spring.commands.spring.ReloadCommand;
+import net.purelic.spring.commands.spring.*;
 import net.purelic.spring.commands.staff.*;
 import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
@@ -228,6 +225,7 @@ public class Spring extends Plugin {
         this.registerCommand(new CreateCommand());
         this.registerCommand(new DestroyCommand());
         this.registerCommand(new PurgeCommand());
+        this.registerCommand(new RebootCommand());
         this.registerCommand(new ReloadCommand());
 
         // Staff
