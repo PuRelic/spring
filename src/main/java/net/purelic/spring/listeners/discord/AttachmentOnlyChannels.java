@@ -14,7 +14,8 @@ public class AttachmentOnlyChannels implements Listener {
 
     private static final List<String> CHANNELS = Arrays.asList(
         Channel.BUILDS,
-        Channel.CLIPS
+        Channel.CLIPS,
+        Channel.SCREENSHOTS
     );
 
     @EventHandler
