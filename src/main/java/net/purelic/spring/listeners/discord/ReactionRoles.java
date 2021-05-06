@@ -22,10 +22,12 @@ public class ReactionRoles extends ListenerAdapter {
         this.alertRoles.put("\uD83D\uDD28", Role.BETA_TESTER); // 🔨
         this.alertRoles.put("\uD83D\uDD14", Role.LOOKING_TO_PLAY); // 🔔
         this.alertRoles.put("\uD83D\uDCE3", Role.ANNOUNCEMENTS); // 📣
+        this.alertRoles.put("\uD83C\uDFC6", Role.EVENTS); // 🏆
 
         this.clubRoles = new HashMap<>();
         this.clubRoles.put("\uD83C\uDFAC", Role.MOVIES); // 🎬
         this.clubRoles.put("\uD83C\uDFB5", Role.MUSIC); // 🎵
+        this.clubRoles.put("\uD83C\uDFA8", Role.CREATIVE); // 🎨
     }
 
     @Override
