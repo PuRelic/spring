@@ -17,12 +17,7 @@ public class BroadcastCommand implements ProxyCommand {
             .senderType(ProxiedPlayer.class)
             .permission(Permission.isStaff())
             .argument(StringArgument.greedy("message"))
-            .handler(c -> {
-                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                String message = c.get("message");
-
-                ChatUtils.broadcastMessage(message);
-            });
+            .handler(c -> ChatUtils.broadcastMessage(c.get("message")));
     }
 
 }

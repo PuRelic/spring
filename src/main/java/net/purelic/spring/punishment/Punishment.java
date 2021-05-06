@@ -124,14 +124,15 @@ public class Punishment {
         new PunishmentAppealedEvent(this.profile.getId(), this).track();
     }
 
+    // If a punishment is old, we'll ignore it when issuing new punishments
     public boolean isStale() {
         Date today = Timestamp.now().toDate();
         Calendar cal = Calendar.getInstance();
 
-        if (this.hasExpirationTimestamp()) {
+        if (this.hasExpirationTimestamp()) { // if ban, stale after 6 months
             cal.setTime(this.expirationTimestamp.toDate());
             cal.add(Calendar.MONTH, 6);
-        } else {
+        } else { // if not a ban, stale after 3 months
             cal.setTime(today);
             cal.add(Calendar.MONTH, 3);
         }

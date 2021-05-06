@@ -3,7 +3,6 @@ package net.purelic.spring.commands.staff;
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.bungee.BungeeCommandManager;
-import cloud.commandframework.bungee.arguments.PlayerArgument;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -15,6 +14,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
 import net.purelic.spring.analytics.events.PlayerReportedEvent;
 import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.parsers.PlayerArgument;
 import net.purelic.spring.managers.DiscordManager;
 import net.purelic.spring.utils.ChatUtils;
 import net.purelic.spring.utils.CommandUtils;
@@ -27,7 +27,7 @@ public class ReportCommand implements ProxyCommand {
     @SuppressWarnings("deprecation")
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("report")
-            .senderType(ProxiedPlayer.class) // TODO local player argument
+            .senderType(ProxiedPlayer.class)
             .argument(PlayerArgument.of("player"))
             .argument(StringArgument.greedy("reason"))
             .handler(c -> {

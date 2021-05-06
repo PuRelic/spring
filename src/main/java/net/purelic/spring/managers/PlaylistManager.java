@@ -8,6 +8,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import net.purelic.spring.server.Playlist;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,16 @@ public class PlaylistManager {
                 Playlist playlist = new Playlist((Map<String, Object>) data);
                 PLAYLISTS.put(playlist.getName(), playlist);
             });
+    }
+
+    public static Collection<Playlist> getPlaylists() {
+        return PLAYLISTS.values();
+    }
+
+    public static Playlist getPlaylistById(String id) {
+        return getPlaylists().stream()
+            .filter(playlist -> playlist.getId().equals(id))
+            .findFirst().orElse(null);
     }
 
     public static Playlist getPlaylist(String name) {

@@ -13,10 +13,7 @@ public class LeagueCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("league")
             .senderType(ProxiedPlayer.class)
-            .handler(c -> {
-                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                InventoryManager.openLeagueSelector(player);
-            });
+            .handler(c -> InventoryManager.openLeagueSelector((ProxiedPlayer) c.getSender()));
     }
 
 }

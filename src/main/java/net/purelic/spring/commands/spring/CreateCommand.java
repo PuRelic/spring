@@ -9,7 +9,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.commands.parsers.Permission;
-import net.purelic.spring.managers.PlaylistManager;
+import net.purelic.spring.commands.parsers.PlaylistArgument;
 import net.purelic.spring.managers.ServerManager;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
@@ -24,22 +24,15 @@ public class CreateCommand implements ProxyCommand {
             .senderType(ProxiedPlayer.class)
             .permission(Permission.isStaff())
             .argument(StringArgument.of("name"))
-            .argument(StringArgument.quoted("playlist"))
+            .argument(PlaylistArgument.of("playlist"))
             .argument(IntegerArgument.<CommandSender>newBuilder("max players").withMin(0).withMax(80).asOptionalWithDefault("40"))
             .argument(BooleanArgument.optional("notify", false))
             .handler(c -> {
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                 String name = c.get("name");
-                String playlistName = c.get("playlist");
+                Playlist playlist = c.get("playlist");
                 int maxPlayers = c.get("max players");
                 boolean notify = c.get("notify");
-
-                Playlist playlist = PlaylistManager.getPlaylist(playlistName);
-
-                if (playlist == null) {
-                    CommandUtils.sendErrorMessage(player, String.format("Could not find playlist \"%s\"!", playlistName));
-                    return;
-                }
 
                 GameServer gameServer = new GameServer(name, playlist, maxPlayers, notify);
                 ServerManager.addServer(gameServer);

@@ -21,121 +21,57 @@ public class PunishmentUtils {
     private static final UUID PURELIC_UUID = UUID.fromString("57014d5f-1d26-4986-832b-a0e7a4e41088");
 
     public static void autoBan(ProxiedPlayer player, String reason) {
-        punishPlayer(null, player.getUniqueId().toString(), reason, PunishmentType.PERMA_BAN);
+        punishPlayer(null, ProfileManager.getProfile(player), reason, PunishmentType.PERMA_BAN);
     }
 
-    public static void punishPlayer(ProxiedPlayer player, String target, String reason) {
-        punishPlayer(player, target, reason, null);
+    public static void punishPlayer(ProxiedPlayer player, Profile profile, String reason) {
+        punishPlayer(player, profile, reason, null);
     }
 
-    public static void punishPlayer(ProxiedPlayer player, String target, String reason, PunishmentType type) {
-        punishPlayer(player, target, reason, type, 0, null);
+    public static void punishPlayer(ProxiedPlayer player, Profile profile, String reason, PunishmentType type) {
+        punishPlayer(player, profile, reason, type, 0, null);
     }
 
-    public static void punishPlayer(ProxiedPlayer player, String target, String reason, PunishmentType type, int duration, BanUnit unit) {
-        ProxiedPlayer targetPlayer = Spring.getPlayer(target);
-        boolean targetOnline = targetPlayer != null;
+    public static void punishPlayer(ProxiedPlayer punisher, Profile profile, String reason, PunishmentType type, int duration, BanUnit unit) {
+        if (PermissionUtils.isStaff(profile.getId())) {
+            if (punisher != null) CommandUtils.sendErrorMessage(punisher, "You cannot punish other staff members!");
+            return;
+        }
 
-        // Automated punishments (no player/punisher)
-        if (player == null && targetPlayer != null) {
-            // Ignore automatic punishments if it's for a staff member
-            if (PermissionUtils.isStaff(targetPlayer)) {
-                return;
+        // Get the next punishment severity if one isn't set
+        if (type == null) {
+            type = profile.getNextPunishmentSeverity();
+
+            // default temp ban is 7 days
+            if (type == PunishmentType.TEMP_BAN) {
+                duration = 7;
+                unit = BanUnit.DAY;
             }
+        }
 
-            Profile targetProfile = ProfileManager.getProfile(targetPlayer);
+        // Call generic punishment event
+        Spring.callEvent(new PlayerPunishEvent(profile, punisher == null ? PURELIC_UUID : punisher.getUniqueId(), reason, type, duration, unit));
 
-            // Get the next punishment severity if one isn't set
-            if (type == null) {
-                type = targetProfile.getNextPunishmentSeverity();
+        // Call punishment specific events if player is online
+        if (profile.isOnline()) {
+            ProxiedPlayer player = profile.getPlayer();
 
-                if (type == PunishmentType.TEMP_BAN) {
-                    duration = 7;
-                    unit = BanUnit.DAY;
-                }
-            }
+            if (type == PunishmentType.WARN) Spring.callEvent(new PlayerWarnEvent(player, reason, true));
+            else if (type == PunishmentType.KICK) Spring.callEvent(new PlayerKickEvent(player, reason));
+            else Spring.callEvent(new PlayerBanEvent(player, reason, type, duration, unit));
+        }
 
-            // Call generic punishment event
-            Spring.callEvent(new PlayerPunishEvent(targetPlayer, targetProfile, PURELIC_UUID, reason, type, duration, unit));
+        // Broadcast to Discord
+        DiscordManager.sendPunishment(punisher, profile, reason, type);
 
-            // Call punishment specific events
-            if (type == PunishmentType.WARN) Spring.callEvent(new PlayerWarnEvent(targetPlayer, reason, true));
-            else if (type == PunishmentType.KICK) Spring.callEvent(new PlayerKickEvent(targetPlayer, reason));
-            else Spring.callEvent(new PlayerBanEvent(targetPlayer, reason, type, duration, unit));
-
-            // Broadcast to Discord
-            DiscordManager.sendPunishment(targetPlayer, reason, type);
-        } else if (!targetOnline && player != null) { // Issuing punishment to an offline player
-            UUID targetId = Fetcher.getUUIDOf(target);
-
-            // Make sure the target uuid is valid
-            if (targetId == null) {
-                CommandUtils.sendNoPlayerMessage(player, target);
-                return;
-            }
-
-            // Disallow punishing other staff
-            if (PermissionUtils.isStaff(targetId)) {
-                CommandUtils.sendErrorMessage(player, "You cannot punish other staff members!");
-                return;
-            }
-
-            Profile profile = ProfileManager.getProfile(targetId);
-
-            // Get the next punishment severity if one isn't set
-            if (type == null) {
-                type = profile.getNextPunishmentSeverity();
-
-                if (type == PunishmentType.TEMP_BAN) {
-                    duration = 7;
-                    unit = BanUnit.DAY;
-                }
-            }
-
-            // Call generic punishment event
-            Spring.callEvent(new PlayerPunishEvent(targetId, player, reason, type, duration, unit));
-
-            // Broadcast to Discord
-            DiscordManager.sendPunishment(player, Fetcher.getNameOf(targetId), targetId, reason, type);
-
-            // Send success message
-            CommandUtils.sendSuccessMessage(player,
+        // Send success message
+        if (punisher != null) {
+            CommandUtils.sendSuccessMessage(punisher,
                 new ComponentBuilder("You successfully punished ").color(ChatColor.GREEN)
                     .append(profile.getName()).color(ChatColor.DARK_AQUA)
                     .append("!").color(ChatColor.GREEN)
                     .append(" (" + type.getPastTense() + ")").color(ChatColor.GRAY)
                     .create());
-        } else { // punishing an online player
-            if (player == null) return; // shouldn't happen
-
-
-            // Disallow punishing other staff Mmembers
-            if (PermissionUtils.isStaff(targetPlayer)) {
-                CommandUtils.sendErrorMessage(player, "You cannot punish other staff members!");
-                return;
-            }
-
-            Profile profile = ProfileManager.getProfile(targetPlayer);
-
-            // Get the next punishment severity if one isn't set
-            if (type == null) {
-                type = profile.getNextPunishmentSeverity();
-                if (type == PunishmentType.TEMP_BAN) {
-                    duration = 7;
-                    unit = BanUnit.DAY;
-                }
-            }
-
-            // Call generic punishment event
-            Spring.callEvent(new PlayerPunishEvent(targetPlayer, profile, player, reason, type, duration, unit));
-
-            // Call punishment specific events
-            if (type == PunishmentType.WARN) Spring.callEvent(new PlayerWarnEvent(targetPlayer, reason, true));
-            else if (type == PunishmentType.KICK) Spring.callEvent(new PlayerKickEvent(targetPlayer, reason));
-            else Spring.callEvent(new PlayerBanEvent(targetPlayer, reason, type, duration, unit));
-
-            // Broadcast to Discord
-            DiscordManager.sendPunishment(player, targetPlayer.getName(), targetPlayer.getUniqueId(), reason, type);
         }
     }
 

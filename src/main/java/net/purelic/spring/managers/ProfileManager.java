@@ -60,4 +60,10 @@ public class ProfileManager {
         Commons.getPlayerCache().clear();
     }
 
+    // Get's the player's profile without caching it
+    public static Profile getOfflineProfile(UUID uuid) {
+        if (PROFILES.containsKey(uuid)) return PROFILES.get(uuid);
+        return new Profile(uuid, DatabaseUtils.getPlayerDoc(uuid));
+    }
+
 }

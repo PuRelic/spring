@@ -1,12 +1,10 @@
 package net.purelic.spring.commands.staff;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.bungee.BungeeCommandManager;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -14,10 +12,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.commons.Commons;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.commands.parsers.Permission;
+import net.purelic.spring.commands.parsers.ProfileArgument;
 import net.purelic.spring.profile.AltAccount;
+import net.purelic.spring.profile.Profile;
 import net.purelic.spring.utils.ChatUtils;
-import net.purelic.spring.utils.CommandUtils;
-import net.purelic.spring.utils.DatabaseUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,19 +30,12 @@ public class AltsCommand implements ProxyCommand {
         return mgr.commandBuilder("alts")
             .senderType(ProxiedPlayer.class)
             .permission(Permission.isStaff())
-            .argument(StringArgument.of("player"))
+            .argument(ProfileArgument.of("player"))
             .handler(c -> {
                 ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
-                String target = c.get("player");
+                Profile target = c.get("player");
 
-                QueryDocumentSnapshot doc = DatabaseUtils.getPlayerDoc(target);
-
-                if (doc == null) {
-                    CommandUtils.sendNoPlayerMessage(sender, target);
-                    return;
-                }
-
-                Query query = Commons.getFirestore().collection("player_ips").whereArrayContains("uuids", doc.getId());
+                Query query = Commons.getFirestore().collection("player_ips").whereArrayContains("uuids", target.getId());
                 ApiFuture<QuerySnapshot> future = query.get();
 
                 try {
@@ -71,7 +62,7 @@ public class AltsCommand implements ProxyCommand {
                         }
                     }
 
-                    ComponentBuilder message = ChatUtils.getHeader(doc.getString("name") + "'s Alts");
+                    ComponentBuilder message = ChatUtils.getHeader(target.getName() + "'s Alts");
 
                     for (AltAccount account : accounts.values()) {
                         message.append("\n").reset().append(account.toComponent());

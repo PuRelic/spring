@@ -1,9 +1,10 @@
 package net.purelic.spring.commands.spring;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.bungee.BungeeCommandManager;
+import cloud.commandframework.bungee.arguments.ServerArgument;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.commands.parsers.Permission;
@@ -18,13 +19,11 @@ public class DestroyCommand implements ProxyCommand {
             .literal("destroy")
             .senderType(ProxiedPlayer.class)
             .permission(Permission.isAdmin())
-            .argument(StringArgument.of("server"))
+            .argument(ServerArgument.of("server"))
             .handler(c -> {
-                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                String server = c.get("server");
-
+                String server = ((ServerInfo) c.get("server")).getName();
                 ServerManager.removeServer(server);
-                CommandUtils.sendSuccessMessage(player, "Server \"" + server + "\" was destroyed!");
+                CommandUtils.sendSuccessMessage((ProxiedPlayer) c.getSender(), "Server \"" + server + "\" was destroyed!");
             });
     }
 

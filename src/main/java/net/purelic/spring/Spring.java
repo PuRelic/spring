@@ -54,10 +54,7 @@ import net.purelic.spring.utils.TaskUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 public class Spring extends Plugin {
@@ -262,6 +259,30 @@ public class Spring extends Plugin {
             System.out.println("Failed to register Bungee Command Manager");
             e.printStackTrace();
         }
+
+        // Create case insensitive suggestions
+        this.bungeeCmdMgr.setCommandSuggestionProcessor((context, strings) -> {
+            String input;
+
+            if (context.getInputQueue().isEmpty()) {
+                input = "";
+            } else {
+                input = context.getInputQueue().peek();
+            }
+
+            input = input.toLowerCase();
+            List<String> suggestions = new LinkedList<>();
+
+            for (String suggestion : strings) {
+                if (suggestion == null) continue;
+
+                if (suggestion.toLowerCase().startsWith(input)) {
+                    suggestions.add(suggestion);
+                }
+            }
+
+            return suggestions;
+        });
     }
 
     private void registerJDACommandManager() {
@@ -364,6 +385,14 @@ public class Spring extends Plugin {
 
     public static ProxiedPlayer getPlayer(String name) {
         return getPlugin().getProxy().getPlayer(name);
+    }
+
+    public static boolean isOnline(UUID uuid) {
+        return getPlayer(uuid) != null;
+    }
+
+    public static boolean isOnline(String name) {
+        return getPlayer(name) != null;
     }
 
 }

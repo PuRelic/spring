@@ -7,6 +7,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.commands.parsers.Permission;
+import net.purelic.spring.commands.parsers.ProfileArgument;
 import net.purelic.spring.punishment.PunishmentType;
 import net.purelic.spring.utils.PunishmentUtils;
 
@@ -17,15 +18,14 @@ public class WarnCommand extends PunishmentUtils implements ProxyCommand {
         return mgr.commandBuilder("warn")
             .senderType(ProxiedPlayer.class)
             .permission(Permission.isStaff())
-            .argument(StringArgument.of("player"))
+            .argument(ProfileArgument.of("player"))
             .argument(StringArgument.greedy("reason"))
-            .handler(c -> {
-                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                String target = c.get("player");
-                String reason = c.get("reason");
-
-                PunishmentUtils.punishPlayer(player, target, reason, PunishmentType.WARN);
-            });
+            .handler(c -> PunishmentUtils.punishPlayer(
+                (ProxiedPlayer) c.getSender(),
+                c.get("player"),
+                c.get("reason"),
+                PunishmentType.WARN
+            ));
     }
 
 }

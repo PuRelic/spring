@@ -3,6 +3,7 @@ package net.purelic.spring.profile;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.FieldValue;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.purelic.spring.Spring;
 import net.purelic.spring.managers.LeagueManager;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.profile.stats.StatSection;
@@ -21,11 +22,13 @@ public class Profile {
 
     private final UUID uuid;
     private final String name;
+    private final String nick;
     private final List<Rank> ranks;
     private final Map<String, Object> stats;
     private final List<Map<String, Object>> matches;
     private final List<Map<String, Object>> punishmentsData;
     private final Timestamp joined;
+    private final Timestamp lastSeen;
     private boolean betaFeatures;
     private boolean discordLinked;
 
@@ -36,10 +39,12 @@ public class Profile {
     public Profile(UUID uuid, Map<String, Object> data) {
         this.uuid = uuid;
         this.name = (String) data.get("name");
+        this.nick = (String) data.get("nick");
         this.ranks = Rank.parseRanks((List<Object>) data.getOrDefault(Rank.PATH, new ArrayList<>()));
         this.stats = (Map<String, Object>) data.getOrDefault("stats", new HashMap<>());
         this.matches = (List<Map<String, Object>>) data.getOrDefault("recent_matches", new ArrayList<>());
         this.joined = (Timestamp) data.getOrDefault("joined", Timestamp.now());
+        this.lastSeen = (Timestamp) data.getOrDefault("last_seen", Timestamp.now());
         this.betaFeatures = (boolean) this.getPreference(Preference.BETA_FEATURES, data, false);
         this.discordLinked = (boolean) data.getOrDefault("discord_linked", false);
         this.punishmentsData = (List<Map<String, Object>>) data.getOrDefault("punishments", new ArrayList<>());
@@ -54,6 +59,14 @@ public class Profile {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getNick() {
+        return this.nick;
+    }
+
+    public boolean isNicked() {
+        return this.nick != null;
     }
 
     public List<Rank> getRanks() {
@@ -103,28 +116,6 @@ public class Profile {
         return this.matches;
     }
 
-    public Map<String, Object> getData() {
-        Map<String, Object> data = new HashMap<>();
-
-        List<String> ranks = new ArrayList<>();
-        this.ranks.forEach(rank -> ranks.add(rank.getName()));
-        data.put(Rank.PATH, ranks);
-
-        Map<String, Object> preferences = new HashMap<>();
-        preferences.put(Preference.BETA_FEATURES.getKey(), this.betaFeatures);
-        data.put(Preference.PATH, preferences);
-
-        data.put("name", this.name);
-        data.put("stats", this.stats);
-        data.put("recent_matches", this.matches);
-        data.put("punishments", this.punishmentsData);
-        data.put("joined", this.joined);
-        data.put("beta_features", this.betaFeatures);
-        data.put("discord_linked", this.discordLinked);
-
-        return data;
-    }
-
     public Map<String, Object> getRankedStats(Playlist pl) {
         Map<String, Object> ranked = (Map<String, Object>) this.stats.getOrDefault("ranked", new HashMap<>());
         Map<String, Object> season = (Map<String, Object>) ranked.getOrDefault(LeagueManager.getCurrentSeason().getId(), new HashMap<>());
@@ -148,6 +139,10 @@ public class Profile {
 
     public Timestamp getJoined() {
         return this.joined;
+    }
+
+    public Timestamp getLastSeen() {
+        return this.lastSeen;
     }
 
     public boolean hasDiscordLinked() {
@@ -224,6 +219,38 @@ public class Profile {
         }
 
         return type;
+    }
+
+    public boolean isOnline() {
+        return Spring.isOnline(this.uuid);
+    }
+
+    public ProxiedPlayer getPlayer() {
+        return Spring.getPlayer(this.uuid);
+    }
+
+    public Map<String, Object> getData() {
+        Map<String, Object> data = new HashMap<>();
+
+        List<String> ranks = new ArrayList<>();
+        this.ranks.forEach(rank -> ranks.add(rank.getName()));
+        data.put(Rank.PATH, ranks);
+
+        Map<String, Object> preferences = new HashMap<>();
+        preferences.put(Preference.BETA_FEATURES.getKey(), this.betaFeatures);
+        data.put(Preference.PATH, preferences);
+
+        data.put("name", this.name);
+        data.put("nick", this.nick);
+        data.put("stats", this.stats);
+        data.put("recent_matches", this.matches);
+        data.put("punishments", this.punishmentsData);
+        data.put("joined", this.joined);
+        data.put("last_seen", this.lastSeen);
+        data.put("beta_features", this.betaFeatures);
+        data.put("discord_linked", this.discordLinked);
+
+        return data;
     }
 
 }

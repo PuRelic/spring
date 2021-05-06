@@ -20,11 +20,9 @@ public class PurgeCommand implements ProxyCommand {
             .permission(Permission.isAdmin())
             .senderType(ProxiedPlayer.class)
             .handler(c -> {
-                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-
                 int servers = ServerManager.getGameServers().size();
                 new ArrayList<>(ServerManager.getGameServers().values()).forEach(ServerManager::removeServer);
-                CommandUtils.sendSuccessMessage(player, "Purged " + servers + " server(s)!");
+                CommandUtils.sendSuccessMessage((ProxiedPlayer) c.getSender(), "Purged " + servers + " server(s)!");
             });
     }
 

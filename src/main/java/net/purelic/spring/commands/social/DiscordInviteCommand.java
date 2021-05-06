@@ -2,7 +2,6 @@ package net.purelic.spring.commands.social;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.bungee.BungeeCommandManager;
-import cloud.commandframework.bungee.arguments.PlayerArgument;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -10,7 +9,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.parsers.PlayerArgument;
 import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.utils.NickUtils;
 
 import java.util.Optional;
 
@@ -29,14 +30,14 @@ public class DiscordInviteCommand implements ProxyCommand {
                 if (targetArg.isPresent()) {
                     ProxiedPlayer target = targetArg.get();
                     target.sendMessage(
-                        new ComponentBuilder(player.getName() + " invited you to the PuRelic Discord").color(ChatColor.WHITE).bold(true)
+                        new ComponentBuilder(NickUtils.getDisplayName(player, target) + " invited you to the PuRelic Discord").color(ChatColor.WHITE).bold(true)
                             .append(" » ").reset().color(ChatColor.GRAY)
                             .append("purelic.net/discord").color(ChatColor.AQUA)
                             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Join").create()))
                             .event(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://purelic.net/discord"))
                             .create()
                     );
-                    CommandUtils.sendSuccessMessage(player, "You invited " + target.getName() + " to join Discord!");
+                    CommandUtils.sendSuccessMessage(player, "You invited " + NickUtils.getDisplayName(target, player) + " to join Discord!");
                 } else {
                     sendDiscordMessage(player);
                 }

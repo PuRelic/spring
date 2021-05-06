@@ -88,7 +88,15 @@ public class DiscordManager {
         webhook.execute();
     }
 
-    public static void sendPunishment(ProxiedPlayer punisher, String punishedName, UUID punishedId, String reason, PunishmentType type) {
+    public static void sendPunishment(ProxiedPlayer punisher, Profile profile, String reason, PunishmentType type) {
+        if (punisher == null) { // automatic punishment, player will always be online
+            sendPunishment(profile.getPlayer(), reason, type);
+            return;
+        }
+
+        String punishedName = profile.getName();
+        String punishedId = profile.getId().toString();
+
         DiscordWebhook webhook = getWebhook(reportsWebhook);
         webhook.setAvatarUrl("https://purelic.net/siteicon.png");
         webhook.setUsername("Guardian");
@@ -99,7 +107,7 @@ public class DiscordManager {
             .addField("Severity", type.getName(), false)
             .addField("Server", ServerUtils.getServerName(punisher), false)
             .setFooter("Punished by " + punisher.getName(), "https://crafatar.com/renders/head/" + punisher.getUniqueId().toString() + "?size=128&overlay")
-            .setAuthor(punishedName, "https://purelic.net/players/" + punishedName, "https://crafatar.com/renders/head/" + punishedId.toString() + "?size=128&overlay")
+            .setAuthor(punishedName, "https://purelic.net/players/" + punishedName, "https://crafatar.com/renders/head/" + punishedId + "?size=128&overlay")
         );
         webhook.execute();
     }

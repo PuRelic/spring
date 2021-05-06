@@ -6,7 +6,9 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.purelic.spring.Spring;
 import net.purelic.spring.utils.ChatUtils;
+import net.purelic.spring.utils.ServerUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,8 +83,13 @@ public class AltAccount {
 
     @SuppressWarnings("deprecation")
     public BaseComponent[] toComponent() {
+        boolean online = Spring.isOnline(this.uuid);
+        String status = online ?
+            "Online " + ChatColor.AQUA + ServerUtils.getServerName(Spring.getPlayer(this.uuid)) :
+            "Seen " + ChatUtils.format(this.lastSeen);
+
         return new ComponentBuilder(ChatUtils.BULLET).color(ChatColor.GRAY)
-            .append(this.name).color(ChatColor.DARK_AQUA)
+            .append(this.name).color(online ? ChatColor.AQUA : ChatColor.DARK_AQUA)
             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new ComponentBuilder(this.uuid + "\n").color(ChatColor.GRAY)
                     .append("Name: ").color(ChatColor.GRAY).append(this.name + "\n").color(ChatColor.DARK_AQUA)
@@ -92,7 +99,7 @@ public class AltAccount {
                     .create()))
             .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, this.uuid))
             .append(" " + ChatUtils.ARROW + " ").color(ChatColor.GRAY)
-            .append("Seen " + ChatUtils.format(this.lastSeen) + " (" + this.totalLogins + " Logins)").color(ChatColor.WHITE)
+            .append(ChatColor.WHITE + status + ChatColor.GRAY + " (" + this.totalLogins + " Logins)")
             .create();
     }
 

@@ -18,10 +18,8 @@ public class ReloadCommand implements ProxyCommand {
             .permission(Permission.isAdmin())
             .literal("reload")
             .handler(c -> {
-                ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-
                 Spring.getPlugin().reloadConfig();
-                CommandUtils.sendSuccessMessage(player, "Spring config reloaded!");
+                CommandUtils.sendSuccessMessage((ProxiedPlayer) c.getSender(), "Spring config reloaded!");
             });
     }
 

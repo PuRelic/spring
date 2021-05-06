@@ -9,6 +9,7 @@ import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.utils.NickUtils;
 import net.purelic.spring.utils.PartyUtils;
 
 public class PartyListCommand implements ProxyCommand {
@@ -32,7 +33,7 @@ public class PartyListCommand implements ProxyCommand {
                 boolean first = true;
 
                 for (ProxiedPlayer member : party.getMembers()) {
-                    message += (first ? "" : separator) + member.getName();
+                    message += (first ? "" : separator) + NickUtils.getDisplayName(member, player);
                     if (first) first = false;
                 }
 

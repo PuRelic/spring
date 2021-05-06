@@ -1,7 +1,6 @@
 package net.purelic.spring.commands.server;
 
 import cloud.commandframework.Command;
-import cloud.commandframework.arguments.standard.StringArgument;
 import cloud.commandframework.bungee.BungeeCommandManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -9,10 +8,10 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
+import net.purelic.spring.commands.parsers.GameServerArgument;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.ServerStatus;
 import net.purelic.spring.utils.CommandUtils;
-import net.purelic.spring.utils.ServerUtils;
 
 import java.util.Optional;
 
@@ -22,10 +21,10 @@ public class ServerCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("server")
             .senderType(ProxiedPlayer.class)
-            .argument(StringArgument.optional("server", StringArgument.StringMode.GREEDY))
+            .argument(GameServerArgument.optional("server"))
             .handler(c -> {
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
-                Optional<String> serverArg = c.getOptional("server");
+                Optional<GameServer> serverArg = c.getOptional("server");
 
                 if (!serverArg.isPresent()) {
                     ServerInfo server = player.getServer().getInfo();
@@ -40,15 +39,8 @@ public class ServerCommand implements ProxyCommand {
                     return;
                 }
 
-                String name = serverArg.get();
-                GameServer server = ServerUtils.getGameServerByName(name, false);
-
-                if (server == null) {
-                    CommandUtils.sendNoServerMessage(player, name);
-                    return;
-                }
-
-                name = server.getName();
+                GameServer server = serverArg.get();
+                String name = server.getName();
 
                 if (!server.isOnline()) {
                     CommandUtils.sendAlertMessage(

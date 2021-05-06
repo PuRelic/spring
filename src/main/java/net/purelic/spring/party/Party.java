@@ -10,6 +10,7 @@ import net.purelic.spring.analytics.events.PartyDisbandedEvent;
 import net.purelic.spring.managers.PartyManager;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.utils.CommandUtils;
+import net.purelic.spring.utils.NickUtils;
 import net.purelic.spring.utils.PartyUtils;
 import net.purelic.spring.utils.ServerUtils;
 
@@ -67,7 +68,7 @@ public class Party {
     public void setLeader(ProxiedPlayer leader) {
         if (!this.hasCustomName()) this.setName(leader.getName());
         this.leader = leader;
-        this.sendMessage(leader.getName() + " is now the party leader!");
+        this.sendMessage(NickUtils.getNick(leader) + " is now the party leader!");
     }
 
     public String getName() {

@@ -33,7 +33,7 @@ public class StaffCommand implements ProxyCommand {
                 }
 
                 if (!staffOnline) {
-                    message.append("\n").reset().append(" " + ChatUtils.BULLET + " There is currently no staff online.").color(ChatColor.GRAY);
+                    message.append("\n").reset().append(" " + ChatUtils.BULLET + " There are currently no staff online.").color(ChatColor.GRAY);
                 }
 
                 ChatUtils.sendMessage(player, message);

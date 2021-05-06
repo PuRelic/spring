@@ -16,10 +16,7 @@ import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ServerUtils {
 
@@ -39,6 +36,10 @@ public class ServerUtils {
 
     public static boolean sameServer(ProxiedPlayer player, ProxiedPlayer other) {
         return getServerName(player).equals(getServerName(other));
+    }
+
+    public static Collection<ProxiedPlayer> getLocalPlayers(ProxiedPlayer player) {
+        return player.getServer().getInfo().getPlayers();
     }
 
     @SuppressWarnings("deprecation")
@@ -187,7 +188,7 @@ public class ServerUtils {
         String name = server.getName();
         boolean hub = name.equals("Hub");
         long online = staffOnly ?
-            server.getPlayers().stream().filter(PermissionUtils::isStaff).count() :
+            server.getPlayers().stream().filter(player -> PermissionUtils.isStaff(player) && !NickUtils.isNicked(player)).count() :
             server.getPlayers().size();
 
         if (online == 0 && staffOnly) return new BaseComponent[]{};
