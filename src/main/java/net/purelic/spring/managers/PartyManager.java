@@ -8,6 +8,7 @@ import net.purelic.spring.events.PartyJoinEvent;
 import net.purelic.spring.events.PartyLeaveEvent;
 import net.purelic.spring.party.Party;
 import net.purelic.spring.party.PartyInvite;
+import net.purelic.spring.utils.NickUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +36,7 @@ public class PartyManager {
     }
 
     public static Party createParty(ProxiedPlayer player) {
-        return createParty(player, player.getName());
+        return createParty(player, NickUtils.getNick(player));
     }
 
     public static Party createParty(ProxiedPlayer player, String name) {

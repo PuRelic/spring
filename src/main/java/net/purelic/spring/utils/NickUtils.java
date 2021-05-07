@@ -30,7 +30,7 @@ public class NickUtils {
 
     public static String getDisplayName(ProxiedPlayer player, ProxiedPlayer viewer) {
         if (PermissionUtils.isStaff(viewer)) { // TODO friends could also see their real name crossed out
-            return isNicked(player) ? ChatColor.STRIKETHROUGH + player.getName() : player.getName();
+            return isNicked(player) ? ChatColor.STRIKETHROUGH + player.getName() + ChatColor.RESET : player.getName();
         } else {
             return isNicked(player) ? ProfileManager.getProfile(player).getNick() : player.getName();
         }

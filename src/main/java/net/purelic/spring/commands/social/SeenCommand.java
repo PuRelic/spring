@@ -35,7 +35,7 @@ public class SeenCommand implements ProxyCommand {
 
     private void sendFoundMessage(ProxiedPlayer player, ProxiedPlayer target) {
         CommandUtils.sendAlertMessage(player,
-            ChatColor.AQUA + NickUtils.getDisplayName(target, player) + ChatColor.RESET + " is currently playing on server " +
+            ChatColor.AQUA + NickUtils.getDisplayName(target, player) + " is currently playing on server " +
                 ChatColor.AQUA + ServerUtils.getServerName(target));
     }
 

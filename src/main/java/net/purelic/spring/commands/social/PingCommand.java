@@ -25,7 +25,7 @@ public class PingCommand implements ProxyCommand {
 
                 if (targetArg.isPresent()) {
                     ProxiedPlayer target = targetArg.get();
-                    CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(" + NickUtils.getDisplayName(target, player) + " has a ping of " + target.getPing() + "ms)");
+                    CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(" + NickUtils.getDisplayName(target, player) + ChatColor.GRAY + " has a ping of " + target.getPing() + "ms)");
                 } else {
                     CommandUtils.sendSuccessMessage(player, "Pong! " + ChatColor.GRAY + "(You have a ping of " + player.getPing() + "ms)");
                 }

@@ -116,10 +116,10 @@ public class Party {
         PartyManager.removeParty(player);
 
         if (kick) {
-            this.sendMessage(player.getName() + " has been kicked from the party!");
+            this.sendMessage(NickUtils.getNick(player) + " has been kicked from the party!");
             PartyUtils.sendPartyMessage(player, "You were kicked from " + this.name + "'s party!");
         } else {
-            this.sendMessage(player.getName() + " left the party!" + (online ? "" : ChatColor.GRAY + " (disconnected)"));
+            this.sendMessage(NickUtils.getNick(player) + " left the party!" + (online ? "" : ChatColor.GRAY + " (disconnected)"));
 
             if (online) {
                 PartyUtils.sendPartyMessage(player, "You left " + this.name + "'s party!");

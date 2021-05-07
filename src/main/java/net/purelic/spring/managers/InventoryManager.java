@@ -17,10 +17,7 @@ import net.purelic.spring.server.GameServer;
 import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 import net.purelic.spring.server.ServerType;
-import net.purelic.spring.utils.ItemAction;
-import net.purelic.spring.utils.ItemUtils;
-import net.purelic.spring.utils.PermissionUtils;
-import net.purelic.spring.utils.ServerUtils;
+import net.purelic.spring.utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -152,12 +149,8 @@ public class InventoryManager {
     }
 
     public static void openStatsMenu(ProxiedPlayer viewer, ProxiedPlayer player) {
-        openMatchesMenu(viewer, ProfileManager.reloadProfile(player));
-    }
-
-    public static void openStatsMenu(ProxiedPlayer viewer, Profile profile) {
-        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(profile.getName() + "'s Stats"));
-        Arrays.asList(StatSection.values()).forEach(section -> inventory.setItem(section.getSlot(), section.toItem(viewer, profile)));
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(NickUtils.getDisplayName(player, viewer) + "'s Stats"));
+        Arrays.asList(StatSection.values()).forEach(section -> inventory.setItem(section.getSlot(), section.toItem(viewer, player)));
         InventoryModule.sendInventory(viewer, inventory);
     }
 
@@ -165,12 +158,10 @@ public class InventoryManager {
         openMatchesMenu(viewer, viewer);
     }
 
-    public static void openMatchesMenu(ProxiedPlayer viewer, ProxiedPlayer statsPlayer) {
-        openMatchesMenu(viewer, ProfileManager.reloadProfile(statsPlayer));
-    }
+    public static void openMatchesMenu(ProxiedPlayer viewer, ProxiedPlayer player) {
+        Profile profile = ProfileManager.getProfile(player);
 
-    public static void openMatchesMenu(ProxiedPlayer viewer, Profile profile) {
-        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(profile.getName() + "'s Recent Matches"));
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(NickUtils.getDisplayName(player, viewer) + "'s Recent Matches"));
 
         int row = 1;
         int offset = 1;

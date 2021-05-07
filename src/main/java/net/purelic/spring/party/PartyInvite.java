@@ -8,6 +8,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.purelic.spring.managers.PartyManager;
+import net.purelic.spring.utils.NickUtils;
 import net.purelic.spring.utils.PartyUtils;
 import net.purelic.spring.utils.TaskUtils;
 
@@ -39,28 +40,28 @@ public class PartyInvite {
 
     private Runnable getTimer() {
         return () -> {
-            this.party.sendMessage("The party invite to " + this.invited.getName() + " has expired!");
-            PartyUtils.sendPartyMessage(this.invited, "Your party invite from " + this.sender.getName() + " has expired!");
+            this.party.sendMessage("The party invite to " + NickUtils.getDisplayName(this.invited, this.sender) + " has expired!");
+            PartyUtils.sendPartyMessage(this.invited, "Your party invite from " + NickUtils.getDisplayName(this.sender, this.invited) + " has expired!");
             this.remove();
         };
     }
 
     @SuppressWarnings("deprecation")
     public void send() {
-        BaseComponent[] message = new ComponentBuilder(this.sender.getName() + " has invited you to " + (this.party.hasCustomName() ? this.party.getName() + "'s" : "their") + " party  ")
+        BaseComponent[] message = new ComponentBuilder(NickUtils.getDisplayName(this.sender, this.invited) + " has invited you to " + (this.party.hasCustomName() ? this.party.getName() + "'s" : "their") + " party  ")
             .append("[ACCEPT]")
             .color(ChatColor.GREEN)
             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Accept").color(ChatColor.GREEN).create()))
-            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + this.sender.getName()))
+            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + NickUtils.getNick(this.sender)))
             .append("  ")
             .append("[DENY]")
             .color(ChatColor.RED)
             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Deny").color(ChatColor.RED).create()))
-            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party deny " + this.sender.getName()))
+            .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party deny " + NickUtils.getNick(this.sender)))
             .create();
 
         PartyUtils.sendPartyMessage(this.invited, message);
-        this.party.sendMessage(this.sender.getName() + " invited " + this.invited.getName() + " to the party! They have 30 seconds to respond.");
+        this.party.sendMessage(NickUtils.getNick(this.sender) + " invited " + NickUtils.getNick(this.invited) + " to the party! They have 30 seconds to respond.");
 
         this.startTimer();
     }
@@ -71,13 +72,13 @@ public class PartyInvite {
 
     public void accept() {
         this.party.add(this.invited);
-        this.party.sendMessage(this.invited.getName() + " joined the party!");
+        this.party.sendMessage(NickUtils.getNick(this.invited) + " joined the party!");
         this.remove();
     }
 
     public void deny() {
         PartyUtils.sendPartyMessage(this.invited, "You denied " + this.sender.getName() + "'s party invite!");
-        this.party.sendMessage(this.invited.getName() + " denied the party invite!");
+        this.party.sendMessage(NickUtils.getNick(this.invited) + " denied the party invite!");
         this.remove();
     }
 
