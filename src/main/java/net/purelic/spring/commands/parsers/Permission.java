@@ -14,7 +14,7 @@ import net.purelic.spring.profile.Profile;
 import net.purelic.spring.profile.Rank;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.PermissionUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class Permission {
 
@@ -39,15 +39,7 @@ public class Permission {
         return of(Rank.MAP_DEVELOPER, Rank.MODERATOR, Rank.HELPER);
     }
 
-    public static PredicatePermission<CommandSender> isMod() {
-        return of(Rank.MAP_DEVELOPER, Rank.MODERATOR, Rank.HELPER);
-    }
-
-    public static PredicatePermission<CommandSender> isMapDev() {
-        return of(Rank.MAP_DEVELOPER);
-    }
-
-    public static boolean notPremium(@NonNull CommandContext<CommandSender> context) {
+    public static boolean notPremium(@NotNull CommandContext<CommandSender> context) {
         return notPremium((ProxiedPlayer) context.getSender());
     }
 
@@ -55,7 +47,7 @@ public class Permission {
         return notPremium(player, null);
     }
 
-    public static boolean notPremium(@NonNull CommandContext<CommandSender> context, String message) {
+    public static boolean notPremium(@NotNull CommandContext<CommandSender> context, String message) {
         return notPremium((ProxiedPlayer) context.getSender(), message);
     }
 
@@ -81,8 +73,28 @@ public class Permission {
         return !hasPermission;
     }
 
-    public static PredicatePermission<CommandSender> isCreator() {
-        return of(Rank.CREATOR);
+    // Temp checks since PermissionPredicates don't work :)
+
+    public static boolean isAdmin(@NotNull CommandContext<CommandSender> context) {
+        return hasPermission(context);
+    }
+
+    public static boolean isStaff(@NotNull CommandContext<CommandSender> context) {
+        return hasPermission(context, Rank.MAP_DEVELOPER, Rank.MODERATOR, Rank.HELPER);
+    }
+
+    private static boolean hasPermission(@NotNull CommandContext<CommandSender> context, Rank... ranks) {
+        if (!(context.getSender() instanceof ProxiedPlayer)) return false;
+
+        ProxiedPlayer player = (ProxiedPlayer) context.getSender();
+        Profile profile = ProfileManager.getProfile(player);
+        boolean hasPermission = PermissionUtils.isAdmin(player) || profile.hasRank(ranks);
+
+        if (!hasPermission) {
+            CommandUtils.sendErrorMessage(player, "You don't have permission to use this command!");
+        }
+
+        return hasPermission;
     }
 
 }

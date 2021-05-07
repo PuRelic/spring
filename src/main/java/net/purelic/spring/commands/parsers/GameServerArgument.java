@@ -13,7 +13,7 @@ import io.leangen.geantyref.TypeToken;
 import net.purelic.spring.managers.ServerManager;
 import net.purelic.spring.server.GameServer;
 import net.purelic.spring.utils.ServerUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -23,11 +23,11 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
 
     private GameServerArgument(
         final boolean required,
-        final @NonNull String name,
+        final @NotNull String name,
         final @Nullable BiFunction<CommandContext<C>, String, List<String>> suggestionsProvider,
-        final @NonNull ArgumentDescription defaultDescription,
-        final @NonNull Collection<@NonNull BiFunction<@NonNull CommandContext<C>, @NonNull Queue<@NonNull String>,
-                    @NonNull ArgumentParseResult<Boolean>>> argumentPreprocessors
+        final @NotNull ArgumentDescription defaultDescription,
+        final @NotNull Collection<@NotNull BiFunction<@NotNull CommandContext<C>, @NotNull Queue<@NotNull String>,
+                    @NotNull ArgumentParseResult<Boolean>>> argumentPreprocessors
     ) {
         super(
             required,
@@ -41,8 +41,8 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
         );
     }
 
-    public static <C> CommandArgument.@NonNull Builder<C, GameServer> newBuilder(
-        final @NonNull String name
+    public static <C> CommandArgument.@NotNull Builder<C, GameServer> newBuilder(
+        final @NotNull String name
     ) {
         return new Builder<C>(
             name
@@ -51,14 +51,14 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
         );
     }
 
-    public static <C> @NonNull CommandArgument<C, GameServer> of(
-        final @NonNull String name
+    public static <C> @NotNull CommandArgument<C, GameServer> of(
+        final @NotNull String name
     ) {
         return GameServerArgument.<C>newBuilder(name).asRequired().build();
     }
 
-    public static <C> @NonNull CommandArgument<C, GameServer> optional(
-        final @NonNull String name
+    public static <C> @NotNull CommandArgument<C, GameServer> optional(
+        final @NotNull String name
     ) {
         return GameServerArgument.<C>newBuilder(name).asOptional().build();
     }
@@ -66,13 +66,13 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
     public static final class Builder<C> extends CommandArgument.Builder<C, GameServer> {
 
         private Builder(
-            final @NonNull String name
+            final @NotNull String name
         ) {
             super(TypeToken.get(GameServer.class), name);
         }
 
         @Override
-        public @NonNull CommandArgument<@NonNull C, @NonNull GameServer> build() {
+        public @NotNull CommandArgument<@NotNull C, @NotNull GameServer> build() {
             return new GameServerArgument<>(
                 this.isRequired(),
                 this.getName(),
@@ -87,9 +87,9 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
     public static final class GameServerParser<C> implements ArgumentParser<C, GameServer> {
 
         @Override
-        public @NonNull ArgumentParseResult<@NonNull GameServer> parse(
-            final @NonNull CommandContext<@NonNull C> commandContext,
-            final @NonNull Queue<@NonNull String> inputQueue
+        public @NotNull ArgumentParseResult<@NotNull GameServer> parse(
+            final @NotNull CommandContext<@NotNull C> commandContext,
+            final @NotNull Queue<@NotNull String> inputQueue
         ) {
             final String input = inputQueue.peek();
 
@@ -112,9 +112,9 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
         }
 
         @Override
-        public @NonNull List<@NonNull String> suggestions(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull String input
+        public @NotNull List<@NotNull String> suggestions(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull String input
         ) {
             return new ArrayList<>(ServerManager.getGameServers().keySet());
         }
@@ -126,8 +126,8 @@ public final class GameServerArgument<C> extends CommandArgument<C, GameServer> 
         private static final long serialVersionUID = -3825941611365494659L;
 
         private GameServerParseException(
-            final @NonNull String input,
-            final @NonNull CommandContext<?> context
+            final @NotNull String input,
+            final @NotNull CommandContext<?> context
         ) {
             super(
                 GameServerParser.class,

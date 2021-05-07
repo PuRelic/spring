@@ -13,7 +13,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.Spring;
 import net.purelic.spring.utils.NickUtils;
 import net.purelic.spring.utils.ServerUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -31,11 +31,11 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
 
     private PlayerArgument(
         final boolean required,
-        final @NonNull String name,
-        final @NonNull String defaultValue,
-        final @Nullable BiFunction<@NonNull CommandContext<C>, @NonNull String,
-            @NonNull List<@NonNull String>> suggestionsProvider,
-        final @NonNull ArgumentDescription defaultDescription
+        final @NotNull String name,
+        final @NotNull String defaultValue,
+        final @Nullable BiFunction<@NotNull CommandContext<C>, @NotNull String,
+            @NotNull List<@NotNull String>> suggestionsProvider,
+        final @NotNull ArgumentDescription defaultDescription
     ) {
         super(required, name, new PlayerParser<>(), defaultValue, ProxiedPlayer.class, suggestionsProvider, defaultDescription);
     }
@@ -47,7 +47,7 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
      * @param <C>  Command sender type
      * @return Created builder
      */
-    public static <C> @NonNull Builder<C> newBuilder(final @NonNull String name) {
+    public static <C> @NotNull Builder<C> newBuilder(final @NotNull String name) {
         return new Builder<>(name);
     }
 
@@ -58,7 +58,7 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
      * @param <C>  Command sender type
      * @return Created component
      */
-    public static <C> @NonNull CommandArgument<C, ProxiedPlayer> of(final @NonNull String name) {
+    public static <C> @NotNull CommandArgument<C, ProxiedPlayer> of(final @NotNull String name) {
         return PlayerArgument.<C>newBuilder(name).asRequired().build();
     }
 
@@ -69,7 +69,7 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
      * @param <C>  Command sender type
      * @return Created component
      */
-    public static <C> @NonNull CommandArgument<C, ProxiedPlayer> optional(final @NonNull String name) {
+    public static <C> @NotNull CommandArgument<C, ProxiedPlayer> optional(final @NotNull String name) {
         return PlayerArgument.<C>newBuilder(name).asOptional().build();
     }
 
@@ -81,16 +81,16 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
      * @param <C>           Command sender type
      * @return Created component
      */
-    public static <C> @NonNull CommandArgument<C, ProxiedPlayer> optional(
-        final @NonNull String name,
-        final @NonNull String defaultPlayer
+    public static <C> @NotNull CommandArgument<C, ProxiedPlayer> optional(
+        final @NotNull String name,
+        final @NotNull String defaultPlayer
     ) {
         return PlayerArgument.<C>newBuilder(name).asOptionalWithDefault(defaultPlayer).build();
     }
 
     public static final class Builder<C> extends CommandArgument.Builder<C, ProxiedPlayer> {
 
-        private Builder(final @NonNull String name) {
+        private Builder(final @NotNull String name) {
             super(ProxiedPlayer.class, name);
         }
 
@@ -100,7 +100,7 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
          * @return Constructed component
          */
         @Override
-        public @NonNull PlayerArgument<C> build() {
+        public @NotNull PlayerArgument<C> build() {
             return new PlayerArgument<>(
                 this.isRequired(),
                 this.getName(),
@@ -115,9 +115,9 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
     public static final class PlayerParser<C> implements ArgumentParser<C, ProxiedPlayer> {
 
         @Override
-        public @NonNull ArgumentParseResult<ProxiedPlayer> parse(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull Queue<@NonNull String> inputQueue
+        public @NotNull ArgumentParseResult<ProxiedPlayer> parse(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull Queue<@NotNull String> inputQueue
         ) {
             final String input = inputQueue.peek();
 
@@ -148,9 +148,9 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
         }
 
         @Override
-        public @NonNull List<@NonNull String> suggestions(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull String input
+        public @NotNull List<@NotNull String> suggestions(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull String input
         ) {
             if (commandContext.getSender() instanceof ProxiedPlayer) {
                 ProxiedPlayer sender = (ProxiedPlayer) commandContext.getSender();
@@ -184,8 +184,8 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
          * @param context Command context
          */
         public PlayerParseException(
-            final @NonNull String input,
-            final @NonNull CommandContext<?> context
+            final @NotNull String input,
+            final @NotNull CommandContext<?> context
         ) {
             super(
                 PlayerParser.class,
@@ -201,7 +201,7 @@ public final class PlayerArgument<C> extends CommandArgument<C, ProxiedPlayer> {
          *
          * @return String value
          */
-        public @NonNull String getInput() {
+        public @NotNull String getInput() {
             return input;
         }
 

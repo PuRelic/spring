@@ -16,7 +16,7 @@ import net.purelic.spring.profile.Profile;
 import net.purelic.spring.utils.Fetcher;
 import net.purelic.spring.utils.NickUtils;
 import net.purelic.spring.utils.ServerUtils;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -30,42 +30,42 @@ public final class ProfileArgument<C> extends CommandArgument<C, Profile> {
 
     private ProfileArgument(
         final boolean required,
-        final @NonNull String name,
-        final @NonNull String defaultValue,
-        final @Nullable BiFunction<@NonNull CommandContext<C>, @NonNull String,
-            @NonNull List<@NonNull String>> suggestionsProvider,
-        final @NonNull ArgumentDescription defaultDescription
+        final @NotNull String name,
+        final @NotNull String defaultValue,
+        final @Nullable BiFunction<@NotNull CommandContext<C>, @NotNull String,
+            @NotNull List<@NotNull String>> suggestionsProvider,
+        final @NotNull ArgumentDescription defaultDescription
     ) {
         super(required, name, new ProfileParser<>(), defaultValue, Profile.class, suggestionsProvider, defaultDescription);
     }
 
-    public static <C> @NonNull Builder<C> newBuilder(final @NonNull String name) {
+    public static <C> @NotNull Builder<C> newBuilder(final @NotNull String name) {
         return new Builder<>(name);
     }
 
-    public static <C> @NonNull CommandArgument<C, Profile> of(final @NonNull String name) {
+    public static <C> @NotNull CommandArgument<C, Profile> of(final @NotNull String name) {
         return ProfileArgument.<C>newBuilder(name).asRequired().build();
     }
 
-    public static <C> @NonNull CommandArgument<C, Profile> optional(final @NonNull String name) {
+    public static <C> @NotNull CommandArgument<C, Profile> optional(final @NotNull String name) {
         return ProfileArgument.<C>newBuilder(name).asOptional().build();
     }
 
-    public static <C> @NonNull CommandArgument<C, Profile> optional(
-        final @NonNull String name,
-        final @NonNull String defaultProfile
+    public static <C> @NotNull CommandArgument<C, Profile> optional(
+        final @NotNull String name,
+        final @NotNull String defaultProfile
     ) {
         return ProfileArgument.<C>newBuilder(name).asOptionalWithDefault(defaultProfile).build();
     }
 
     public static final class Builder<C> extends CommandArgument.Builder<C, Profile> {
 
-        private Builder(final @NonNull String name) {
+        private Builder(final @NotNull String name) {
             super(Profile.class, name);
         }
 
         @Override
-        public @NonNull ProfileArgument<C> build() {
+        public @NotNull ProfileArgument<C> build() {
             return new ProfileArgument<>(
                 this.isRequired(),
                 this.getName(),
@@ -80,9 +80,9 @@ public final class ProfileArgument<C> extends CommandArgument<C, Profile> {
     public static final class ProfileParser<C> implements ArgumentParser<C, Profile> {
 
         @Override
-        public @NonNull ArgumentParseResult<Profile> parse(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull Queue<@NonNull String> inputQueue
+        public @NotNull ArgumentParseResult<Profile> parse(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull Queue<@NotNull String> inputQueue
         ) {
             final String input = inputQueue.peek();
 
@@ -119,9 +119,9 @@ public final class ProfileArgument<C> extends CommandArgument<C, Profile> {
         }
 
         @Override
-        public @NonNull List<@NonNull String> suggestions(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull String input
+        public @NotNull List<@NotNull String> suggestions(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull String input
         ) {
             if (commandContext.getSender() instanceof ProxiedPlayer) {
                 ProxiedPlayer sender = (ProxiedPlayer) commandContext.getSender();
@@ -145,8 +145,8 @@ public final class ProfileArgument<C> extends CommandArgument<C, Profile> {
         private final String input;
 
         public ProfileParseException(
-            final @NonNull String input,
-            final @NonNull CommandContext<?> context
+            final @NotNull String input,
+            final @NotNull CommandContext<?> context
         ) {
             super(
                 ProfileParser.class,
@@ -157,7 +157,7 @@ public final class ProfileArgument<C> extends CommandArgument<C, Profile> {
             this.input = input;
         }
 
-        public @NonNull String getInput() {
+        public @NotNull String getInput() {
             return input;
         }
 

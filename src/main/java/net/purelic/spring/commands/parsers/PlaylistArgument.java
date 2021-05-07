@@ -12,7 +12,7 @@ import cloud.commandframework.exceptions.parsing.ParserException;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.managers.PlaylistManager;
 import net.purelic.spring.server.Playlist;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -25,42 +25,42 @@ public final class PlaylistArgument<C> extends CommandArgument<C, Playlist> {
 
     private PlaylistArgument(
         final boolean required,
-        final @NonNull String name,
-        final @NonNull String defaultValue,
-        final @Nullable BiFunction<@NonNull CommandContext<C>, @NonNull String,
-            @NonNull List<@NonNull String>> suggestionsProvider,
-        final @NonNull ArgumentDescription defaultDescription
+        final @NotNull String name,
+        final @NotNull String defaultValue,
+        final @Nullable BiFunction<@NotNull CommandContext<C>, @NotNull String,
+            @NotNull List<@NotNull String>> suggestionsProvider,
+        final @NotNull ArgumentDescription defaultDescription
     ) {
         super(required, name, new PlaylistParser<>(), defaultValue, Playlist.class, suggestionsProvider, defaultDescription);
     }
 
-    public static <C> @NonNull Builder<C> newBuilder(final @NonNull String name) {
+    public static <C> @NotNull Builder<C> newBuilder(final @NotNull String name) {
         return new Builder<>(name);
     }
 
-    public static <C> @NonNull CommandArgument<C, Playlist> of(final @NonNull String name) {
+    public static <C> @NotNull CommandArgument<C, Playlist> of(final @NotNull String name) {
         return PlaylistArgument.<C>newBuilder(name).asRequired().build();
     }
 
-    public static <C> @NonNull CommandArgument<C, Playlist> optional(final @NonNull String name) {
+    public static <C> @NotNull CommandArgument<C, Playlist> optional(final @NotNull String name) {
         return PlaylistArgument.<C>newBuilder(name).asOptional().build();
     }
 
-    public static <C> @NonNull CommandArgument<C, Playlist> optional(
-        final @NonNull String name,
-        final @NonNull String defaultPlaylist
+    public static <C> @NotNull CommandArgument<C, Playlist> optional(
+        final @NotNull String name,
+        final @NotNull String defaultPlaylist
     ) {
         return PlaylistArgument.<C>newBuilder(name).asOptionalWithDefault(defaultPlaylist).build();
     }
 
     public static final class Builder<C> extends CommandArgument.Builder<C, Playlist> {
 
-        private Builder(final @NonNull String name) {
+        private Builder(final @NotNull String name) {
             super(Playlist.class, name);
         }
 
         @Override
-        public @NonNull PlaylistArgument<C> build() {
+        public @NotNull PlaylistArgument<C> build() {
             return new PlaylistArgument<>(
                 this.isRequired(),
                 this.getName(),
@@ -75,9 +75,9 @@ public final class PlaylistArgument<C> extends CommandArgument<C, Playlist> {
     public static final class PlaylistParser<C> implements ArgumentParser<C, Playlist> {
 
         @Override
-        public @NonNull ArgumentParseResult<Playlist> parse(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull Queue<@NonNull String> inputQueue
+        public @NotNull ArgumentParseResult<Playlist> parse(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull Queue<@NotNull String> inputQueue
         ) {
             final String input = inputQueue.peek();
 
@@ -100,9 +100,9 @@ public final class PlaylistArgument<C> extends CommandArgument<C, Playlist> {
         }
 
         @Override
-        public @NonNull List<@NonNull String> suggestions(
-            final @NonNull CommandContext<C> commandContext,
-            final @NonNull String input
+        public @NotNull List<@NotNull String> suggestions(
+            final @NotNull CommandContext<C> commandContext,
+            final @NotNull String input
         ) {
             if (commandContext.getSender() instanceof ProxiedPlayer) {
                 List<String> output = new ArrayList<>();
@@ -124,8 +124,8 @@ public final class PlaylistArgument<C> extends CommandArgument<C, Playlist> {
         private final String input;
 
         public PlaylistParseException(
-            final @NonNull String input,
-            final @NonNull CommandContext<?> context
+            final @NotNull String input,
+            final @NotNull CommandContext<?> context
         ) {
             super(
                 PlaylistParser.class,
@@ -136,7 +136,7 @@ public final class PlaylistArgument<C> extends CommandArgument<C, Playlist> {
             this.input = input;
         }
 
-        public @NonNull String getInput() {
+        public @NotNull String getInput() {
             return input;
         }
 

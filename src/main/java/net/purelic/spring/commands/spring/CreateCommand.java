@@ -22,12 +22,14 @@ public class CreateCommand implements ProxyCommand {
         return mgr.commandBuilder("spring")
             .literal("create")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            // .permission(Permission.isStaff())
             .argument(StringArgument.of("name"))
             .argument(PlaylistArgument.of("playlist"))
             .argument(IntegerArgument.<CommandSender>newBuilder("max players").withMin(0).withMax(80).asOptionalWithDefault("40"))
             .argument(BooleanArgument.optional("notify", false))
             .handler(c -> {
+                if (!Permission.isAdmin(c)) return;
+
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                 String name = c.get("name");
                 Playlist playlist = c.get("playlist");

@@ -27,10 +27,12 @@ public class AppealCommand extends PunishmentUtils implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("appeal")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            // .permission(Permission.isStaff())
             .argument(ProfileArgument.of("player"))
             .argument(StringArgument.optional("punishment id"))
             .handler(c -> {
+                if (!Permission.isStaff(c)) return;
+
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                 Profile profile = c.get("player");
                 Optional<Object> punishmentIdArg = c.getOptional("punishment id");

@@ -16,14 +16,18 @@ public class PunishCommand extends PunishmentUtils implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("punish")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            // .permission(Permission.isStaff())
             .argument(ProfileArgument.of("player"))
             .argument(StringArgument.greedy("reason"))
-            .handler(c -> PunishmentUtils.punishPlayer(
-                (ProxiedPlayer) c.getSender(),
-                c.get("player"),
-                c.get("reason")
-            ));
+            .handler(c -> {
+                if (!Permission.isStaff(c)) return;
+
+                PunishmentUtils.punishPlayer(
+                    (ProxiedPlayer) c.getSender(),
+                    c.get("player"),
+                    c.get("reason")
+                );
+            });
     }
 
 }

@@ -20,6 +20,7 @@ import net.purelic.spring.utils.ChatUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class AltsCommand implements ProxyCommand {
@@ -29,13 +30,15 @@ public class AltsCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("alts")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            // .permission(Permission.isStaff())
             .argument(ProfileArgument.of("player"))
             .handler(c -> {
+                if (!Permission.isStaff(c)) return;
+
                 ProxiedPlayer sender = (ProxiedPlayer) c.getSender();
                 Profile target = c.get("player");
 
-                Query query = Commons.getFirestore().collection("player_ips").whereArrayContains("uuids", target.getId());
+                Query query = Commons.getFirestore().collection("player_ips").whereArrayContains("uuids", target.getId().toString());
                 ApiFuture<QuerySnapshot> future = query.get();
 
                 try {
@@ -43,16 +46,19 @@ public class AltsCommand implements ProxyCommand {
 
                     if (querySnapshot.isEmpty()) return;
 
-                    Map<String, AltAccount> accounts = new HashMap<>();
+                    Map<UUID, AltAccount> accounts = new HashMap<>();
 
                     for (DocumentSnapshot documentSnapshot : querySnapshot.getDocuments()) {
+                        List<String> uuids = (List<String>) documentSnapshot.get("uuids");
                         List<Map<String, Object>> accountsData = (List<Map<String, Object>>) documentSnapshot.get("accounts");
 
                         if (accountsData == null || accountsData.isEmpty()) continue;
 
+                        int i = 0;
                         for (Map<String, Object> data : accountsData) {
-                            AltAccount account = new AltAccount(data);
-                            String id = account.getId();
+                            AltAccount account = new AltAccount(uuids.get(i), data);
+                            i++;
+                            UUID id = account.getId();
 
                             if (accounts.containsKey(id)) {
                                 accounts.put(id, account.merge(accounts.get(id)));

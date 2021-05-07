@@ -39,11 +39,13 @@ public class AltManager {
         } else { // known account for this ip
             List<Map<String, Object>> accountsCopy = new ArrayList<>();
 
+            int i = 0;
             // update account records
             for (Map<String, Object> accountData : accounts) {
-                AltAccount account = new AltAccount(accountData);
+                AltAccount account = new AltAccount(uuids.get(i), accountData);
+                i++;
 
-                if (account.getId().equals(uuid)) {
+                if (account.getId().toString().equals(uuid)) {
                     account.setName(name);
                     accountsCopy.add(account.toData(true));
                 } else {

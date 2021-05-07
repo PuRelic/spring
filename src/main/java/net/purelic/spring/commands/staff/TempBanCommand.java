@@ -20,19 +20,23 @@ public class TempBanCommand extends PunishmentUtils implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("tempban")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            //.permission(Permission.isStaff())
             .argument(ProfileArgument.of("player"))
             .argument(IntegerArgument.of("duration"))
             .argument(EnumArgument.of(BanUnit.class, "unit"))
             .argument(StringArgument.greedy("reason"))
-            .handler(c -> PunishmentUtils.punishPlayer(
-                (ProxiedPlayer) c.getSender(),
-                c.get("player"),
-                c.get("reason"),
-                PunishmentType.TEMP_BAN,
-                c.get("duration"),
-                c.get("unit")
-            ));
+            .handler(c -> {
+                if (!Permission.isStaff(c)) return;
+
+                PunishmentUtils.punishPlayer(
+                    (ProxiedPlayer) c.getSender(),
+                    c.get("player"),
+                    c.get("reason"),
+                    PunishmentType.TEMP_BAN,
+                    c.get("duration"),
+                    c.get("unit")
+                );
+            });
     }
 
 }

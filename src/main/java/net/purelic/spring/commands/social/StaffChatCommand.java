@@ -25,9 +25,11 @@ public class StaffChatCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("sc")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            // .permission(Permission.isStaff())
             .argument(StringArgument.greedy("message"))
             .handler(c -> {
+                if (!Permission.isStaff(c)) return;
+
                 ProxiedPlayer player = (ProxiedPlayer) c.getSender();
                 String message = player.getName() + ": " + c.get("message");
 

@@ -225,7 +225,6 @@ public class Spring extends Plugin {
         this.registerCommand(new CreateCommand());
         this.registerCommand(new DestroyCommand());
         this.registerCommand(new PurgeCommand());
-        this.registerCommand(new RebootCommand());
         this.registerCommand(new ReloadCommand());
 
         // Staff

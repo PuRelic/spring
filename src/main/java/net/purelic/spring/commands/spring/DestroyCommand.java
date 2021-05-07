@@ -18,9 +18,11 @@ public class DestroyCommand implements ProxyCommand {
         return mgr.commandBuilder("spring")
             .literal("destroy")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isAdmin())
+            // .permission(Permission.isAdmin())
             .argument(ServerArgument.of("server"))
             .handler(c -> {
+                if (!Permission.isAdmin(c)) return;
+
                 String server = ((ServerInfo) c.get("server")).getName();
                 ServerManager.removeServer(server);
                 CommandUtils.sendSuccessMessage((ProxiedPlayer) c.getSender(), "Server \"" + server + "\" was destroyed!");

@@ -12,17 +12,18 @@ import net.purelic.spring.utils.ServerUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class AltAccount {
 
-    private final String uuid;
+    private final UUID uuid;
     private String name;
     private Timestamp firstSeen;
     private Timestamp lastSeen;
     private long totalLogins;
 
-    public AltAccount(Map<String, Object> data) {
-        this.uuid = (String) data.get("uuid");
+    public AltAccount(String uuid, Map<String, Object> data) {
+        this.uuid = UUID.fromString(uuid);
         this.name = (String) data.get("name");
         this.firstSeen = (Timestamp) data.get("first_seen");
         this.lastSeen = (Timestamp) data.get("last_seen");
@@ -30,14 +31,14 @@ public class AltAccount {
     }
 
     public AltAccount(String uuid, String name) {
-        this.uuid = uuid;
+        this.uuid = UUID.fromString(uuid);
         this.name = name;
         this.firstSeen = Timestamp.now();
         this.lastSeen = this.firstSeen;
         this.totalLogins = 1;
     }
 
-    public String getId() {
+    public UUID getId() {
         return this.uuid;
     }
 
@@ -59,7 +60,7 @@ public class AltAccount {
 
     public Map<String, Object> toData(boolean update) {
         Map<String, Object> data = new HashMap<>();
-        data.put("uuid", this.uuid);
+        data.put("uuid", this.uuid.toString());
         data.put("name", this.name);
         data.put("first_seen", this.firstSeen);
         data.put("last_seen", update ? Timestamp.now() : this.lastSeen);
@@ -72,7 +73,7 @@ public class AltAccount {
             this.firstSeen = altAccount.getFirstSeen();
         }
 
-        if (this.lastSeen.getSeconds() > altAccount.getLastSeen().getSeconds()) {
+        if (this.lastSeen.getSeconds() < altAccount.getLastSeen().getSeconds()) {
             this.lastSeen = altAccount.getLastSeen();
         }
 
@@ -97,7 +98,7 @@ public class AltAccount {
                     .append("Last Seen: ").color(ChatColor.GRAY).append(ChatUtils.format(this.lastSeen) + "\n").color(ChatColor.DARK_AQUA)
                     .append("Total Logins: ").color(ChatColor.GRAY).append("" + this.totalLogins).color(ChatColor.DARK_AQUA)
                     .create()))
-            .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, this.uuid))
+            .event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, this.uuid.toString()))
             .append(" " + ChatUtils.ARROW + " ").color(ChatColor.GRAY)
             .append(ChatColor.WHITE + status + ChatColor.GRAY + " (" + this.totalLogins + " Logins)")
             .create();

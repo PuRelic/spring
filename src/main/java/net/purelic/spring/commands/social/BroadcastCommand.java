@@ -15,9 +15,13 @@ public class BroadcastCommand implements ProxyCommand {
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
         return mgr.commandBuilder("broadcast", "bc")
             .senderType(ProxiedPlayer.class)
-            .permission(Permission.isStaff())
+            // .permission(Permission.isStaff())
             .argument(StringArgument.greedy("message"))
-            .handler(c -> ChatUtils.broadcastMessage(c.get("message")));
+            .handler(c -> {
+                if (!Permission.isStaff(c)) return;
+
+                ChatUtils.broadcastMessage(c.get("message"));
+            });
     }
 
 }
