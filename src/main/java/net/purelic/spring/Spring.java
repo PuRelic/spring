@@ -29,12 +29,15 @@ import net.purelic.spring.commands.DiscordCommand;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.commands.discord.*;
 import net.purelic.spring.commands.league.LeaveCommand;
+import net.purelic.spring.commands.moderation.*;
 import net.purelic.spring.commands.parsers.*;
 import net.purelic.spring.commands.server.*;
 import net.purelic.spring.commands.social.*;
 import net.purelic.spring.commands.social.party.*;
-import net.purelic.spring.commands.spring.*;
-import net.purelic.spring.commands.staff.*;
+import net.purelic.spring.commands.spring.CreateCommand;
+import net.purelic.spring.commands.spring.DestroyCommand;
+import net.purelic.spring.commands.spring.PurgeCommand;
+import net.purelic.spring.commands.spring.ReloadCommand;
 import net.purelic.spring.listeners.discord.*;
 import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
@@ -181,6 +184,17 @@ public class Spring extends Plugin {
         // League
         this.registerCommand(new LeaveCommand());
 
+        // Moderation
+        this.registerCommand(new AltsCommand());
+        this.registerCommand(new AppealCommand());
+        this.registerCommand(new BanCommand());
+        this.registerCommand(new KickCommand());
+        this.registerCommand(new LookupCommand());
+        this.registerCommand(new PunishCommand());
+        this.registerCommand(new ReportCommand());
+        this.registerCommand(new TempBanCommand());
+        this.registerCommand(new WarnCommand());
+
         // Server
         this.registerCommand(new HubCommand());
         this.registerCommand(new LeagueCommand());
@@ -226,17 +240,6 @@ public class Spring extends Plugin {
         this.registerCommand(new DestroyCommand());
         this.registerCommand(new PurgeCommand());
         this.registerCommand(new ReloadCommand());
-
-        // Staff
-        this.registerCommand(new AltsCommand());
-        this.registerCommand(new AppealCommand());
-        this.registerCommand(new BanCommand());
-        this.registerCommand(new KickCommand());
-        this.registerCommand(new LookupCommand());
-        this.registerCommand(new PunishCommand());
-        this.registerCommand(new ReportCommand());
-        this.registerCommand(new TempBanCommand());
-        this.registerCommand(new WarnCommand());
     }
 
     private void registerBungeeCommandManager() {

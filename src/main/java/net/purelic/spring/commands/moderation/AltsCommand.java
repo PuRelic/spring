@@ -1,4 +1,4 @@
-package net.purelic.spring.commands.staff;
+package net.purelic.spring.commands.moderation;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.bungee.BungeeCommandManager;

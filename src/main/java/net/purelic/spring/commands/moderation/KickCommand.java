@@ -1,4 +1,4 @@
-package net.purelic.spring.commands.staff;
+package net.purelic.spring.commands.moderation;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.standard.StringArgument;
@@ -11,24 +11,24 @@ import net.purelic.spring.commands.parsers.ProfileArgument;
 import net.purelic.spring.punishment.PunishmentType;
 import net.purelic.spring.utils.PunishmentUtils;
 
-public class BanCommand extends PunishmentUtils implements ProxyCommand {
+public class KickCommand extends PunishmentUtils implements ProxyCommand {
 
     @Override
     public Command.Builder<CommandSender> getCommandBuilder(BungeeCommandManager<CommandSender> mgr) {
-        return mgr.commandBuilder("pban")
+        return mgr.commandBuilder("pkick")
             .senderType(ProxiedPlayer.class)
             // .permission(Permission.isStaff())
             .argument(ProfileArgument.of("player"))
             .argument(StringArgument.greedy("reason"))
             .handler(c -> {
                 if (!Permission.isStaff(c)) return;
-                
+
                 PunishmentUtils.punishPlayer(
                 (ProxiedPlayer) c.getSender(),
                 c.get("player"),
                 c.get("reason"),
-                PunishmentType.PERMA_BAN
-            );});
+                PunishmentType.KICK
+            ); });
     }
 
 }
