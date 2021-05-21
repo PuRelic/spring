@@ -56,6 +56,8 @@ import java.util.function.Function;
 
 public class Spring extends Plugin {
 
+    private static final String PLUGIN_MESSAGING_CHANNEL = "purelic:spring";
+
     private static Spring plugin;
 
     private Configuration config;
@@ -66,7 +68,7 @@ public class Spring extends Plugin {
     public void onEnable() {
         plugin = this;
 
-        this.getProxy().registerChannel("purelic:spring");
+        this.getProxy().registerChannel(PLUGIN_MESSAGING_CHANNEL);
         this.reloadConfig();
         this.registerBungeeCommandManager();
         this.registerJDACommandManager();
@@ -369,7 +371,7 @@ public class Spring extends Plugin {
         out.writeUTF(subChannel);
         for (String s : data) out.writeUTF(s);
 
-        server.sendData("purelic:spring", out.toByteArray());
+        server.sendData(PLUGIN_MESSAGING_CHANNEL, out.toByteArray());
     }
 
     public static void callEvent(Event event) {
