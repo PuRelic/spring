@@ -7,7 +7,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.purelic.spring.analytics.events.ProxyPingedEvent;
 import net.purelic.spring.managers.SettingsManager;
 
 public class ProxyPing implements Listener {
@@ -22,7 +21,8 @@ public class ProxyPing implements Listener {
 
         event.setResponse(ping);
 
-        new ProxyPingedEvent(event).track();
+        // Disabled for the time being
+        // new ProxyPingedEvent(event).track();
     }
 
     private BaseComponent getMotd() {
