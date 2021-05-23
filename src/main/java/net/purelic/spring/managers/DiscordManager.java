@@ -134,6 +134,7 @@ public class DiscordManager {
         webhook.setUsername("Guardian");
         webhook.addEmbed(new DiscordWebhook.EmbedObject()
             .setColor(Color.ORANGE)
+            .addField("Nickname", NickUtils.isNicked(reported) ? NickUtils.getNick(reported) : "N/A", false)
             .addField("Type", "Report", false)
             .addField("Reason", reason, false)
             .addField("Server", ServerUtils.getServerName(reported), false)
