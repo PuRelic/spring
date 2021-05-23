@@ -71,6 +71,8 @@ public class DocumentManager {
 
     @SuppressWarnings("ConstantConditions")
     public static void addServerDoc(GameServer server, DocumentReference docRef) {
+        if (server == null) return;
+
         ListenerRegistration registration = docRef.addSnapshotListener((snapshot, e) -> {
             if (e != null) {
                 System.err.println("Listen failed: " + e);
