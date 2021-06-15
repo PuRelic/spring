@@ -29,8 +29,8 @@ public class ServerDestroyedEvent extends AnalyticsEvent {
         this.properties.put("max_players", server.getMaxPlayers());
         this.properties.put("max_party", server.getMaxParty());
         this.properties.put("min_party", server.getMinParty());
-        this.properties.put("ip_address", server.getIp());
         this.properties.put("time_online", Timestamp.now().getSeconds() - server.getCreatedAt().getSeconds());
+        if (server.getIp() != null) this.properties.put("ip_address", server.getIp());
 
         Playlist playlist = server.getPlaylist();
         if (playlist != null) {

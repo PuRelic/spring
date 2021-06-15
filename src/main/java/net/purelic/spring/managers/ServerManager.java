@@ -155,7 +155,7 @@ public class ServerManager {
         String name = server.getName();
         GAME_SERVERS.remove(name);
 
-        if (!server.isCreated()) return;
+        // if (!server.isCreated()) return;
 
         for (ProxiedPlayer player : server.getPlayers()) {
             ServerInfo hub = ProxyServer.getInstance().getServerInfo("hub");
