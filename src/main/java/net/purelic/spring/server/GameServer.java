@@ -21,6 +21,7 @@ import net.purelic.spring.Spring;
 import net.purelic.spring.analytics.events.ServerCreatedEvent;
 import net.purelic.spring.analytics.events.ServerDestroyedEvent;
 import net.purelic.spring.analytics.events.ServerStartedEvent;
+import net.purelic.spring.commands.parsers.DiscordUser;
 import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.league.LeagueMatch;
 import net.purelic.spring.managers.*;
@@ -424,12 +425,12 @@ public class GameServer {
 
     private void setDroplet() {
         Droplet droplet = new Droplet();
-        droplet.setName(this.getDropletName());
+        droplet.setName(this.id);
         droplet.setSize(new Size(this.size.getSlug()).getSlug());
         droplet.setRegion(new Region(this.region.getSlug()));
         droplet.setImage(new Image(this.snapshotId));
         droplet.setKeys(Collections.singletonList(new Key(28618976)));
-        droplet.setTags(Collections.singletonList(this.id));
+        droplet.setTags(Collections.singletonList(this.getDropletName()));
         droplet.setEnableBackup(false);
         droplet.setEnableIpv6(false);
         droplet.setEnablePrivateNetworking(false);
