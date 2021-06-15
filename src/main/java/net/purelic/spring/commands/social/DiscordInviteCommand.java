@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.purelic.spring.commands.ProxyCommand;
 import net.purelic.spring.commands.parsers.PlayerArgument;
+import net.purelic.spring.managers.ProfileManager;
 import net.purelic.spring.utils.CommandUtils;
 import net.purelic.spring.utils.NickUtils;
 
@@ -29,6 +30,12 @@ public class DiscordInviteCommand implements ProxyCommand {
 
                 if (targetArg.isPresent()) {
                     ProxiedPlayer target = targetArg.get();
+
+                    if (ProfileManager.getProfile(target).hasDiscordLinked()) {
+                        CommandUtils.sendErrorMessage(player, "That player is already in the Discord!");
+                        return;
+                    }
+
                     target.sendMessage(
                         new ComponentBuilder(NickUtils.getDisplayName(player, target)).color(ChatColor.WHITE).bold(true)
                             .append(" invited you to the PuRelic Discord").color(ChatColor.WHITE).bold(true)
