@@ -21,7 +21,6 @@ import net.purelic.spring.Spring;
 import net.purelic.spring.analytics.events.ServerCreatedEvent;
 import net.purelic.spring.analytics.events.ServerDestroyedEvent;
 import net.purelic.spring.analytics.events.ServerStartedEvent;
-import net.purelic.spring.commands.parsers.DiscordUser;
 import net.purelic.spring.commands.parsers.Permission;
 import net.purelic.spring.league.LeagueMatch;
 import net.purelic.spring.managers.*;
@@ -272,7 +271,7 @@ public class GameServer {
     }
 
     public Collection<ProxiedPlayer> getPlayers() {
-        return this.serverInfo.getPlayers();
+        return this.serverInfo == null ? new ArrayList<>() : this.serverInfo.getPlayers();
     }
 
     public int getPlayersOnline() {
@@ -430,7 +429,7 @@ public class GameServer {
         droplet.setRegion(new Region(this.region.getSlug()));
         droplet.setImage(new Image(this.snapshotId));
         droplet.setKeys(Collections.singletonList(new Key(28618976)));
-        droplet.setTags(Collections.singletonList(this.getDropletName()));
+        droplet.setTags(Arrays.asList(this.getDropletName(), this.id));
         droplet.setEnableBackup(false);
         droplet.setEnableIpv6(false);
         droplet.setEnablePrivateNetworking(false);
@@ -450,10 +449,10 @@ public class GameServer {
             this.task = this.proxy.getScheduler().schedule(this.plugin, () -> {
                 attempts.getAndIncrement();
 
-                if (attempts.get() >= 60) {
-                    System.out.println("Attempt to start server has failed! (" + this.name + ")");
-                    ServerManager.removeServer(this);
+                if (attempts.get() >= 120) {
                     this.cancel();
+                    DiscordUtils.log("Attempt to create server has failed! (" + this.name + ")");
+                    ServerManager.removeServer(this);
                 } else {
                     try {
                         List<Droplet> droplets = Commons.getDigitalOcean().getAvailableDropletsByTagName(this.id, 1, 1).getDroplets();
@@ -469,6 +468,9 @@ public class GameServer {
                                 }
                             }
 
+                            this.ip = hostname;
+                            this.dropletId = droplet.getId();
+
                             if (hostname.isEmpty()) return;
 
                             InetSocketAddress address;
@@ -479,9 +481,6 @@ public class GameServer {
                                 return;
                             }
 
-                            this.ip = hostname;
-                            this.dropletId = droplet.getId();
-
                             this.addServer(address);
 
                             System.out.println("Server successfully created after " + attempts.get() + " attempt(s)! (" + this.name + ")");
@@ -489,17 +488,19 @@ public class GameServer {
                             this.cancel();
                         }
                     } catch (DigitalOceanException | RequestUnsuccessfulException e) {
-                        System.out.println("There was an error setting up the droplet! (" + this.name + ")");
+                        DiscordUtils.log("There was an error setting up droplet " + this.dropletId + "! (" + this.name + ")");
                         e.printStackTrace();
                         ServerManager.removeServer(this);
                         this.cancel();
                     }
                 }
-            }, 1, 1, TimeUnit.SECONDS); // wait 1 second and retry every 1 second up to 30 times
+            }, 1, 1, TimeUnit.SECONDS); // wait 1 second and retry every 1 second up to 120 times
         } catch (Exception e) {
-            System.out.println("There was an error setting up the server! (" + this.name + ")");
+            DiscordUtils.log("There was an error setting up a server! (" + this.name + ")");
             e.printStackTrace();
-            this.destroy();
+
+            ServerManager.removeServer(this);
+
             if (this.isPrivate) {
                 ProxiedPlayer player = this.proxy.getPlayer(UUID.fromString(this.id));
                 if (player != null)
@@ -523,17 +524,22 @@ public class GameServer {
     }
 
     public void destroy() {
-        if (this.created) {
-            try {
-                DatabaseUtils.removeServerDoc(this);
-                Commons.getDigitalOcean().deleteDroplet(this.dropletId);
-                ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(this.name);
-                if (player != null) CommandUtils.sendAlertMessage(player, "Your private server has shutdown");
-                new ServerDestroyedEvent(this).track();
-            } catch (Exception e) {
-                System.out.println("There was an error destroying server! (" + this.name + " - " + this.dropletId + ")");
-                e.printStackTrace();
-            }
+        // Notify the player
+        ProxiedPlayer player = Spring.getPlugin().getProxy().getPlayer(this.name);
+        if (player != null) CommandUtils.sendAlertMessage(player, "Your private server has shutdown");
+
+        // Track the analytics event
+        new ServerDestroyedEvent(this).track();
+
+        // Clean up database documents
+        DatabaseUtils.removeServerDoc(this);
+
+        // Attempt to destroy the droplet
+        try {
+            Commons.getDigitalOcean().deleteDroplet(this.dropletId);
+        } catch (Exception e) {
+            DiscordUtils.log("There was an error deleting droplet " + this.dropletId + "! (" + this.name + ")");
+            e.printStackTrace();
         }
     }
 

@@ -40,6 +40,7 @@ public class DocumentManager {
         docData.put("size", server.getSize().getName());
         docData.put("region", server.getRegion().getName());
         docData.put("type", server.getType().getName());
+        docData.put("repo", server.getType().name().toLowerCase().replace("_", "-"));
         docData.put("private", server.isPrivate());
         docData.put("beta", server.isBeta());
         docData.put("max_players", server.getMaxPlayers());
