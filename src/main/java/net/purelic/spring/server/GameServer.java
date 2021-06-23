@@ -271,7 +271,7 @@ public class GameServer {
     }
 
     public Collection<ProxiedPlayer> getPlayers() {
-        return this.serverInfo.getPlayers();
+        return this.serverInfo == null ? new ArrayList<>() : this.serverInfo.getPlayers();
     }
 
     public int getPlayersOnline() {
@@ -450,9 +450,9 @@ public class GameServer {
                 attempts.getAndIncrement();
 
                 if (attempts.get() >= 120) {
+                    this.cancel();
                     DiscordUtils.log("Attempt to create server has failed! (" + this.name + ")");
                     ServerManager.removeServer(this);
-                    this.cancel();
                 } else {
                     try {
                         List<Droplet> droplets = Commons.getDigitalOcean().getAvailableDropletsByTagName(this.id, 1, 1).getDroplets();
