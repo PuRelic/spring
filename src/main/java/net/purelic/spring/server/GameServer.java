@@ -83,7 +83,7 @@ public class GameServer {
             playlist,
             type == ServerType.GAME_DEVELOPMENT ?
                 (PermissionUtils.isDonator(player) ? 10 : 5) :
-                (PermissionUtils.isDonator(player) ? 32 : 8),
+                (PermissionUtils.isDonator(player) ? 20 : 8),
             0,
             0,
             false,
