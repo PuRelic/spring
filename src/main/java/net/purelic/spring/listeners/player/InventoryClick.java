@@ -95,11 +95,14 @@ public class InventoryClick implements Listener {
                 case SELECT_PUBLIC:
                     int servers = ServerManager.getPublicServers(playlist, true).size();
 
-                    if (servers == 1) ServerUtils.quickJoin(player, playlist);
+                    if (servers == 1) ServerUtils.quickJoinPlaylist(player, playlist);
                     else InventoryManager.openPublicServerSelector(player, playlist, false);
                     break;
                 case QUICK_JOIN:
-                    ServerUtils.quickJoin(player, playlist);
+                    ServerUtils.quickJoinPlaylist(player, playlist);
+                    break;
+                case QUICK_JOIN_CUSTOM:
+                    ServerUtils.quickJoinCustomGames(player);
                     break;
                 case SELECT_LEAGUE:
                     if (clickType == ClickType.LEFT_CLICK) {
@@ -152,6 +155,9 @@ public class InventoryClick implements Listener {
                     CommandUtils.sendSuccessMessage(player, "Successfully appealed " + Fetcher.getNameOf(punishedId) +
                         "'s " + punishment.getType().getName().toLowerCase() + "!");
                     DiscordManager.sendAppeal(player, Fetcher.getNameOf(punishedId), punishedId, punishment.getReason(), punishment.getType());
+                    break;
+                case MAIN_SELECTOR:
+                    InventoryManager.openMainSelector(player);
                     break;
             }
         }

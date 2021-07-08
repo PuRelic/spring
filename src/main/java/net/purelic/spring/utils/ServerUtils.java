@@ -17,6 +17,7 @@ import net.purelic.spring.server.Playlist;
 import net.purelic.spring.server.PublicServer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ServerUtils {
 
@@ -102,10 +103,44 @@ public class ServerUtils {
         List<GameServer> servers = ServerManager.getPublicServers(playlist, true);
         servers.sort(Comparator.comparingInt(GameServer::getPlayersOnline)); // sort by player count
         Collections.reverse(servers); // most players to least players
-        return servers;
+
+        // First we add all the servers from most players to least players that are NOT full.
+        // Then, we add all the servers from most players to least players that ARE full.
+        List<GameServer> sorted = new ArrayList<>();
+        sorted.addAll(servers.stream().filter(server -> !server.isFull()).collect(Collectors.toList()));
+        sorted.addAll(servers.stream().filter(GameServer::isFull).collect(Collectors.toList()));
+
+        return sorted;
     }
 
-    public static void quickJoin(ProxiedPlayer player, Playlist playlist) {
+    public static List<GameServer> getSortedPrivateServers(boolean visibleOnly) {
+        List<GameServer> servers = ServerManager.getPrivateServers(visibleOnly);
+        servers.sort(Comparator.comparingInt(GameServer::getPlayersOnline)); // sort by player count
+        Collections.reverse(servers); // most players to least players
+
+        // First we add all the servers from most players to least players that are NOT full and NOT whitelisted.
+        // Then, we add all the servers from most players to least players that ARE full or ARE whitelisted.
+        List<GameServer> sorted = new ArrayList<>();
+        sorted.addAll(servers.stream().filter(server -> !server.isFull() && !server.isWhitelisted()).collect(Collectors.toList()));
+        sorted.addAll(servers.stream().filter(server -> server.isFull() || server.isWhitelisted()).collect(Collectors.toList()));
+
+        return sorted;
+    }
+
+    public static void quickJoinCustomGames(ProxiedPlayer player) {
+        List<GameServer> servers = ServerManager.getPrivateServers(true);
+        Collections.shuffle(servers);
+
+        Optional<GameServer> result = servers.stream().filter(server -> !server.isFull() && !server.isWhitelisted()).findFirst();
+
+        if (result.isPresent()) {
+            result.get().connect(player);
+        } else {
+            CommandUtils.sendErrorMessage(player, "There are currently no open Custom Game servers!");
+        }
+    }
+
+    public static void quickJoinPlaylist(ProxiedPlayer player, Playlist playlist) {
         List<GameServer> servers = getSortedPublicServers(playlist);
         Optional<GameServer> result = servers.stream().filter(server -> !server.isFull()).findFirst(); // first server not full
 

@@ -34,7 +34,7 @@ public class SpringPluginMessage implements Listener {
 
             switch (subChannel) {
                 case "ServerSelector": {
-                    InventoryManager.openMainSelector(player);
+                    InventoryManager.openSelector(player);
                     break;
                 }
                 case "LeagueSelector": {

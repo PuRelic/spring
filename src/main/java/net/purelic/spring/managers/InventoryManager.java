@@ -19,8 +19,8 @@ import net.purelic.spring.server.PublicServer;
 import net.purelic.spring.server.ServerType;
 import net.purelic.spring.utils.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +33,20 @@ public class InventoryManager {
     public static void loadServerSelector(Configuration config) {
         selectorRows = config.getInt("server_selector.rows", 3);
         rankedSelectorRows = config.getInt("server_selector.ranked_selector_rows", 3);
+    }
+
+    public static void openSelector(ProxiedPlayer player) {
+        GameServer current = ServerUtils.getGameServer(player);
+
+        if (current == null) { // in hub
+            openMainSelector(player);
+        } else if (current.isPrivate()) {
+            openPrivateServerSelector(player);
+        } else if (current.isRanked()) {
+            openLeagueSelector(player);
+        } else {
+            openPublicServerSelector(player, current.getPlaylist(), current.isRanked());
+        }
     }
 
     public static void openMainSelector(ProxiedPlayer player) {
@@ -54,16 +68,7 @@ public class InventoryManager {
     public static void openServerSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(selectorRows), new TextComponent("Select a playlist:"));
         ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem(player)));
-        // inventory.setItem(8, ItemUtils.getPrivateServerItem());
-        // inventory.setItem(32, ItemUtils.getLeagueServerItem());
-
-        // private servers
-        List<GameServer> privateServers = ServerManager.getPrivateServers(false);
-
-        if (privateServers.size() > 0) {
-            inventory.setItem(7, ItemUtils.getPrivateServerItem(privateServers));
-        }
-
+        inventory.setItem(8, ItemUtils.getMainSelectorItem());
         InventoryModule.sendInventory(player, inventory);
     }
 
@@ -83,32 +88,51 @@ public class InventoryManager {
     }
 
     public static void openPrivateServerSelector(ProxiedPlayer player) {
-        List<GameServer> servers = ServerManager.getPrivateServers(!PermissionUtils.isStaff(player));
+        List<GameServer> servers = ServerUtils.getSortedPrivateServers(false);
 
-        int rows = Math.max((servers.size() / 9) + (servers.size() % 9 == 0 ? 0 : 1), 1);
-        Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(rows), new TextComponent("Select a server:"));
+        ItemStack quickJoin = new ItemStack(ItemType.EMERALD);
+        quickJoin.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + "Quick Join");
+        quickJoin.setLore(Collections.singletonList(
+            ChatColor.WHITE + "Auto-join the largest, non-full server!"
+        ));
+        ItemAction.QUICK_JOIN_CUSTOM.apply(quickJoin);
 
-        List<ItemStack> items = new ArrayList<>();
-        servers.forEach(server -> items.add(server.getItem()));
-        inventory.setItems(items);
-
-        InventoryModule.sendInventory(player, inventory);
+        openServerBrowser(player, "Custom Game Servers", quickJoin, ItemUtils.getPrivateServerItem(servers), servers);
     }
 
     public static void openPublicServerSelector(ProxiedPlayer player, Playlist playlist, boolean ranked) {
         List<GameServer> servers = ServerUtils.getSortedPublicServers(playlist).stream().filter(server -> server.isRanked() == ranked).collect(Collectors.toList());
 
-        int rows = Math.max((servers.size() / 9) + (servers.size() % 9 == 0 ? 0 : 1), 1);
-        Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(rows), new TextComponent("Select a server:"));
-
         ItemStack quickJoin = new ItemStack(ItemType.EMERALD);
         quickJoin.setDisplayName("" + ChatColor.GREEN + ChatColor.BOLD + "Quick Join");
+        quickJoin.setLore(Collections.singletonList(
+            ChatColor.WHITE + "Auto-join the largest, non-full server!"
+        ));
         ItemAction.QUICK_JOIN.apply(quickJoin, playlist.getName());
 
-        List<ItemStack> items = new ArrayList<>();
-        items.add(quickJoin);
-        servers.forEach(server -> items.add(server.getItem()));
-        inventory.setItems(items);
+        openServerBrowser(player, playlist.getName() + " Servers", quickJoin, ServerManager.getPublicServer(playlist).toItem(player), servers);
+    }
+
+    public static void openServerBrowser(ProxiedPlayer player, String title, ItemStack quickJoinItem, ItemStack playlistItem, List<GameServer> servers) {
+        Inventory inventory = new Inventory(InventoryType.GENERIC_9X5, new TextComponent(title));
+
+        // add the servers to the middle of the inventory
+        int row = 1;
+        int offset = 1;
+
+        for (GameServer server : servers) {
+            if (offset == 8) {
+                row++;
+                offset = 1;
+            }
+
+            inventory.setItem((row * 9) + offset, server.getItem());
+            offset++;
+        }
+
+        inventory.setItem(3, quickJoinItem);
+        inventory.setItem(4, playlistItem);
+        inventory.setItem(5, ItemUtils.getMainSelectorItem());
 
         InventoryModule.sendInventory(player, inventory);
     }
@@ -130,7 +154,8 @@ public class InventoryManager {
             i++;
         }
 
-        inventory.setItem(8, ItemUtils.getBetaItem(player));
+        inventory.setItem(7, ItemUtils.getBetaItem(player));
+        inventory.setItem(8, ItemUtils.getMainSelectorItem());
 
         InventoryModule.sendInventory(player, inventory);
     }
@@ -140,7 +165,8 @@ public class InventoryManager {
         Inventory inventory = new Inventory(InventoryType.GENERIC_9X1, new TextComponent("Choose an option:"));
         inventory.setItem(0, server.isOnline() ? ItemUtils.getJoinServerItem(name) : ItemUtils.getStartingServerItem());
         inventory.setItem(1, ItemUtils.getStopServerItem(name));
-        inventory.setItem(8, server.getItem());
+        inventory.setItem(7, server.getItem());
+        inventory.setItem(8, ItemUtils.getMainSelectorItem());
         InventoryModule.sendInventory(player, inventory);
     }
 
