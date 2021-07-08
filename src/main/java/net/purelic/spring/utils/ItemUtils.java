@@ -21,7 +21,7 @@ public class ItemUtils {
 
     public static ItemStack getPublicServerItem() {
         ItemStack item = new ItemStack(ItemType.IRON_CHESTPLATE);
-        item.setDisplayName(new ComponentBuilder("Public Servers").color(ChatColor.AQUA).bold(true).create());
+        item.setDisplayName(new ComponentBuilder("Casual Games").color(ChatColor.AQUA).bold(true).create());
 
         List<String> lore = getServerCategoryLore(
             ServerManager.getPublicServers(true),
@@ -80,6 +80,17 @@ public class ItemUtils {
         skull.setLore(lore);
         ItemAction.BROWSE_PRIVATE.apply(skull);
         return skull;
+    }
+
+    public static ItemStack getMainSelectorItem() {
+        ItemStack mainSelector = new ItemStack(ItemType.COMPASS);
+        mainSelector.setDisplayName("" + ChatColor.AQUA + ChatColor.BOLD + "Main Menu");
+        mainSelector.setLore(Arrays.asList(
+            ChatColor.WHITE + "Browse all Casual, Competitive,",
+            ChatColor.WHITE + "and Custom game servers!"
+        ));
+        ItemAction.MAIN_SELECTOR.apply(mainSelector);
+        return mainSelector;
     }
 
     public static ItemStack getBetaItem(ProxiedPlayer player) {

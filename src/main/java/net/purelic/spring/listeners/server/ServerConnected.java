@@ -14,7 +14,6 @@ public class ServerConnected implements Listener {
     @EventHandler
     public void onServerConnected(ServerConnectedEvent event) {
         ProxiedPlayer player = event.getPlayer();
-
         ServerInfo to = event.getServer().getInfo();
         boolean toHub = to.getName().equals("Hub");
 

@@ -32,7 +32,7 @@ public class ServersCommand implements ProxyCommand {
 
                     ChatUtils.sendMessage(player, message);
                 } else {
-                    InventoryManager.openServerSelector(player);
+                    InventoryManager.openSelector(player);
                 }
             });
     }

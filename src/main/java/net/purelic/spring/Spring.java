@@ -40,10 +40,7 @@ import net.purelic.spring.listeners.party.PartyJoin;
 import net.purelic.spring.listeners.party.PartyLeave;
 import net.purelic.spring.listeners.player.*;
 import net.purelic.spring.listeners.punishment.*;
-import net.purelic.spring.listeners.server.ProxyPing;
-import net.purelic.spring.listeners.server.ServerConnected;
-import net.purelic.spring.listeners.server.ServerKick;
-import net.purelic.spring.listeners.server.SpringPluginMessage;
+import net.purelic.spring.listeners.server.*;
 import net.purelic.spring.managers.*;
 import net.purelic.spring.server.ServerType;
 import net.purelic.spring.utils.DiscordUtils;
@@ -142,6 +139,8 @@ public class Spring extends Plugin {
         this.registerListener(new PreLogin());
 
         // Server
+        this.registerListener(new NPCInteract());
+        this.registerListener(new NPCUpdater());
         this.registerListener(new ProxyPing());
         this.registerListener(new ServerKick());
         this.registerListener(new ServerConnected());
