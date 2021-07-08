@@ -37,15 +37,15 @@ public class InventoryManager {
 
     public static void openMainSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(3), new TextComponent("Select an option:"));
-        inventory.setItem(10, ItemUtils.getPublicServerItem());
-        inventory.setItem(12, ItemUtils.getLeagueServerItem());
-        inventory.setItem(16, ItemUtils.getPrivateServerItem());
+        inventory.setItem(11, ItemUtils.getPublicServerItem());
+        // inventory.setItem(12, ItemUtils.getLeagueServerItem());
+        inventory.setItem(15, ItemUtils.getPrivateServerItem());
 
         // private servers
         List<GameServer> privateServers = ServerManager.getPrivateServers(!PermissionUtils.isStaff(player));
 
         if (privateServers.size() > 0) {
-            inventory.setItem(14, ItemUtils.getPrivateServerItem(privateServers));
+            inventory.setItem(13, ItemUtils.getPrivateServerItem(privateServers));
         }
 
         InventoryModule.sendInventory(player, inventory);
@@ -54,14 +54,14 @@ public class InventoryManager {
     public static void openServerSelector(ProxiedPlayer player) {
         Inventory inventory = new Inventory(InventoryType.getChestInventoryWithRows(selectorRows), new TextComponent("Select a playlist:"));
         ServerManager.getPublicServerTypes().values().stream().filter(server -> !server.isRanked()).forEach(server -> inventory.setItem(server.getSlot(), server.toItem(player)));
-        inventory.setItem(48, ItemUtils.getPrivateServerItem());
-        inventory.setItem(50, ItemUtils.getLeagueServerItem());
+        // inventory.setItem(8, ItemUtils.getPrivateServerItem());
+        // inventory.setItem(32, ItemUtils.getLeagueServerItem());
 
         // private servers
         List<GameServer> privateServers = ServerManager.getPrivateServers(false);
 
         if (privateServers.size() > 0) {
-            inventory.setItem(49, ItemUtils.getPrivateServerItem(privateServers));
+            inventory.setItem(7, ItemUtils.getPrivateServerItem(privateServers));
         }
 
         InventoryModule.sendInventory(player, inventory);

@@ -6,6 +6,8 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.purelic.spring.Spring;
+import net.purelic.spring.events.NPCInteractEvent;
+import net.purelic.spring.events.constants.NPCInteractAction;
 import net.purelic.spring.managers.InventoryManager;
 import net.purelic.spring.utils.PunishmentUtils;
 
@@ -32,7 +34,7 @@ public class SpringPluginMessage implements Listener {
 
             switch (subChannel) {
                 case "ServerSelector": {
-                    InventoryManager.openServerSelector(player);
+                    InventoryManager.openMainSelector(player);
                     break;
                 }
                 case "LeagueSelector": {
@@ -54,6 +56,12 @@ public class SpringPluginMessage implements Listener {
                 case "AutoBan": {
                     String reason = in.readUTF();
                     PunishmentUtils.autoBan(player, reason);
+                    break;
+                }
+                case "NPCInteract": {
+                    String npc = in.readUTF();
+                    NPCInteractAction action = NPCInteractAction.valueOf(in.readUTF());
+                    Spring.callEvent(new NPCInteractEvent(player, npc, action));
                     break;
                 }
             }

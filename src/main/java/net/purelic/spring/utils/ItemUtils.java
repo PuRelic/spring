@@ -21,7 +21,7 @@ public class ItemUtils {
 
     public static ItemStack getPublicServerItem() {
         ItemStack item = new ItemStack(ItemType.IRON_CHESTPLATE);
-        item.setDisplayName(new ComponentBuilder("Public Servers").color(ChatColor.AQUA).bold(true).create());
+        item.setDisplayName(new ComponentBuilder("Casual Games").color(ChatColor.AQUA).bold(true).create());
 
         List<String> lore = getServerCategoryLore(
             ServerManager.getPublicServers(true),
