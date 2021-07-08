@@ -90,7 +90,7 @@ public class ServerUtils {
 
     public static boolean allServersFull(Playlist playlist) {
         int scaleThreshold = ServerManager.getPublicServer(playlist).getScaleThreshold();
-        return ServerManager.getPublicServers(playlist, false).stream().noneMatch(server -> server.getPlayersOnline() < scaleThreshold);
+        return ServerManager.getPublicServers(playlist, false).stream().noneMatch(server -> server.getPlayersOnline() <= scaleThreshold);
     }
 
     public static boolean isMaxServers(Playlist playlist) {
